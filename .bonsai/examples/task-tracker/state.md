@@ -6,7 +6,7 @@
 ## Current Execution State
 
 **Current Phase:** Task Behavior Contract
-**Active Phase Plan File:** `plan_phase_1.md`
+**Active Phase Plan File:** None
 **Current Phase Pass:** Pass A (Contract)
 **Current Objective:** Produce the full Phase 1 Pass A contract package through its human review gate.
 
@@ -14,7 +14,7 @@
 * **Active Files:** [`requirements.md`, `architecture.md`, `plan.md`, `plan_phase_1.md`]
 * **Blockers / Risks:** [Exact CLI command syntax remains deferred, Persistence format remains deferred, Task identifier format remains open unless the Pass A contract requires it to be settled]
 
-**Exact Next Step:** Execute Phase 1 Pass A completely: define the reviewable task model and task-operation contract, create behavior-focused JUnit 5 tests or usage examples that make the intended task behavior and edge cases concrete, then stop for human review before any Pass B implementation.  
+**Exact Next Step:** Draft plan/plan_phase_1.md for the active two-pass Task Behavior Contract phase, preserving the required Pass A human review gate, then stop for human review before implementation work proceeds.  
 **Success Condition:** The API/structural contract and tests are specific enough for a human to review the intended behavior, and implementation has not proceeded beyond what is needed to express that contract.  
 **Recommended AI Level:** Thinking - The work is bounded, but the contract and tests will shape the implementation that follows.
 

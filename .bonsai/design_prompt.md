@@ -20,7 +20,7 @@ You must generate:
 
 Generate optional documents ONLY if our design explicitly demands them:
 
-* `plan_phase_<N>.md`
+* `plan/plan_phase_<N>.md`
   *(Only when the initial active phase has already been discussed in enough execution detail that a
   phase-level plan will materially improve the first implementation session. Otherwise, leave
   detailed phase planning to the implementation workflow when the phase becomes active.)*
@@ -66,7 +66,7 @@ first implementation step, ask first.
   conversational filler outside the code blocks.
 * **Plan Initialization:** In `plan.md`, define the initial roadmap, the first active phase, and
   whether that phase should use single-pass or two-pass execution.
-* **Phase-Plan Restraint:** Do not generate `plan_phase_<N>.md` merely because a phase is active,
+* **Phase-Plan Restraint:** Do not generate `plan/plan_phase_<N>.md` merely because a phase is active,
   complex in the abstract, or two-pass. Generate it only when our design discussion already contains
   enough execution-level sequencing, review gates, or validation detail to justify preserving a
   phase-level plan before implementation begins. Otherwise, leave the phase plan absent so the

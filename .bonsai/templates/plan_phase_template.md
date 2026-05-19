@@ -1,3 +1,6 @@
+## `plan_phase_template.md`
+
+```md
 # AI Plan - Phase <N>: <Phase Name>
 
 **[Meta: Agent-maintained | Active Phase Detail | Compress when done]**
@@ -40,3 +43,4 @@
 * **Open Questions:** [Active execution questions, max 5]
 * **Completion Summary:** *(Fill when done)* **Outcome:** [Results] | 
   **Unlocked:** [Next capability]
+```

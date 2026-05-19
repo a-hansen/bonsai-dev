@@ -51,7 +51,7 @@ explicitly asks you to proceed.
 
     * `plan.md`
     * `state.md`
-    * The active `plan_phase_<N>.md`, when one exists
+    * The active `plan/plan_phase_<N>.md`, when one exists
     * `icebox.md`, when out-of-scope observations need to be preserved
 * **Focus:** Execute only the exact next step in `state.md`. Do not broaden scope casually.
 * **Out-of-Scope Discoveries:** If you notice adjacent bugs, technical debt, missing tests,
@@ -67,25 +67,48 @@ explicitly asks you to proceed.
   platform conventions.
 * **Framework Evidence:** State which maps or source guidance were checked when framework-specific
   behavior materially affects the implementation.
+
+## Phase Activation & Planning
+
+* **Phase Execution Mode Assessment:** When activating a new phase, or when the current active phase
+  has not yet had its execution mode resolved, determine whether it should use:
+
+    * **Single-pass execution**, for bounded work whose implementation direction is already clear, or
+    * **Two-pass contract-first execution**, when the phase introduces or materially reshapes a
+      public API, important abstraction, subsystem boundary, extension contract, rebuild-relevant
+      structure, or other high-leverage design surface that merits human review before full
+      implementation.
+
 * **Phase Plan Creation:** When activating a new phase, determine whether that phase needs a detailed
-  `plan_phase_<N>.md`. Create one before substantive phase execution when the phase:
+  `plan/plan_phase_<N>.md`. Create one before substantive phase execution when the phase:
 
     * is complex enough to need ordered sequencing,
     * uses two-pass contract-first execution,
     * has multiple review or validation gates, or
     * would otherwise bloat `plan.md`.
 
-  Update `state.md` to reference the phase plan when one is created.
+  Update `plan.md` and `state.md` to reflect the resolved execution mode and the phase plan path when
+  one is created.
+
 * **Missing Phase Plan:** If the current active phase appears to require a detailed
-  `plan_phase_<N>.md` but none exists, treat drafting that phase plan as the exact next step before
+  `plan/plan_phase_<N>.md` but none exists, treat drafting that phase plan as the exact next step before
   substantive phase execution. After drafting it, STOP for human review before proceeding with
   implementation work.
-* **Two-Pass Gates:** If Pass A is active, build the API shape and behavioral tests, then STOP for
-  human review. Do not begin Pass B until the contract is approved.
+
+* **Unresolved Phase Mode:** If the current active phase has not yet had its execution mode resolved,
+  treat determining the mode, updating roadmap/state, and drafting any required phase plan as the
+  exact next step before substantive phase execution. After that planning update, STOP for human
+  review before proceeding with implementation work.
+
+* **Two-Pass Gates:** If Pass A is active, build the API shape and behavioral tests or usage examples,
+  then STOP for human review. Do not begin Pass B until the contract is approved.
+
+## Maintenance Discipline
+
 * **Plan Discipline:** Update `plan.md` only when roadmap-level truth changes: phase status,
-  ordering, deferrals, completion, or the need for a separate phase plan.
+  ordering, deferrals, completion, resolved execution mode, or the need for a separate phase plan.
 * **State Discipline:** Update `state.md` whenever the exact next step, current objective,
-  blockers, recommended AI level, or pass state changes.
+  blockers, recommended AI level, pass state, active phase plan, or execution mode changes.
 * **Icebox Discipline:** Update `icebox.md` only for observations that are useful to preserve but
   not approved for immediate execution. Keep entries compact, specific, and easy for a human to
   triage later.

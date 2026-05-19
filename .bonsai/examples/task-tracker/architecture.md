@@ -6,8 +6,8 @@
 ## Architectural Goal & Overview
 
 **Goal:** Keep the task tracker small, explicit, and testable by separating core task behavior from CLI handling, persistence, and build packaging concerns.  
-**System Overview:** The application is a Java 17 single-module Gradle project packaged as an executable JAR. It consists of a command-line entry point, a task-focused application/domain layer, and a local persistence boundary. The command-line layer receives user intent and delegates task operations. The core task behavior is designed to be reviewable and testable before implementation details are finalized. Persistence retains task state between runs but should not control task rules.  
-**Principles:** [Small surface area, Clear boundaries, Contract-first behavior design, Tests demonstrate intended usage, Avoid architecture that exceeds the example’s needs]
+**System Overview:** The application is a Java 17 single-module Gradle project packaged as an executable JAR. It consists of a command-line entry point, a task-focused application/domain layer, and a local persistence boundary. The command-line layer receives user intent and delegates task operations. The core task behavior should expose a small, explicit surface that is straightforward to test independently of CLI and persistence concerns. Persistence retains task state between runs but should not control task rules.  
+**Principles:** [Small surface area, Clear boundaries, Explicit behavior boundaries, Tests demonstrate intended usage, Avoid architecture that exceeds the example’s needs]
 
 ## Major Subsystems
 
@@ -40,6 +40,6 @@
 
 ## Guardrails & Rejections
 
-* **Implementation Guardrails:** [Do not combine task rules, CLI parsing, and persistence into one monolithic class, Do not implement a graphical UI for this example, Do not expand scope beyond the compact task tracker requirements, Preserve the two-pass review gate for the first phase, Keep build configuration explicit rather than implied]
+* **Implementation Guardrails:** [Do not combine task rules, CLI parsing, and persistence into one monolithic class, Do not implement a graphical UI for this example, Do not expand scope beyond the compact task tracker requirements, Keep build configuration explicit rather than implied]
 * **Explicitly Rejected:** [Swing UI - It would broaden the example and distract from the Bonsai workflow being demonstrated] | [Unspecified build tooling - The project explicitly uses Gradle Wrapper] | [Framework-heavy architecture - It is not justified by the project scope]
 * **Open Questions:** [What exact CLI command vocabulary should be used?, What persistence format should be used?, What task identifier format should be chosen?]

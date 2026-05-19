@@ -13,7 +13,7 @@
 
 1. **Task Behavior Contract:** <Define the task model, task operations, reviewable API/structure, and behavior-focused tests before implementation> | **Mode:** Two-pass contract-first |
    **Status:** Active |
-   **Plan:** `plan_phase_1.md`
+   **Plan:** None
 2. **CLI Interaction Layer:** <Implement the Java CLI workflow for invoking task operations and presenting results> | **Mode:** Single-pass |
    **Status:** Pending |
    **Plan:** None

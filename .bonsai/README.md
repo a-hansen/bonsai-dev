@@ -35,7 +35,8 @@ For repository code mapping, see [the Bonsai Maps guide](maps/README.md).
         ├── plan.md
         ├── state.md
         ├── icebox.md                          # Optional
-        ├── plan_phase_<N>.md                  # Optional
+        ├── plan/
+        │   └── plan_phase_<N>.md             # Optional
         ├── requirements/
         │   └── requirements_<AREA>.md        # Optional
         └── architecture/
@@ -57,7 +58,7 @@ Bonsai separates durable project memory by type.
 | `plan.md`                                  | Execution roadmap                          | Agent-maintained |
 | `state.md`                                 | Current-session baton pass                 | Agent-maintained |
 | `icebox.md`                                | Out-of-scope observations worth preserving | Agent-maintained |
-| `plan_phase_<N>.md`                        | Detailed active phase execution plan       | Agent-maintained |
+| `plan/plan_phase_<N>.md`                   | Detailed active phase execution plan       | Agent-maintained |
 
 This separation matters.
 
@@ -114,8 +115,7 @@ Use an IDE / CLI coding agent to:
 Start with:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions.
-Active project: <project>.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
 ```
 
 The coding agent should:
@@ -192,7 +192,7 @@ It may also produce, when justified:
 
 ```text
 icebox.md
-plan_phase_<N>.md
+plan/plan_phase_<N>.md
 requirements/requirements_<AREA>.md
 architecture/architecture_<SUBSYSTEM>.md
 ```
@@ -376,14 +376,14 @@ requirements/requirements_<AREA>.md
 architecture.md
 architecture/architecture_<SUBSYSTEM>.md
 plan.md
-plan_phase_<N>.md
+plan/plan_phase_<N>.md
 ```
 
 when appropriate.
 
 ---
 
-## `plan_phase_<N>.md`
+## `plan/plan_phase_<N>.md`
 
 **Optional agent-maintained detailed execution plan for an active phase.**
 
@@ -554,7 +554,7 @@ The coding agent should actively maintain:
 plan.md
 state.md
 icebox.md
-plan_phase_<N>.md
+plan/plan_phase_<N>.md
 ```
 
 when their truth changes.
@@ -590,7 +590,7 @@ Do not treat `icebox.md` as approved scope.
 Do not execute icebox items unless the human explicitly moves them into the active plan or tells the
 agent to address them.
 
-### Update `plan_phase_<N>.md` when
+### Update `plan/plan_phase_<N>.md` when
 
 * active sequencing changes
 * contract/implementation pass changes
@@ -693,3 +693,5 @@ Use Bonsai to keep four things cleanly separated:
 4. **What the AI noticed but should not act on yet**
 
 That separation is what makes frequent fresh-session AI development practical.
+
+```

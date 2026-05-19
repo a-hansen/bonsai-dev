@@ -11,7 +11,7 @@ It helps you:
 * keep context small, structured, and high-signal
 * move cleanly from Web AI design to IDE / CLI implementation
 * preserve product intent, architecture, roadmap, current execution state, and useful out-of-scope observations separately
-* layer deep product requirements and subsystem architecture without bloating top-level project memory
+* layer deep product requirements, subsystem architecture, and detailed phase plans without bloating top-level project memory
 * guide coding agents through large codebases using layered code maps
 * right-size AI effort instead of burning maximum reasoning on every step
 * keep the human in the loop before an agent hardens the wrong abstraction
@@ -100,7 +100,7 @@ The AI will synthesize the conversation into durable project memory:
 and, when warranted:
 
 * `icebox.md`
-* `plan_phase_<N>.md`
+* `plan/plan_phase_<N>.md`
 * `requirements/requirements_<AREA>.md`
 * `architecture/architecture_<SUBSYSTEM>.md`
 
@@ -354,15 +354,16 @@ Top-level project memory should stay orienting and authoritative.
 But serious projects eventually accumulate detail that deserves preservation without being loaded into
 every session.
 
-Bonsai supports optional layered documents for both product and architecture depth:
+Bonsai supports optional layered documents for product depth, architecture depth, and execution depth:
 
 ```text
 requirements/requirements_<AREA>.md
 architecture/architecture_<SUBSYSTEM>.md
+plan/plan_phase_<N>.md
 ```
 
-Use these when a product area or architectural subsystem has deep, isolated complexity that would
-otherwise bloat the top-level documents.
+Use these when a product area, architectural subsystem, or active implementation phase has deep,
+isolated complexity that would otherwise bloat the top-level documents.
 
 The top-level files retain the project-wide truth.
 The layered files preserve detailed truth that can be loaded only when relevant.
@@ -458,7 +459,7 @@ scratchpads.
 * `plan.md`
 * `state.md`
 * `icebox.md`
-* `plan_phase_<N>.md`
+* `plan/plan_phase_<N>.md`
 
 These evolve as implementation proceeds.
 
@@ -531,7 +532,7 @@ actually become intended work.
 For phases that need real execution detail, Bonsai uses:
 
 ```text
-plan_phase_<N>.md
+plan/plan_phase_<N>.md
 ```
 
 This keeps the roadmap readable while still allowing complex work to be planned carefully.
@@ -714,7 +715,7 @@ The current system focuses on:
 * execution continuity
 * startup-gated implementation sessions
 * context minimization
-* layered requirements and architecture
+* layered requirements, architecture, and phase planning
 * contract-first development
 * scoped preservation of out-of-scope observations
 * layered codebase guidance
@@ -732,3 +733,5 @@ That is the point of this system.
 
 AI can generate enormous amounts of motion.
 Bonsai is about turning that motion into deliberate, maintainable software.
+
+```
