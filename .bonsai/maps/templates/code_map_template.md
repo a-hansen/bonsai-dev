@@ -38,9 +38,25 @@ Load it only when editing the map system or map artifacts themselves.
 **Primary language(s):** <Languages>
 **Build / packaging model:** <Short summary>
 
+Repository facts in this file should describe the codebase and durable repository structure.
+
+Do **not** use this map to summarize:
+
+* Bonsai project-memory documents
+* active implementation phase or session state
+* deferred work tracked in plans, state, or icebox
+* requirements identifiers or project-roadmap terminology
+* temporary build/test blockers unless they are durable repository navigation facts
+
+Those belong in the project-memory system, not in the repository code map.
+
 ---
 
 ## Subsystem Index
+
+List only durable repository subsystems or source areas that improve code navigation.
+
+Do **not** treat Bonsai project-memory directories, planning documents, state files, or implementation-session artifacts as code subsystems.
 
 | Subsystem     | Role            | Primary Path(s) | Map                             |
 | ------------- | --------------- | --------------- | ------------------------------- |
@@ -81,7 +97,10 @@ List execution, integration, or extension origins that help agents route into th
 
 ## Recommended Drill-Down Order
 
-Use when a repository has a clear learning sequence.
+Use when a repository has a clear **code-navigation** learning sequence.
+
+The drill-down order should route future agents through source and map artifacts that explain the repository.
+Do **not** use this section to direct agents through project `state.md`, phase plans, requirements, architecture, or other Bonsai project-memory files.
 
 1. **<Subsystem>** - <Why it should be understood first>
 2. **<Subsystem>** - <Why it follows>
@@ -114,7 +133,11 @@ when that optional file exists and the current task needs it.
 
 ## Repository Rules That Affect Navigation
 
-Keep this short. Capture only routing-relevant facts.
+Keep this short. Capture only durable routing-relevant repository facts.
+
+Do **not** record temporary implementation status, active-phase gaps, missing work from the project plan,
+or session-specific blockers here. If a fact will likely disappear as ordinary implementation proceeds,
+it probably does not belong in this code map.
 
 * **Testing:** <Where meaningful tests live, if that affects mapping or implementation work>
 * **Packaging:** <Build or module fact that helps orient future agents>

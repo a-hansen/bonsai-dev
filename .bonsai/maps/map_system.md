@@ -192,6 +192,22 @@ Should answer:
 
 Must remain compact.
 
+It must remain a **repository compass**, not a project-session guide.
+It may point agents that are editing Bonsai map artifacts to `map_system.md`, but it must not absorb
+Bonsai project-memory workflow, active implementation state, or phase guidance.
+
+It must not:
+
+* treat `.bonsai/projects/...` memory as a repository subsystem
+* use project state, phase plans, requirements, architecture, or icebox files as code-navigation drill-down steps
+* record active phase status, deferred work, pending implementation work, or session progress
+* translate requirement IDs or project-plan vocabulary into repository-map claims
+* include transient tool-availability or execution-status notes that belong in project state or a session summary
+* describe absent future features as â€œintentionally absentâ€ merely because a project plan says so
+
+A source-observed absence may be recorded only when it materially improves repository navigation and is
+phrased as a repository fact, not as project intent or implementation progress.
+
 It may include a **small, curated, high-value package or namespace router** when that improves first-load
 orientation. It must not become the full package or namespace registry.
 
@@ -493,8 +509,34 @@ Use repo guidance as bias, not proof.
 `map_repo.md` may prioritize where to look or reflect owner judgment, but observed source wins when the
 repository contradicts the calibration document.
 
+### Repository Maps vs Project Memory
+
+Bonsai repository maps describe the repository, not the active project workflow operating on it.
+
+Project-memory artifacts such as:
+
+```text
+.bonsai/projects/<project>/requirements.md
+.bonsai/projects/<project>/architecture.md
+.bonsai/projects/<project>/plan/
+.bonsai/projects/<project>/state.md
+.bonsai/projects/<project>/icebox.md
+```
+
+may explain why current implementation work exists, but they are not repository mapping evidence.
+They must not be used to turn project workflow into code-map structure.
+
+When editing code maps:
+
+* use source, tests, examples, build files, and other concrete repository artifacts to establish repository facts
+* use `map_repo.md` only as repository calibration guidance, not as proof
+* do not promote project-memory directories into repository subsystems
+* do not place project-state, phase-plan, or implementation-summary content into `code_map.md`
+* do not express project intentions, deferred work, or requirements traceability as if they were source-derived repository facts
+* if a project document suggests something that source does not yet contain, treat it as project intent, not mapped code reality
+
 Avoid overstating.
-A useful map that says “Uncertain” is better than a confident map that teaches future agents the wrong
+A useful map that says â€œUncertainâ€ is better than a confident map that teaches future agents the wrong
 thing.
 
 ---
@@ -561,16 +603,29 @@ thing.
     * what exact rule prevents mistakes
     * what canonical calling or extension pattern should be reused, when one exists
 
-10. **Update dependent map files together.**
+10. **Keep repository maps separate from Bonsai project memory.**
+
+    Repository maps should not become mirrors of:
+
+    * active project state
+    * phase plans
+    * requirements tracking
+    * architecture intentions not yet visible in source
+    * icebox follow-ups
+    * implementation-session summaries
+
+    If that information matters, it belongs in the project-memory system, not in repository maps.
+
+11. **Update dependent map files together.**
     If a mapping change alters top-level routing, lookup support, or current mapping status, update the
     affected related artifacts in the same pass.
 
-11. **Finish the active subsystem before moving to another subsystem.**
+12. **Finish the active subsystem before moving to another subsystem.**
     After creating or refreshing `subsystems/<subsystem>/map.md`, immediately evaluate whether
     `api_pub.md` and/or `api_ext.md` are justified for that subsystem. Create or refresh those API maps
     when warranted before selecting a different subsystem.
 
-12. **Do not casually rewrite mapping-control files.**
+13. **Do not casually rewrite mapping-control files.**
     Do not modify:
 
     ```text
@@ -581,7 +636,7 @@ thing.
 
     unless the human explicitly requests it.
 
-13. **Code remains the source of truth.**
+14. **Code remains the source of truth.**
     Bonsai maps should point agents toward the right code with the right expectations, not replace
     source inspection.
 
@@ -1187,6 +1242,9 @@ Watch for:
 * repo-owner guidance being treated as proof when source evidence disagrees
 * optional artifacts being created merely because templates exist
 * structural rewrites of existing artifacts during routine updates without explicit need
+* `code_map.md` becoming a Bonsai project-session guide instead of a repository compass
+* `.bonsai/projects/...` directories being treated as repository subsystems
+* project state, phase plans, requirements, architecture intent, icebox items, or session status leaking into repository maps
 
 When API maps exist, the subsystem map should retain only the architecture-level summary and direct future
 agents to the API map for coding mechanics.
