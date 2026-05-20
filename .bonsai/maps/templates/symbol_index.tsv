@@ -1,0 +1,4 @@
+symbol	kind	subsystem	path	notes
+<symbol>	<class|interface|enum|record|annotation|function|service|config|other>	<subsystem>	<path>	<short lookup note>
+<symbol>	<class|interface|enum|record|annotation|function|service|config|other>	<subsystem>	<path>	<short lookup note>
+<symbol>	<class|interface|enum|record|annotation|function|service|config|other>	<subsystem>	<path>	<short lookup note>
