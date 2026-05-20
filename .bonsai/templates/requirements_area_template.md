@@ -1,11 +1,11 @@
 # AI Requirements - <Area Name>
 
-**[Meta: Human-owned | Durable Product-Area Truth | Bounded Scope | No Implementation Detail]**
+**[Meta: Human-owned | Durable Product-Area Truth | Bounded Scope | No Implementation Detail]**  
 **Project:** <Project name> | **Parent:** `../requirements.md`
 
 ## Area Goal & Intent
 
-**Area Goal:** <What this product area exists to accomplish>
+**Area Goal:** <What this product area exists to accomplish>  
 **Product Intent:** <What this area is optimizing for from a user or product perspective>
 
 ## Scope & Boundaries
@@ -41,7 +41,7 @@
 
 * **Out of Scope / Non-Goals:** [List specific excluded items for this area]
 * **Accepted Decisions:** [List finalized product decisions for this area]
-* **Open Questions:** [Active product questions, max 5]
+* **Open Questions:** [Active product questions, prioritized by importance]
 
 ## Definition of Done
 

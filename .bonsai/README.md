@@ -23,12 +23,14 @@ For repository code mapping, see [the Bonsai Maps guide](maps/README.md).
 ```text
 .bonsai/
 ├── README.md
-├── design_prompt.md
+├── design_session.md
 ├── implementation_prompt.md
 ├── style_guide.md
 ├── maps/
 │   └── ...
 └── projects/
+    ├── task-tracker/                         # Included example project
+    │   └── ...
     └── <project>/
         ├── requirements.md
         ├── architecture.md
@@ -91,13 +93,22 @@ Use a Web UI AI to explore:
 * risks
 * sequencing
 
-When the design is mature enough to preserve, use:
+When the design is mature enough to preserve, paste the full contents of:
 
 ```text
-.bonsai/design_prompt.md
+.bonsai/design_session.md
 ```
 
-to synthesize the conversation into project memory.
+into the same conversation.
+
+`design_session.md` is a self-contained synthesis packet. It includes:
+
+* the design-synthesis instructions
+* the output rules
+* the clarification rules
+* the inline document templates the design AI should use
+
+The design AI uses that single document to generate durable Bonsai project memory.
 
 ---
 
@@ -120,7 +131,7 @@ Read .bonsai/implementation_prompt.md and follow its instructions. Active projec
 
 The coding agent should:
 
-1. read the shared code map
+1. read the shared code map, when one exists and is relevant
 2. read the active project memory
 3. read area-level requirements, phase-level plans, or subsystem-level architecture only when needed
 4. summarize the current state
@@ -130,25 +141,39 @@ The coding agent should:
 
 ---
 
-# Creating a New Project
+# Try the Included Example First
 
-## Step 1: Create a project directory
-
-Create:
+This repository includes:
 
 ```text
-.bonsai/projects/<project>/
+.bonsai/projects/task-tracker/
 ```
 
-Example:
+a small example Bonsai project produced by a completed design session.
+
+It is useful for seeing what the initial project memory looks like before implementation begins.
+
+To try it, open your coding AI and run:
 
 ```text
-.bonsai/projects/audit-logging/
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker.
 ```
+
+The agent should:
+
+1. read the example project memory
+2. summarize the current implementation state
+3. identify the exact next step
+4. recommend an AI effort level
+5. stop for human approval or redirection before making changes
+
+That startup gate is a core Bonsai behavior.
 
 ---
 
-## Step 2: Design the project in a Web UI AI
+# Creating a New Project
+
+## Step 1: Design the project in a Web UI AI
 
 Discuss the project naturally.
 
@@ -169,17 +194,33 @@ is where ambiguity gets resolved.
 
 ---
 
-## Step 3: Synthesize the design into Bonsai memory
+## Step 2: Synthesize the design into Bonsai memory
 
-When ready, paste:
+When the design has matured, paste the full contents of:
 
 ```text
-.bonsai/design_prompt.md
+.bonsai/design_session.md
 ```
 
-into the Web AI conversation, along with the relevant Bonsai project templates.
+into the same conversation.
 
-The AI should produce:
+The design AI will use the inline instructions and templates in that document to synthesize the
+conversation into durable project memory.
+
+It must generate:
+
+* `requirements.md`
+* `architecture.md`
+* `plan.md`
+* `state.md`
+
+It may also generate these optional files when the design discussion clearly warrants them:
+
+* `plan/plan_phase_<N>.md`
+* `requirements/requirements_<AREA>.md`
+* `architecture/architecture_<SUBSYSTEM>.md`
+
+A new Bonsai project usually begins with only the four core documents:
 
 ```text
 requirements.md
@@ -188,20 +229,71 @@ plan.md
 state.md
 ```
 
-It may also produce, when justified:
+Layered requirements, subsystem architecture files, and detailed phase plans are created only when
+their extra structure materially improves the project memory.
 
-```text
-icebox.md
-plan/plan_phase_<N>.md
-requirements/requirements_<AREA>.md
-architecture/architecture_<SUBSYSTEM>.md
-```
+---
 
-Copy those files into:
+## Step 3: Create the project directory
+
+Create:
 
 ```text
 .bonsai/projects/<project>/
 ```
+
+Example:
+
+```text
+.bonsai/projects/audit-logging/
+```
+
+---
+
+## Step 4: Save the generated project memory
+
+Copy the generated documents into:
+
+```text
+.bonsai/projects/<project>/
+```
+
+For a simple project, the initial result may look like:
+
+```text
+.bonsai/projects/audit-logging/
+├── requirements.md
+├── architecture.md
+├── plan.md
+└── state.md
+```
+
+For a more complex project, the design session may also produce optional layered files beneath:
+
+```text
+plan/
+requirements/
+architecture/
+```
+
+---
+
+## Step 5: Start implementation
+
+Open your coding AI and begin with:
+
+```text
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
+```
+
+Example:
+
+```text
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: audit-logging.
+```
+
+The coding agent will load the project memory, summarize the next execution step, recommend an AI
+effort level, and stop for approval or redirection before substantive work begins.
 
 ---
 
@@ -404,20 +496,18 @@ execution-relevant.
 Open your coding AI and begin with:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions.
-Active project: <project>.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
 ```
 
 Example:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions.
-Active project: audit-logging.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: audit-logging.
 ```
 
 The agent should then read:
 
-1. `.bonsai/maps/code_map.md`
+1. `.bonsai/maps/code_map.md`, when present and relevant
 2. project core:
 
     * `requirements.md`
@@ -607,7 +697,7 @@ Implementation sessions should use:
 .bonsai/maps/code_map.md
 ```
 
-for top-level repository orientation.
+for top-level repository orientation when it exists and is relevant.
 
 When the exact next step touches a mapped subsystem, the agent may load:
 
@@ -645,6 +735,9 @@ The implementation agent should update shared maps only when code changes alter:
 
 It should not update maps for routine local code changes.
 
+When map updates are needed, the agent should follow the mapping-system instructions referenced by
+the code-map artifacts rather than improvising local map-writing rules.
+
 ---
 
 # Clean Rebuilds
@@ -668,18 +761,20 @@ This is especially valuable for prototypes that became real systems through repe
 A typical Bonsai project may look like this:
 
 1. Web UI design conversation
-2. Generate initial project memory
-3. Coding-agent startup
-4. Agent summarizes state and waits at the startup gate
-5. Human approves or redirects the next step
-6. Agent executes one bounded next step
-7. Agent records useful out-of-scope discoveries in `icebox.md`, when needed
-8. Agent updates `state.md`
-9. Start a fresh session
-10. Continue
-11. Pause at contract review gates when appropriate
-12. Periodically revise human-owned requirements or architecture in a deliberate design session
-13. Keep roadmap, state, and icebox compact as the project evolves
+2. Paste `.bonsai/design_session.md`
+3. Generate initial project memory
+4. Save it under `.bonsai/projects/<project>/`
+5. Coding-agent startup
+6. Agent summarizes state and waits at the startup gate
+7. Human approves or redirects the next step
+8. Agent executes one bounded next step
+9. Agent records useful out-of-scope discoveries in `icebox.md`, when needed
+10. Agent updates `state.md`
+11. Start a fresh session
+12. Continue
+13. Pause at contract review gates when appropriate
+14. Periodically revise human-owned requirements or architecture in a deliberate design session
+15. Keep roadmap, state, and icebox compact as the project evolves
 
 ---
 
@@ -693,5 +788,3 @@ Use Bonsai to keep four things cleanly separated:
 4. **What the AI noticed but should not act on yet**
 
 That separation is what makes frequent fresh-session AI development practical.
-
-```

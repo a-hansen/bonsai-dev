@@ -15,13 +15,11 @@
 
 ---
 
-## If Editing Bonsai Code Maps
+### Map Maintenance Rule
 
-If you are creating, updating, reorganizing, or compressing Bonsai code-map artifacts, first read:
+Before modifying any map file, read `.bonsai/maps/map_system.md` and follow its map-maintenance rules.
 
-```text
-.bonsai/maps/map_system.md
-```
+This applies to all map artifacts, including this file, subsystem maps, API maps, routing/index TSVs, and any other map-system outputs.
 
 `map_system.md` defines the mapping file model, artifact responsibilities, build order, update rules,
 and drift-prevention guidance.

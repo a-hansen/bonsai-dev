@@ -31,25 +31,18 @@ They reduce blind searching and repeated relearning.
 
 ## Prepare repository mapping guidance
 
-For a serious repository, first use a Web UI AI session to synthesize:
+For a serious repository, begin a Web UI session with:
+
+```text
+.bonsai/maps/repo_session.md
+```
+
+Use that session to discuss the repository, mapping priorities, representative usage, scope boundaries,
+and likely AI mistakes. When ready, ask the AI to generate:
 
 ```text
 .bonsai/maps/map_repo.md
 ```
-
-Paste into the conversation:
-
-```text
-.bonsai/maps/repo_prompt.md
-```
-
-along with:
-
-```text
-.bonsai/maps/templates/map_repo_template.md
-```
-
-The AI will turn your repository discussion into a durable mapping addendum.
 
 ---
 
@@ -143,7 +136,7 @@ Lives under:
 
 Typical files:
 
-* `repo_prompt.md`
+* `repo_session.md`
 * `map_prompt.md`
 * `map_system.md`
 * `map_repo.md`
@@ -183,7 +176,7 @@ then drill into deeper map files only when needed.
 .bonsai/
 └── maps/
     ├── README.md
-    ├── repo_prompt.md
+    ├── repo_session.md
     ├── map_prompt.md
     ├── map_system.md
     ├── map_repo.md
@@ -193,7 +186,6 @@ then drill into deeper map files only when needed.
     ├── manifest.tsv                       # Optional generated artifact
     ├── symbol_index.tsv                   # Optional generated artifact
     ├── templates/
-    │   ├── map_repo_template.md
     │   ├── map_state_template.md
     │   ├── code_map_template.md
     │   ├── subsystem_map_template.md
@@ -217,9 +209,9 @@ then drill into deeper map files only when needed.
 
 # File Roles
 
-## `repo_prompt.md`
+## `repo_session.md`
 
-**The Web UI synthesis prompt for repository calibration.**
+**The Web UI repository-calibration session document.**
 
 Use this before the first serious mapping pass when you want help constructing:
 
@@ -227,7 +219,8 @@ Use this before the first serious mapping pass when you want help constructing:
 map_repo.md
 ```
 
-It asks a Web AI to synthesize your conversation into durable human-owned repo guidance.
+It guides a Web AI through the repository-calibration conversation, then instructs it to synthesize
+the final human-owned repository addendum when asked.
 
 This is useful because repository owners often know things source scanning cannot reliably infer:
 
@@ -237,6 +230,9 @@ This is useful because repository owners often know things source scanning canno
 * which small abstractions are foundational
 * which directories are stale, generated, misleading, or low value
 * which development patterns future agents should prioritize
+
+It also contains the inline output structure for `map_repo.md`, so no separate repository template is
+required.
 
 ---
 
@@ -376,7 +372,6 @@ The mapping agent should consult the corresponding template whenever it creates 
 
 | Template                        | Generated artifact                  |
 | ------------------------------- | ----------------------------------- |
-| `map_repo_template.md`          | `map_repo.md`                       |
 | `map_state_template.md`         | `map_state.md`                      |
 | `code_map_template.md`          | `code_map.md`                       |
 | `subsystem_map_template.md`     | `subsystems/<subsystem>/map.md`     |
@@ -562,29 +557,15 @@ Before asking a coding agent to map a serious repository, create:
 .bonsai/maps/map_repo.md
 ```
 
-There are two ways to do that.
+## Web UI synthesis
 
----
-
-## Option A: Fill `map_repo.md` manually
-
-Use:
+Begin a Web UI AI session with:
 
 ```text
-.bonsai/maps/templates/map_repo_template.md
+.bonsai/maps/repo_session.md
 ```
 
-and write the repo-specific guidance yourself.
-
-This works well when you already know exactly what you want to tell the mapping agent.
-
----
-
-## Option B: Use a Web UI synthesis session
-
-This is the recommended path for large, mature, or politically complicated codebases.
-
-Start a Web UI AI conversation about the repository. Discuss:
+Use that session to discuss:
 
 * what the repo is
 * what the major components are
@@ -595,19 +576,7 @@ Start a Web UI AI conversation about the repository. Discuss:
 * what structural oddities may mislead an outsider
 * what assumptions an AI mapping agent is likely to get wrong
 
-Then paste:
-
-```text
-.bonsai/maps/repo_prompt.md
-```
-
-into the conversation, along with:
-
-```text
-.bonsai/maps/templates/map_repo_template.md
-```
-
-The AI should return a completed:
+When ready, ask the AI to generate:
 
 ```text
 map_repo.md

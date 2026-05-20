@@ -42,23 +42,61 @@ bonsai-dev/
 ├── README.md
 └── .bonsai/
     ├── README.md
-    ├── design_prompt.md
+    ├── design_session.md
     ├── implementation_prompt.md
     ├── style_guide.md
     ├── maps/
     │   └── ...
     └── projects/
-        └── ...
+        └── task-tracker/
+            └── ...
 ```
 
 The repo root is the public project landing page.
 The `.bonsai/` directory is the actual framework you copy into another repository.
 
+This repository also includes:
+
+```text
+.bonsai/projects/task-tracker/
+```
+
+a small example Bonsai project showing the output of a completed design session before implementation begins.
+
+It gives new users a concrete reference for what Bonsai project memory looks like in practice, including:
+
+* `requirements.md`
+* `architecture.md`
+* `plan.md`
+* `state.md`
+
+and any supporting project documents needed for the example workflow.
+
 ---
 
 # TL;DR
 
-## Add Bonsai to a project
+## Try Bonsai immediately with the included example
+
+Clone the repo, open your AI coding tool, and begin with:
+
+```text
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker.
+```
+
+The AI should:
+
+1. load the existing `task-tracker` project memory
+2. summarize the current execution state
+3. identify the exact next implementation step
+4. recommend the appropriate AI level for that step
+5. stop for human approval or redirection before execution begins
+
+This is the fastest way to see the Bonsai implementation workflow in action.
+
+---
+
+## Add Bonsai to your own project
 
 Copy:
 
@@ -67,6 +105,12 @@ Copy:
 ```
 
 into the root of the repository where you want to use it.
+
+Each software effort gets its own project memory directory under:
+
+```text
+.bonsai/projects/<project>/
+```
 
 Then follow:
 
@@ -82,13 +126,13 @@ for the project workflow.
 
 Use a Web UI AI to brainstorm the product, architecture, constraints, and tradeoffs.
 
-When the design has matured, paste the contents of:
+When the design has matured, paste the full contents of:
 
 ```text
-.bonsai/design_prompt.md
+.bonsai/design_session.md
 ```
 
-into the conversation, along with the relevant Bonsai templates.
+into the conversation.
 
 The AI will synthesize the conversation into durable project memory:
 
@@ -99,10 +143,19 @@ The AI will synthesize the conversation into durable project memory:
 
 and, when warranted:
 
-* `icebox.md`
 * `plan/plan_phase_<N>.md`
 * `requirements/requirements_<AREA>.md`
 * `architecture/architecture_<SUBSYSTEM>.md`
+
+A new Bonsai project usually begins with only the four core project memory documents:
+
+* `requirements.md`
+* `architecture.md`
+* `plan.md`
+* `state.md`
+
+Layered requirements, subsystem architecture files, detailed phase plans, and code maps are added only
+when the project warrants them.
 
 ---
 
@@ -662,21 +715,145 @@ If your AI tool can read files and follow instructions, it can probably work wit
 
 # Getting Started
 
-1. Copy `.bonsai/` into your repository.
-2. Read `.bonsai/README.md`.
-3. Use a Web UI AI session to create your first project memory.
-4. Start implementation with:
+## Option 1: Try the included example
+
+The fastest way to understand Bonsai is to run the included example project.
+
+This repository already contains:
+
+```text
+.bonsai/projects/task-tracker/
+```
+
+a small example project memory package produced by a completed Bonsai design session.
+
+Open your AI coding tool and run:
+
+```text
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker.
+```
+
+The coding AI should:
+
+1. read the `task-tracker` project memory
+2. summarize the current implementation state
+3. identify the exact next step
+4. recommend the appropriate AI level
+5. stop for approval or redirection before making changes
+
+A startup summary should look roughly like this:
+
+```text
+Active project: task-tracker
+
+Current phase:
+Phase 1 — Establish the initial application contract and core project scaffolding
+
+Exact next step:
+Review the active phase plan, then prepare the contract-first implementation work for the first approved slice of the project.
+
+Recommended AI level:
+Medium / Thinking
+
+No code changes have been made yet.
+Proceed, or redirect?
+```
+
+That startup gate is central to Bonsai. It gives the human a chance to catch stale state or redirect the
+agent before execution begins.
+
+---
+
+## Option 2: Start Bonsai on your own project
+
+### 1. Copy Bonsai into your repository
+
+Copy:
+
+```text
+.bonsai/
+```
+
+into the root of the repository where you want to use it.
+
+### 2. Create or choose a project memory directory
+
+Each software effort lives under:
+
+```text
+.bonsai/projects/<project>/
+```
+
+For example:
+
+```text
+.bonsai/projects/my-product/
+```
+
+### 3. Use a Web UI AI to shape the project
+
+Brainstorm the product, requirements, constraints, architecture, tradeoffs, and implementation approach
+in a Web UI AI conversation.
+
+When the design has matured, paste the full contents of:
+
+```text
+.bonsai/design_session.md
+```
+
+into that same conversation.
+
+The AI will synthesize the discussion into Bonsai project memory.
+
+A typical new project begins with:
+
+```text
+requirements.md
+architecture.md
+plan.md
+state.md
+```
+
+More detailed layered documents are created only when warranted.
+
+### 4. Save the generated project memory
+
+Place the generated files under:
+
+```text
+.bonsai/projects/<project>/
+```
+
+For example:
+
+```text
+.bonsai/projects/my-product/
+├── requirements.md
+├── architecture.md
+├── plan.md
+└── state.md
+```
+
+### 5. Start implementation in your coding tool
+
+Run:
 
 ```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
 ```
 
-5. Review the startup summary, then approve or redirect the agent before execution begins.
-6. For large or unfamiliar repos, build code maps using:
+The AI will summarize the next step, recommend an AI effort level, and stop for your approval before
+execution.
+
+### 6. Add code maps when they become useful
+
+For large, mature, or unfamiliar repositories, build code maps using:
 
 ```text
 .bonsai/maps/README.md
 ```
+
+Code maps are optional. Add them when repository rediscovery starts costing real time.
 
 ---
 
@@ -706,21 +883,23 @@ Bonsai is meant for that.
 
 # Status
 
-Bonsai is an evolving workflow extracted from real AI-assisted development practice.
+Bonsai is an evolving workflow extracted from real AI-assisted software development practice.
 
-The current system focuses on:
+It is already useful for:
 
-* structured project memory
-* design-to-implementation handoff
-* execution continuity
-* startup-gated implementation sessions
-* context minimization
-* layered requirements, architecture, and phase planning
-* contract-first development
-* scoped preservation of out-of-scope observations
-* layered codebase guidance
-* AI effort right-sizing
-* clean rebuildability after early product pivots
+* shaping a project in Web AI and handing it cleanly to a coding agent
+* maintaining durable project memory across many implementation sessions
+* keeping agents aligned through startup gates, execution state, and focused next steps
+* mapping large repositories so agents spend less time rediscovering structure
+* preserving architectural intent while letting execution state evolve
+
+The system is still being refined. Areas currently evolving include:
+
+* smoother first-time onboarding
+* example-driven documentation
+* the code mapping workflow
+* the balance between layered depth and operational simplicity
+* better conventions for preserving useful discoveries without expanding active scope
 
 ---
 
@@ -733,5 +912,3 @@ That is the point of this system.
 
 AI can generate enormous amounts of motion.
 Bonsai is about turning that motion into deliberate, maintainable software.
-
-```
