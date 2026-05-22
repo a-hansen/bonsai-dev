@@ -25,6 +25,7 @@ For repository code mapping, see [the Bonsai Maps guide](maps/README.md).
 ├── README.md
 ├── design_session.md
 ├── implementation_prompt.md
+├── dry_run.md                            # Loaded only when a dry run is requested
 ├── style_guide.md
 ├── maps/
 │   └── ...
@@ -136,8 +137,10 @@ The coding agent should:
 3. read area-level requirements, phase-level plans, or subsystem-level architecture only when needed
 4. summarize the current state
 5. recommend the appropriate AI level for the exact next step
-6. wait for the human to proceed
-7. execute only that next step
+6. stop at a structured startup gate
+7. proceed, preview the work with a dry run, or accept redirection from the human
+8. execute only the authorized next step
+9. summarize completed work and recommend a clean session for the next step
 
 ---
 
@@ -165,9 +168,11 @@ The agent should:
 2. summarize the current implementation state
 3. identify the exact next step
 4. recommend an AI effort level
-5. stop for human approval or redirection before making changes
+5. stop at a structured startup gate before making changes
 
-That startup gate is a core Bonsai behavior.
+The startup gate offers a clear choice: proceed with the identified next step, show a dry run
+first, correct the identified next step, or stop. That explicit authorization is a core Bonsai
+behavior.
 
 ---
 
@@ -293,7 +298,8 @@ Read .bonsai/implementation_prompt.md and follow its instructions. Active projec
 ```
 
 The coding agent will load the project memory, summarize the next execution step, recommend an AI
-effort level, and stop for approval or redirection before substantive work begins.
+effort level, and stop at a structured startup gate before substantive work begins. The human may
+authorize the step, request a compact dry run first, correct the next step, or stop.
 
 ---
 
@@ -430,6 +436,7 @@ Defines:
 * active blockers
 * exact next step
 * recommended AI effort level
+* compact approved dry-run execution baseline, only while applicable
 
 It should remain compact, volatile, and easy to read at every implementation-session startup.
 
@@ -507,7 +514,7 @@ Read .bonsai/implementation_prompt.md and follow its instructions. Active projec
 
 The agent should then read:
 
-1. `.bonsai/maps/code_map.md`, when present and relevant
+1. `.bonsai/maps/code_map.md`
 2. project core:
 
     * `requirements.md`
@@ -524,11 +531,49 @@ It should respond with a compact startup summary:
 * active project
 * current phase
 * current phase pass
+* phase execution mode
 * exact next step
 * blockers
 * recommended AI level
 
-Then it should stop and wait for the human to explicitly proceed.
+Then it should stop and present the startup choices:
+
+1. Proceed with the identified next step.
+2. Show a dry run first.
+3. Correct the identified next step.
+4. Stop here.
+
+---
+
+# Human Gates and Dry Runs
+
+Bonsai uses explicit human gates rather than vague prompts such as “awaiting approval.”
+
+* **Approve** applies to a reviewed artifact or contract.
+* **Proceed** authorizes the stated next action.
+* **Dry run** previews intended execution before files are modified.
+
+The implementation agent should prefer supported structured choices and otherwise use equivalent
+numbered choices.
+
+Dry runs are optional. When requested at an execution authorization gate, the agent reads:
+
+```text
+.bonsai/dry_run.md
+```
+
+A dry run is intentionally compact and read-only. It identifies the approved basis, expected touch
+points, intended result, planned checks, and any likely scope concern. If approved, only a compact
+execution baseline is preserved in `state.md` until that work completes or is redirected.
+
+If continuing a step would require a material contract change, expanded subsystem scope, a material
+change to the approved execution basis, acceptance of failed required checks, or a new human design
+decision, the agent must stop before making that change and present explicit choices:
+
+1. Approve the proposed change and continue in this session.
+2. Stop here; revise the plan or contract before continuing.
+3. Stop here and preserve the issue in the icebox.
+
 
 ---
 
@@ -568,15 +613,22 @@ A session should end when:
 * a review gate is reached
 * a major decision changes the direction of work
 
-Before ending, the agent should update:
+At the completion of an exact next step, the agent should update `state.md` and any other
+agent-maintained files whose truth changed, then report:
 
-```text
-state.md
-```
+* completed step
+* material changes
+* checks and results
+* relevant Bonsai artifact updates
+* deviations, or `None`
+* recorded exact next step
 
-and any other agent-maintained files whose truth changed.
+When work followed an approved dry run, the summary also compares the actual result against the
+approved execution baseline.
 
-Then start a new session with the same implementation prompt.
+The agent then recommends terminating the current session and starting a clean session for the
+recorded next step. When the next step does not require a named gate, the human may instead choose
+to continue in the current session or request a dry run for that next step.
 
 The chat is temporary working space.
 The repository is durable project memory.
@@ -596,7 +648,7 @@ The coding agent drafts:
 * behavioral tests that show intended use
 * minimal scaffolding needed to make the contract reviewable
 
-Then it stops.
+Then it stops at the contract gate.
 
 ---
 
@@ -607,7 +659,14 @@ The human reviews:
 * Is this the right abstraction?
 * Is the API shaped correctly?
 * Do the tests express the right behavior?
-* Should implementation proceed?
+* Should implementation proceed directly or after a dry run?
+
+The contract gate offers:
+
+1. Approve the contract and proceed with implementation.
+2. Approve the contract and show an implementation dry run first.
+3. Request revisions to the contract.
+4. Return to the phase plan.
 
 ---
 
@@ -665,6 +724,7 @@ when their truth changes.
 * recommended AI level changes
 * active pass changes
 * phase transition occurs
+* an approved dry-run baseline becomes active, completes, or is abandoned
 
 ### Update `icebox.md` when
 
@@ -765,16 +825,17 @@ A typical Bonsai project may look like this:
 3. Generate initial project memory
 4. Save it under `.bonsai/projects/<project>/`
 5. Coding-agent startup
-6. Agent summarizes state and waits at the startup gate
-7. Human approves or redirects the next step
-8. Agent executes one bounded next step
-9. Agent records useful out-of-scope discoveries in `icebox.md`, when needed
-10. Agent updates `state.md`
-11. Start a fresh session
-12. Continue
-13. Pause at contract review gates when appropriate
-14. Periodically revise human-owned requirements or architecture in a deliberate design session
-15. Keep roadmap, state, and icebox compact as the project evolves
+6. Agent summarizes state and presents the startup gate
+7. Human proceeds, requests a dry run, corrects the next step, or stops
+8. Agent executes one authorized bounded step
+9. Agent stops before any material deviation and requests direction
+10. Agent records useful out-of-scope discoveries in `icebox.md`, when needed
+11. Agent updates `state.md` and reports completion
+12. Agent recommends a fresh session for the recorded next step
+13. Continue in a clean session by default, or deliberately continue in-session
+14. Pause at phase-plan and contract review gates when appropriate
+15. Periodically revise human-owned requirements or architecture in a deliberate design session
+16. Keep roadmap, state, dry-run baselines, and icebox compact as the project evolves
 
 ---
 

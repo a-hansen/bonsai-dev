@@ -14,7 +14,8 @@ It helps you:
 * layer deep product requirements, subsystem architecture, and detailed phase plans without bloating top-level project memory
 * guide coding agents through large codebases using layered code maps
 * right-size AI effort instead of burning maximum reasoning on every step
-* keep the human in the loop before an agent hardens the wrong abstraction
+* keep the human in the loop through explicit approval and execution gates
+* preview risky execution with optional compact dry runs
 * rebuild a project cleanly from its final intended form after early pivots and experimentation
 
 Bonsai is plain Markdown plus a small set of prompts.
@@ -44,6 +45,7 @@ bonsai-dev/
     ├── README.md
     ├── design_session.md
     ├── implementation_prompt.md
+    ├── dry_run.md
     ├── style_guide.md
     ├── maps/
     │   └── ...
@@ -90,9 +92,10 @@ The AI should:
 2. summarize the current execution state
 3. identify the exact next implementation step
 4. recommend the appropriate AI level for that step
-5. stop for human approval or redirection before execution begins
+5. stop at a structured startup gate before execution begins
 
-This is the fastest way to see the Bonsai implementation workflow in action.
+At that gate, you can proceed, request a compact dry run first, correct the identified next step, or
+stop. This is the fastest way to see the Bonsai implementation workflow in action.
 
 ---
 
@@ -168,10 +171,11 @@ Read .bonsai/implementation_prompt.md and follow its instructions. Active projec
 ```
 
 The AI will load the relevant Bonsai memory, summarize the current execution state, recommend the
-appropriate AI level for the exact next step, and then stop for human approval or redirection before
+appropriate AI level for the exact next step, and then stop at a structured startup gate before
 execution begins.
 
-This is the command you will use over and over.
+This is the command you will use over and over. At completion, the agent updates the project memory,
+reports the result, and recommends starting a clean session for the recorded next step.
 
 ---
 
@@ -429,13 +433,16 @@ Bonsai is designed around the idea that **fresh sessions are good**.
 
 Instead of stretching one AI conversation until it becomes a swamp, you:
 
-1. end the current session when appropriate
-2. let `state.md` preserve the baton pass
-3. start a new session
-4. reload only the meaningful project memory
-5. continue cleanly
+1. execute one bounded, authorized step
+2. let the agent update `state.md` and report completion
+3. normally end the current session at that handoff
+4. start a new session
+5. reload only the meaningful project memory
+6. continue cleanly
 
-This keeps reasoning sharper and conversations easier to manage.
+The completion gate still lets you continue in the current session when that is more convenient, but
+the recommended path is a clean restart. This keeps reasoning sharper and conversations easier to
+manage.
 
 ---
 
@@ -647,7 +654,10 @@ The human reviews:
 * Is this the right abstraction?
 * Is the API shaped correctly?
 * Do the tests express the right behavior?
-* Should implementation proceed?
+* Should implementation proceed directly or after a dry run?
+
+The gate makes that transition explicit: approve and proceed, approve and preview implementation
+with a dry run, request revisions, or return to the phase plan.
 
 ### Pass B: Implementation
 
@@ -659,7 +669,7 @@ This keeps the human involved at the highest-leverage moment:
 
 ---
 
-## 12. A startup gate before implementation begins
+## 12. Explicit human gates
 
 Bonsai does not treat “read the prompt” as permission to start editing immediately.
 
@@ -669,16 +679,48 @@ At the beginning of an implementation session, the coding AI:
 2. identifies the active project state
 3. surfaces the exact next step
 4. recommends the appropriate AI level
-5. stops for human approval or redirection
+5. stops at a structured startup gate
 
-That pause matters.
+The startup gate is an execution decision: proceed with the identified step, request a dry run first,
+correct the next step, or stop.
 
-It lets the human catch stale state, shift direction, or change priorities before the agent commits to
-the next block of work.
+Other gates name what the human is deciding. A phase plan or API contract is **approved**. A named
+implementation step is authorized to **proceed**. If execution would materially change approved scope
+or contract boundaries, the agent stops and requests a decision instead of quietly broadening the
+work.
+
+That precision matters. It lets the human catch stale state, shift direction, or review a high-value
+boundary before the agent commits to the next block of work.
 
 ---
 
-## 13. AI effort right-sizing
+## 13. Optional dry runs
+
+When a planned step is risky, unclear, or expensive to reverse, Bonsai can preview execution before
+the agent changes files.
+
+A dry run is intentionally compact. It identifies:
+
+* the approved basis for the work
+* expected touch points
+* intended result
+* planned checks
+* likely scope concerns
+
+When the dry run is approved, the agent can compare actual results against that execution baseline in
+its completion summary.
+
+The procedure lives in:
+
+```text
+.bonsai/dry_run.md
+```
+
+and is loaded only when a dry run is requested.
+
+---
+
+## 14. AI effort right-sizing
 
 Not every task deserves the most expensive or capable model.
 
@@ -697,7 +739,7 @@ This is another way Bonsai keeps AI-assisted development focused, economical, an
 
 ---
 
-## 14. Tool-agnostic and lightweight
+## 15. Tool-agnostic and lightweight
 
 Bonsai is intentionally boring technology:
 
@@ -739,7 +781,7 @@ The coding AI should:
 2. summarize the current implementation state
 3. identify the exact next step
 4. recommend the appropriate AI level
-5. stop for approval or redirection before making changes
+5. stop at the structured startup gate before making changes
 
 A startup summary should look roughly like this:
 
@@ -756,11 +798,15 @@ Recommended AI level:
 Medium / Thinking
 
 No code changes have been made yet.
-Proceed, or redirect?
+
+1. Proceed with the identified next step.
+2. Show a dry run first.
+3. Correct the identified next step.
+4. Stop here.
 ```
 
-That startup gate is central to Bonsai. It gives the human a chance to catch stale state or redirect the
-agent before execution begins.
+That startup gate is central to Bonsai. It gives the human a chance to authorize the named work,
+inspect it first, or correct stale state before execution begins.
 
 ---
 
@@ -842,8 +888,8 @@ Run:
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
 ```
 
-The AI will summarize the next step, recommend an AI effort level, and stop for your approval before
-execution.
+The AI will summarize the next step, recommend an AI effort level, and stop at a structured startup
+gate before execution.
 
 ### 6. Add code maps when they become useful
 
@@ -889,7 +935,9 @@ It is already useful for:
 
 * shaping a project in Web AI and handing it cleanly to a coding agent
 * maintaining durable project memory across many implementation sessions
-* keeping agents aligned through startup gates, execution state, and focused next steps
+* keeping agents aligned through structured gates, execution state, and focused next steps
+* previewing risky execution with optional compact dry runs
+* recommending clean-session continuation after completed work
 * mapping large repositories so agents spend less time rediscovering structure
 * preserving architectural intent while letting execution state evolve
 
