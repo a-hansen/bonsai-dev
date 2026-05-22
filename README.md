@@ -2,6 +2,8 @@
 
 **Structured project memory for serious AI-assisted software development.**
 
+Current release: **v1.1.0**
+
 Bonsai is a repo-local memory system and workflow for using AI to design, build, and evolve software
 over many sessions without losing the thread.
 
