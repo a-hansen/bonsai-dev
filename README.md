@@ -10,8 +10,8 @@ It helps you:
 * start fresh AI sessions frequently without starting over
 * keep context small, structured, and high-signal
 * move cleanly from Web AI design to IDE / CLI implementation
-* preserve product intent, architecture, roadmap, current execution state, and useful out-of-scope observations separately
-* layer deep product requirements, subsystem architecture, and detailed phase plans without bloating top-level project memory
+* preserve and actively reconcile product intent, architecture, roadmap, current execution state, and useful out-of-scope observations separately
+* layer deep product requirements, subsystem architecture, detailed phase plans, and stage-specific implementation procedures without bloating always-loaded context
 * guide coding agents through large codebases using layered code maps
 * right-size AI effort instead of burning maximum reasoning on every step
 * keep the human in the loop through explicit approval and execution gates
@@ -45,6 +45,8 @@ bonsai-dev/
     ├── README.md
     ├── design_session.md
     ├── implementation_prompt.md
+    ├── phase_execution.md
+    ├── step_completion.md
     ├── dry_run.md
     ├── style_guide.md
     ├── maps/
@@ -170,12 +172,19 @@ Open your AI coding tool and begin with:
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
 ```
 
-The AI will load the relevant Bonsai memory, summarize the current execution state, recommend the
-appropriate AI level for the exact next step, and then stop at a structured startup gate before
-execution begins.
+The AI will load the relevant Bonsai memory, summarize the current execution state, identify whether
+the exact next step affects approved final truth, recommend the appropriate AI level, and then stop at
+a structured startup gate before execution begins.
 
-This is the command you will use over and over. At completion, the agent updates the project memory,
-reports the result, and recommends starting a clean session for the recorded next step.
+`implementation_prompt.md` stays compact by loading specialized procedures only when needed:
+
+* `phase_execution.md` when phase planning, execution-mode resolution, or contract gates are active
+* `dry_run.md` when the human requests an execution preview
+* `step_completion.md` when approved work is being closed and handed off
+
+This is the command you will use over and over. At completion, the agent reconciles the result against
+approved final truth and any approved dry-run baseline, updates operational project memory, reports
+the result, and recommends starting a clean session for the recorded next step.
 
 ---
 
@@ -273,6 +282,16 @@ Bonsai distinguishes between:
 
 Its durable project memory is intended to describe the **final desired system**, not merely chronicle
 the historical implementation journey.
+
+That truth is not only established during design. During implementation, Bonsai classifies proposed
+or discovered impact on requirements and architecture as:
+
+* `None`: existing final truth already covers the work
+* `Clarification`: intended behavior is unchanged, but final truth should be stated more precisely
+* `Revision`: intended behavior, constraints, architecture, or system boundaries change
+
+A revision does not silently slip through as code or planning detail. The affected final-truth
+documents must be updated and approved before substantive implementation proceeds.
 
 That enables a powerful workflow:
 
@@ -461,7 +480,12 @@ Its documents are intended to be:
 The implementation workflow reads the high-level project memory first, then drills into deeper
 documents only when the current task requires it.
 
-A large project should not require dumping the entire project history into every AI session.
+The implementation instructions follow the same rule. The always-loaded prompt preserves startup,
+authority, final-truth, scope, and maintenance invariants. Stage-specific procedures for phase
+execution, dry runs, and step completion are loaded only when their trigger applies.
+
+A large project should not require dumping the entire project history or every implementation
+procedure into every AI session.
 
 ---
 
@@ -512,7 +536,12 @@ Others represent operational state the agent maintains.
 * `architecture/architecture_<SUBSYSTEM>.md`
 
 These should describe what the product is and how it is intended to work. They are not disposable
-scratchpads.
+scratchpads. They are maintained final truth.
+
+The coding agent does not silently modify them to match implementation drift. At implementation gates
+and completion, it identifies whether work has no final-truth impact, requires a clarification, or
+requires a revision. The human approves changes to final truth before revised behavior or architecture
+becomes the project direction.
 
 ### Agent-maintained execution memory
 
@@ -659,6 +688,17 @@ The human reviews:
 The gate makes that transition explicit: approve and proceed, approve and preview implementation
 with a dry run, request revisions, or return to the phase plan.
 
+When the proposed contract changes final truth, contract approval alone is not enough. The affected
+requirements or architecture must also be updated and approved before Pass B begins.
+
+The detailed phase and contract-gate procedure lives in:
+
+```text
+.bonsai/phase_execution.md
+```
+
+and is loaded only when that workflow is active.
+
 ### Pass B: Implementation
 
 Only after approval does the AI build the underlying implementation.
@@ -678,16 +718,17 @@ At the beginning of an implementation session, the coding AI:
 1. reads the relevant Bonsai memory
 2. identifies the active project state
 3. surfaces the exact next step
-4. recommends the appropriate AI level
-5. stops at a structured startup gate
+4. classifies its anticipated final-truth impact
+5. recommends the appropriate AI level
+6. stops at a structured startup gate
 
 The startup gate is an execution decision: proceed with the identified step, request a dry run first,
 correct the next step, or stop.
 
 Other gates name what the human is deciding. A phase plan or API contract is **approved**. A named
-implementation step is authorized to **proceed**. If execution would materially change approved scope
-or contract boundaries, the agent stops and requests a decision instead of quietly broadening the
-work.
+implementation step is authorized to **proceed**. If execution would materially change approved scope,
+contract boundaries, requirements, or architecture, the agent stops and requests a decision instead
+of quietly broadening the work or silently rewriting final truth.
 
 That precision matters. It lets the human catch stale state, shift direction, or review a high-value
 boundary before the agent commits to the next block of work.
@@ -706,9 +747,10 @@ A dry run is intentionally compact. It identifies:
 * intended result
 * planned checks
 * likely scope concerns
+* anticipated final-truth impact and affected truth documents, when any
 
-When the dry run is approved, the agent can compare actual results against that execution baseline in
-its completion summary.
+When the dry run is approved, the agent can compare actual results and actual final-truth impact
+against that execution baseline in its completion summary.
 
 The procedure lives in:
 
@@ -936,6 +978,8 @@ It is already useful for:
 * shaping a project in Web AI and handing it cleanly to a coding agent
 * maintaining durable project memory across many implementation sessions
 * keeping agents aligned through structured gates, execution state, and focused next steps
+* preserving final truth by surfacing clarifications and blocking unapproved revisions during implementation
+* reducing always-loaded implementation instructions through triggered phase and completion procedures
 * previewing risky execution with optional compact dry runs
 * recommending clean-session continuation after completed work
 * mapping large repositories so agents spend less time rediscovering structure
@@ -947,6 +991,7 @@ The system is still being refined. Areas currently evolving include:
 * example-driven documentation
 * the code mapping workflow
 * the balance between layered depth and operational simplicity
+* real-project feedback on final-truth reconciliation and triggered implementation procedures
 * better conventions for preserving useful discoveries without expanding active scope
 
 ---

@@ -24,6 +24,7 @@ Run implementation sessions inside an existing project workspace (`.bonsai/proje
 
     * Active phase plan, if named in `state.md`.
     * If `state.md` does not identify a phase plan, use `plan.md` to determine whether one exists.
+    * `.bonsai/phase_execution.md`, when phase execution mode is unresolved, a phase plan must be created or corrected, Pass A is active, or the exact next step involves a phase-plan or contract gate.
     * Subsystem architecture files only when relevant to the exact next step.
     * `icebox.md`, only when present and only if its contents are relevant to the exact next step or recent project context.
 4. **Respond:** Output a telegraphic summary:
@@ -51,7 +52,6 @@ Present:
 2. Show a dry run first.
 3. Correct the identified next step.
 4. Stop here.
-
 
 ## Execution Rules
 
@@ -95,72 +95,18 @@ For an unresolved `Revision`, present:
 3. Discuss the final-truth impact before deciding.
 4. Stop here.
 
-## Phase Activation & Planning
+## Specialized Procedures
 
-* **Phase Execution Mode Assessment:** When activating a new phase, or when the current active phase has not yet had its execution mode resolved, determine whether it should use:
+Read the relevant procedure when its trigger applies:
 
-    * **Single-pass execution**, when the phase:
-        * implements already-approved behavior,
-        * is bounded and localized,
-        * has a clear implementation direction,
-        * does not materially shape downstream design, and
-        * can be safely reviewed after code and tests are produced.
+| Trigger | Read |
+| --- | --- |
+| Phase execution mode is unresolved, a phase plan must be created or corrected, Pass A is active, or a phase-plan or contract gate is required | `.bonsai/phase_execution.md` |
+| The human requests a dry run at an execution authorization gate | `.bonsai/dry_run.md` |
+| The exact next step is complete or is about to be handed off | `.bonsai/step_completion.md` |
+| Code-map artifacts will be modified | Follow `.bonsai/maps/code_map.md`, including any required map-system instructions |
 
-    * **Two-pass contract-first execution**, when the phase:
-        * introduces or materially reshapes a public API,
-        * defines or changes a schema, persistent format, protocol, extension contract, or integration surface,
-        * establishes an important abstraction or subsystem boundary,
-        * changes rebuild-relevant structure that later phases will rely on,
-        * creates a high-leverage design surface where human review before full implementation is valuable, or
-        * is otherwise likely to become costly to reverse after implementation begins.
-
-* **Visible Mode Recommendation:** If the phase execution mode is unresolved at startup, state the recommended mode and one-sentence rationale in the Startup Gate summary. Do not resolve the mode, update files, or proceed into planning until the user explicitly asks you to continue.
-
-* **Phase Plan Creation:** When activating a new phase, determine whether that phase needs a detailed `plan/plan_phase_<N>.md`. Create one before substantive phase execution when the phase:
-
-    * is complex enough to need ordered sequencing,
-    * uses two-pass contract-first execution,
-    * has multiple review or validation gates, or
-    * would otherwise bloat `plan.md`.
-
-  Update `plan.md` and `state.md` to reflect the resolved execution mode and the phase plan path when one is created.
-
-* **Missing Phase Plan:** If the current active phase appears to require a detailed `plan/plan_phase_<N>.md` but none exists, treat drafting that phase plan as the exact next step before substantive phase execution. After drafting it, use the Phase Plan Approval Gate.
-
-* **Incomplete Existing Phase Plan:** If `plan/plan_phase_<N>.md` already exists but is incomplete, stale, or inconsistent with the current approved project direction, treat completing or correcting that phase plan as the exact next step before substantive phase execution. Do not duplicate partial phase detail in `plan.md`. After updating it, use the Phase Plan Approval Gate.
-
-* **Unresolved Phase Mode:** If the current active phase has not yet had its execution mode resolved, treat determining the mode, updating roadmap/state, and drafting any required phase plan as the exact next step before substantive phase execution. After that planning update, use the Phase Plan Approval Gate when a phase plan was created or materially changed; otherwise complete the step normally.
-
-* **Phase Plan Approval Gate:** After creating or materially correcting a phase plan, STOP. State its final-truth impact and affected final-truth documents, if any. For an unresolved `Revision`, use the Final-Truth Reconciliation choices instead of authorizing implementation. Otherwise present:
-
-    1. Approve the phase plan and continue to the next planned pass.
-    2. Request revisions to the phase plan.
-    3. Discuss concerns before deciding.
-    4. Return to roadmap-level planning.
-
-* **Two-Pass Contract Gate:** If Pass A is active, build the API shape and behavioral tests or usage examples, then STOP. State its final-truth impact and affected final-truth documents, if any. Do not begin Pass B until the contract is approved and any `Revision` is reflected in approved final truth. For an unresolved `Revision`, use the Final-Truth Reconciliation choices instead of authorizing Pass B. Otherwise present:
-
-    1. Approve the contract and proceed with implementation.
-    2. Approve the contract and show an implementation dry run first.
-    3. Request revisions to the contract.
-    4. Return to the phase plan.
-
-## Step Completion
-
-After completing the exact next step:
-
-1. Update required Bonsai maintenance artifacts.
-2. Output a compact completion summary: completed step; material changes; checks/results; relevant Bonsai artifact updates; approved versus actual final-truth impact; final-truth updates proposed or completed, or `None`; deviations or `None`; recorded exact next step.
-3. If work followed an approved dry run, compare actual results, checks, and final-truth impact against its approved execution baseline.
-4. If actual final-truth impact is `Clarification`, propose the affected document update unless completed under explicit instruction. If it is `Revision`, do not treat revised work as complete until affected final-truth documents are updated and approved.
-5. Recommend a clean session for the recorded next step. Unless that step requires a named gate, present:
-
-    1. Terminate this session; continue in a clean session.
-    2. Proceed to the recorded next step in this session.
-    3. Show a dry run for the recorded next step in this session.
-    4. Discuss or correct the result or next step.
-
-If the recorded next step requires a named gate, present that gate instead of immediate proceed choices.
+Do not begin substantive execution until any required phase-planning or contract gate has been satisfied. Do not claim an exact next step is complete until `.bonsai/step_completion.md` has been followed.
 
 ## Maintenance Discipline
 
@@ -177,8 +123,6 @@ If the recorded next step requires a named gate, present that gate instead of im
 * **Dry-Run Baseline Discipline:** When a dry run is approved, preserve only its compact execution baseline in `state.md` until that work completes or is abandoned. Remove or replace stale active baseline content after completion or redirection.
 
 * **Icebox Discipline:** Update `icebox.md` only for observations that are useful to preserve but not approved for immediate execution. Keep entries compact, specific, and easy for a human to triage later.
-
-* **Icebox Visibility:** When `icebox.md` is updated during a session, mention that clearly in the completion summary and briefly state what kind of observation was preserved. Do not imply that an icebox entry is approved work.
 
 * **Map Updates:** After code changes, update shared maps only if public structure, extension points, lifecycles, or rebuild-relevant behavior changed.
 
