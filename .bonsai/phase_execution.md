@@ -70,16 +70,18 @@ State:
 
 * Final-truth impact: `None`, `Clarification`, or `Revision`.
 * Affected final-truth documents, when impact is not `None`.
-* Any final-truth update required before substantive implementation.
+* Any final-truth update required before the next planned pass.
 
-For an unresolved `Revision`, use the Final-Truth Reconciliation choices from `implementation_prompt.md` instead of authorizing implementation.
+For an unresolved `Revision`, use the Final-Truth Reconciliation choices from `implementation_prompt.md` instead of authorizing the next planned pass.
 
 Otherwise present:
 
-1. Approve the phase plan and continue to the next planned pass.
-2. Request revisions to the phase plan.
+1. Approve the phase plan. Record approval and the exact next step for the next planned pass, provide the startup instruction for a fresh session, then terminate this session.
+2. Request revisions to the phase plan in this session.
 3. Discuss concerns before deciding.
 4. Return to roadmap-level planning.
+
+After phase-plan approval, do not begin the next planned pass in this session unless the human explicitly requests continuation here.
 
 ## Two-Pass Contract Gate
 
@@ -95,7 +97,9 @@ For an unresolved `Revision`, use the Final-Truth Reconciliation choices from `i
 
 Otherwise present:
 
-1. Approve the contract and proceed with implementation.
-2. Approve the contract and show an implementation dry run first.
-3. Request revisions to the contract.
+1. Approve the contract. Record approval and the exact next step for Pass B implementation, provide the startup instruction for a fresh session, then terminate this session.
+2. Approve the contract and require an implementation dry run first. Record the approved dry-run next step, provide the startup instruction for a fresh session, then terminate this session.
+3. Request revisions to the contract in this session.
 4. Return to the phase plan.
+
+After contract approval, do not begin Pass B or its dry run in this session unless the human explicitly requests continuation here.

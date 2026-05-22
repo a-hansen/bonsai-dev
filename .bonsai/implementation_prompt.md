@@ -13,7 +13,7 @@ Run implementation sessions inside an existing project workspace (`.bonsai/proje
 
 ## Startup Sequence
 
-1. Read `.bonsai/maps/code_map.md`.
+1. Read `.bonsai/maps/code_map.md`, when present. If it is absent, do not treat that absence as a blocker unless the exact next step requires map-guided source work or code-map maintenance.
 2. Read project core:
 
     * `requirements.md`
@@ -36,7 +36,7 @@ Run implementation sessions inside an existing project workspace (`.bonsai/proje
     * Exact next step
     * Final-truth impact: `None`, `Clarification`, or `Revision`
     * Affected final-truth documents, when impact is not `None`
-    * Blockers
+    * Blockers to the exact next step, if any
     * Recommended AI level
     * If phase execution mode is unresolved or must be resolved before work proceeds:
         * Recommended mode
@@ -63,6 +63,13 @@ Present:
     * The active `plan/plan_phase_<N>.md`, when one exists
     * `icebox.md`, when out-of-scope observations need to be preserved
 * **Focus:** Execute only the exact next step in `state.md`. Do not broaden scope casually.
+* **Working-Tree Baseline:** Treat the current contents of the working tree as the human's intended starting state.
+
+    * Do not gate approved work on whether the repository is clean.
+    * Do not inspect or report unrelated pre-existing Git modifications unless they prevent safe completion of the exact next step.
+    * Do not revert, normalize, or overwrite unrelated work.
+    * Stop only when the exact next step conflicts with required project-memory contents or cannot be completed within approved scope.
+* **Completion Reporting:** Report files added or modified as part of the completed step and the checks performed. Do not enumerate unrelated pre-existing workspace changes unless they affected execution or require human attention.
 * **Dry Runs:** Offer at execution authorization gates. If requested, read `.bonsai/dry_run.md` before beginning work.
 * **Out-of-Scope Discoveries:** If you notice adjacent bugs, technical debt, missing tests, refactor opportunities, documentation gaps, or other useful work outside the exact next step:
 
@@ -107,6 +114,19 @@ Read the relevant procedure when its trigger applies:
 | Code-map artifacts will be modified | Follow `.bonsai/maps/code_map.md`, including any required map-system instructions |
 
 Do not begin substantive execution until any required phase-planning or contract gate has been satisfied. Do not claim an exact next step is complete until `.bonsai/step_completion.md` has been followed.
+
+### Session Boundary at Human Gates
+
+When a gate approves work that begins a new substantial pass, the default approval action is a fresh-session handoff, not continuation in the current session.
+
+For phase-plan approval and contract approval:
+
+* Present approval as authorizing the next pass in a fresh session.
+* On approval, update the required Bonsai state and planning documents with the approved next step.
+* Provide the exact startup instruction for the next session.
+* End the current session without beginning the newly approved pass.
+
+Do not continue from phase-plan approval into contract work, or from contract approval into implementation, unless the human explicitly requests same-session continuation.
 
 ## Maintenance Discipline
 

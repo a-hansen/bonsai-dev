@@ -61,6 +61,10 @@ Output a compact completion summary containing:
 
 Do not claim completion without reporting the checks actually performed and their results.
 
+### Changed Files Reporting
+
+At completion, report files added or modified as part of the completed step. Do not enumerate unrelated pre-existing working-tree changes unless they affected execution or require human attention.
+
 ## Handoff Choices
 
 Unless the recorded next step requires a named gate, present:
