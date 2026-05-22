@@ -65,39 +65,24 @@ This repository also includes:
 .bonsai/projects/task-tracker/
 ```
 
-a small example Bonsai project showing the output of a completed design session before implementation begins.
-
-It gives new users a concrete reference for what Bonsai project memory looks like in practice, including:
-
-* `requirements.md`
-* `architecture.md`
-* `plan.md`
-* `state.md`
-
-and any supporting project documents needed for the example workflow.
-
 ---
 
 # TL;DR
 
-## Try Bonsai immediately with the included example
+## Try Bonsai with the included example
 
-Clone the repo, open your AI coding tool, and begin with:
+The Task Tracker example supports two starting paths:
 
-```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker.
-```
+* **Design your own implementation:** begin with the supplied Task Tracker design prompt and choose
+  your preferred language and tools during the design session.
+* **Explore the included reference memory:** use the completed Java command-line / Gradle project
+  memory to see the implementation workflow operate against a ready-made Bonsai project.
 
-The AI should:
+See the [Task Tracker Example README](.bonsai/projects/task-tracker/README.md) for both paths.
 
-1. load the existing `task-tracker` project memory
-2. summarize the current execution state
-3. identify the exact next implementation step
-4. recommend the appropriate AI level for that step
-5. stop at a structured startup gate before execution begins
-
-At that gate, you can proceed, request a compact dry run first, correct the identified next step, or
-stop. This is the fastest way to see the Bonsai implementation workflow in action.
+Starting from design is the best introduction when you want to evaluate Bonsai independently of any
+specific implementation stack. The included Java reference memory is useful when you want to inspect
+completed project artifacts or exercise the implementation workflow directly.
 
 ---
 
@@ -799,56 +784,14 @@ If your AI tool can read files and follow instructions, it can probably work wit
 
 # Getting Started
 
-## Option 1: Try the included example
+## Option 1: Try the included Task Tracker example
 
-The fastest way to understand Bonsai is to run the included example project.
+The included Task Tracker example is a compact project scenario intended to demonstrate Bonsai's
+design and implementation workflows.
 
-This repository already contains:
-
-```text
-.bonsai/projects/task-tracker/
-```
-
-a small example project memory package produced by a completed Bonsai design session.
-
-Open your AI coding tool and run:
-
-```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker.
-```
-
-The coding AI should:
-
-1. read the `task-tracker` project memory
-2. summarize the current implementation state
-3. identify the exact next step
-4. recommend the appropriate AI level
-5. stop at the structured startup gate before making changes
-
-A startup summary should look roughly like this:
-
-```text
-Active project: task-tracker
-
-Current phase:
-Phase 1 — Establish the initial application contract and core project scaffolding
-
-Exact next step:
-Review the active phase plan, then prepare the contract-first implementation work for the first approved slice of the project.
-
-Recommended AI level:
-Medium / Thinking
-
-No code changes have been made yet.
-
-1. Proceed with the identified next step.
-2. Show a dry run first.
-3. Correct the identified next step.
-4. Stop here.
-```
-
-That startup gate is central to Bonsai. It gives the human a chance to authorize the named work,
-inspect it first, or correct stale state before execution begins.
+See the [Task Tracker Example README](.bonsai/projects/task-tracker/README.md) for the two available
+paths: designing your own implementation in your preferred stack or exploring the included Java
+command-line reference memory package.
 
 ---
 
@@ -935,11 +878,7 @@ gate before execution.
 
 ### 6. Add code maps when they become useful
 
-For large, mature, or unfamiliar repositories, build code maps using:
-
-```text
-.bonsai/maps/README.md
-```
+For large, mature, or unfamiliar repositories, build code maps using [.bonsai/maps/README.md](.bonsai/maps/README.md).
 
 Code maps are optional. Add them when repository rediscovery starts costing real time.
 
