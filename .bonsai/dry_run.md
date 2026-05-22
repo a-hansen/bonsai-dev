@@ -16,6 +16,8 @@ Read this file only when the user requests a dry run at an execution authorizati
 * Keep the output compact. Identify file groups or subsystems rather than speculative line-by-line edits.
 * Do not restate requirements, architecture, or contract detail already available in the approved basis.
 * Surface uncertainty explicitly. Do not turn assumptions into approved scope.
+* Classify anticipated final-truth impact using `None`, `Clarification`, or `Revision` as defined in `implementation_prompt.md`.
+* A `Revision` may be previewed, but cannot authorize substantive implementation before affected final-truth documents are updated and approved.
 
 ## Output
 
@@ -33,6 +35,10 @@ Expected touch points:
 Intended result:
 - <concrete outcome>
 
+Final-truth impact: <None | Clarification | Revision>
+- Affected documents: <None, or final-truth document paths>
+- Required update before implementation: <None, proposed clarification, or required approved revision>
+
 Planned checks:
 - <test, build, validation, or review check>
 
@@ -45,17 +51,20 @@ Scope concerns:
 4. Stop here.
 ````
 
+For a `Revision`, replace option 1 with: `Draft proposed updates to the affected final-truth documents for review.`
+
 Add detail only when needed to prevent material ambiguity.
 
 ## After Approval
 
 If the user approves the dry run:
 
-1. Record in `state.md` a compact approved execution baseline: basis, intended result, expected touch points, and planned checks.
+1. Record in `state.md` a compact approved execution baseline: basis, intended result, expected touch points, anticipated final-truth impact, affected final-truth documents when applicable, and planned checks.
 2. Execute only against that baseline and already-approved project direction.
-3. Before implementing a material deviation, STOP and use the Material Deviations gate in `implementation_prompt.md`.
-4. At completion, compare actual changes and checks against the approved baseline.
-5. Remove or replace the active baseline after completion or redirection.
+3. Do not implement work classified as `Revision` until affected final-truth documents have been updated and approved.
+4. Before implementing a material deviation, STOP and use the applicable gate in `implementation_prompt.md`.
+5. At completion, compare actual changes, checks, and final-truth impact against the approved baseline.
+6. Remove or replace the active baseline after completion or redirection.
 
 ## Compactness Test
 

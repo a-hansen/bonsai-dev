@@ -33,6 +33,8 @@ Run implementation sessions inside an existing project workspace (`.bonsai/proje
     * Current phase pass
     * Phase execution mode
     * Exact next step
+    * Final-truth impact: `None`, `Clarification`, or `Revision`
+    * Affected final-truth documents, when impact is not `None`
     * Blockers
     * Recommended AI level
     * If phase execution mode is unresolved or must be resolved before work proceeds:
@@ -68,13 +70,30 @@ Present:
     * Record them concisely in `icebox.md`.
     * Continue the assigned work.
     * Treat `icebox.md` as agent-maintained, non-authoritative observation storage, not an approved backlog or execution plan.
-* **Material Deviations:** If continuing requires a contract change, expanded subsystem scope, material change to approved execution basis, acceptance of failed required checks, or new human design decision, STOP before the deviating change and present:
+* **Material Deviations:** If continuing requires a contract change, expanded subsystem scope, material change to approved execution basis, acceptance of failed required checks, or new human design decision, STOP before the deviating change. If it is a `Revision`, use the Final-Truth Reconciliation choices. Otherwise present:
 
     1. Approve the proposed change and continue in this session.
     2. Stop here; I will revise the plan or contract before continuing.
     3. Stop here and preserve the issue in the icebox.
 * **Framework:** Zero trust. Do not invent framework behavior. Consult deeper `.bonsai/maps/` files and relevant source guidance before relying on non-obvious APIs, lifecycle assumptions, or platform conventions.
 * **Framework Evidence:** State which maps or source guidance were checked when framework-specific behavior materially affects the implementation.
+
+## Final-Truth Reconciliation
+
+`requirements.md` and `architecture.md`, including applicable lower-layer documents, are maintained final truth. Implementation must conform to them unless the human explicitly approves a change. Do not modify these Human-owned files without explicit instruction.
+
+At each execution authorization gate and at step completion, classify final-truth impact:
+
+* `None`: Approved requirements and architecture already cover the work.
+* `Clarification`: Intended behavior is unchanged, but final truth should be stated more precisely. Work may proceed only if the missing precision is not needed to safely approve or implement it; propose the documentation update at the gate or completion.
+* `Revision`: Intended behavior, constraints, architecture, or system boundaries change. STOP before substantive implementation until affected final-truth documents are updated and approved.
+
+For an unresolved `Revision`, present:
+
+1. Draft proposed updates to the affected final-truth documents for review.
+2. Revise the proposed work to conform to current approved final truth.
+3. Discuss the final-truth impact before deciding.
+4. Stop here.
 
 ## Phase Activation & Planning
 
@@ -112,14 +131,14 @@ Present:
 
 * **Unresolved Phase Mode:** If the current active phase has not yet had its execution mode resolved, treat determining the mode, updating roadmap/state, and drafting any required phase plan as the exact next step before substantive phase execution. After that planning update, use the Phase Plan Approval Gate when a phase plan was created or materially changed; otherwise complete the step normally.
 
-* **Phase Plan Approval Gate:** After creating or materially correcting a phase plan, STOP and present:
+* **Phase Plan Approval Gate:** After creating or materially correcting a phase plan, STOP. State its final-truth impact and affected final-truth documents, if any. For an unresolved `Revision`, use the Final-Truth Reconciliation choices instead of authorizing implementation. Otherwise present:
 
     1. Approve the phase plan and continue to the next planned pass.
     2. Request revisions to the phase plan.
     3. Discuss concerns before deciding.
     4. Return to roadmap-level planning.
 
-* **Two-Pass Contract Gate:** If Pass A is active, build the API shape and behavioral tests or usage examples, then STOP. Do not begin Pass B until the contract is approved. Present:
+* **Two-Pass Contract Gate:** If Pass A is active, build the API shape and behavioral tests or usage examples, then STOP. State its final-truth impact and affected final-truth documents, if any. Do not begin Pass B until the contract is approved and any `Revision` is reflected in approved final truth. For an unresolved `Revision`, use the Final-Truth Reconciliation choices instead of authorizing Pass B. Otherwise present:
 
     1. Approve the contract and proceed with implementation.
     2. Approve the contract and show an implementation dry run first.
@@ -131,9 +150,10 @@ Present:
 After completing the exact next step:
 
 1. Update required Bonsai maintenance artifacts.
-2. Output a compact completion summary: completed step; material changes; checks/results; relevant Bonsai artifact updates; deviations or `None`; recorded exact next step.
-3. If work followed an approved dry run, compare actual results against its approved execution baseline.
-4. Recommend a clean session for the recorded next step. Unless that step requires a named gate, present:
+2. Output a compact completion summary: completed step; material changes; checks/results; relevant Bonsai artifact updates; approved versus actual final-truth impact; final-truth updates proposed or completed, or `None`; deviations or `None`; recorded exact next step.
+3. If work followed an approved dry run, compare actual results, checks, and final-truth impact against its approved execution baseline.
+4. If actual final-truth impact is `Clarification`, propose the affected document update unless completed under explicit instruction. If it is `Revision`, do not treat revised work as complete until affected final-truth documents are updated and approved.
+5. Recommend a clean session for the recorded next step. Unless that step requires a named gate, present:
 
     1. Terminate this session; continue in a clean session.
     2. Proceed to the recorded next step in this session.
@@ -143,6 +163,8 @@ After completing the exact next step:
 If the recorded next step requires a named gate, present that gate instead of immediate proceed choices.
 
 ## Maintenance Discipline
+
+* **Final-Truth Discipline:** Do not allow implementation, contracts, phase plans, or completed work to silently redefine `requirements.md` or `architecture.md`. Route clarifications and revisions through explicit human instruction and approval.
 
 * **Plan Discipline:** Update `plan.md` only when roadmap-level truth changes: phase status, ordering, deferrals, completion, resolved execution mode, or the need for a separate phase plan.
 
