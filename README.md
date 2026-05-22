@@ -2,6 +2,8 @@
 
 **Structured project memory for serious AI-assisted software development.**
 
+Current release: **v1.1.0**
+
 Bonsai is a repo-local memory system and workflow for using AI to design, build, and evolve software
 over many sessions without losing the thread.
 
@@ -10,11 +12,12 @@ It helps you:
 * start fresh AI sessions frequently without starting over
 * keep context small, structured, and high-signal
 * move cleanly from Web AI design to IDE / CLI implementation
-* preserve product intent, architecture, roadmap, current execution state, and useful out-of-scope observations separately
-* layer deep product requirements, subsystem architecture, and detailed phase plans without bloating top-level project memory
+* preserve and actively reconcile product intent, architecture, roadmap, current execution state, and useful out-of-scope observations separately
+* layer deep product requirements, subsystem architecture, detailed phase plans, and stage-specific implementation procedures without bloating always-loaded context
 * guide coding agents through large codebases using layered code maps
 * right-size AI effort instead of burning maximum reasoning on every step
-* keep the human in the loop before an agent hardens the wrong abstraction
+* keep the human in the loop through explicit approval and execution gates
+* preview risky execution with optional compact dry runs
 * rebuild a project cleanly from its final intended form after early pivots and experimentation
 
 Bonsai is plain Markdown plus a small set of prompts.
@@ -44,6 +47,9 @@ bonsai-dev/
     ├── README.md
     ├── design_session.md
     ├── implementation_prompt.md
+    ├── phase_execution.md
+    ├── step_completion.md
+    ├── dry_run.md
     ├── style_guide.md
     ├── maps/
     │   └── ...
@@ -61,38 +67,24 @@ This repository also includes:
 .bonsai/projects/task-tracker/
 ```
 
-a small example Bonsai project showing the output of a completed design session before implementation begins.
-
-It gives new users a concrete reference for what Bonsai project memory looks like in practice, including:
-
-* `requirements.md`
-* `architecture.md`
-* `plan.md`
-* `state.md`
-
-and any supporting project documents needed for the example workflow.
-
 ---
 
 # TL;DR
 
-## Try Bonsai immediately with the included example
+## Try Bonsai with the included example
 
-Clone the repo, open your AI coding tool, and begin with:
+The Task Tracker example supports two starting paths:
 
-```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker.
-```
+* **Design your own implementation:** begin with the supplied Task Tracker design prompt and choose
+  your preferred language and tools during the design session.
+* **Explore the included reference memory:** use the completed Java command-line / Gradle project
+  memory to see the implementation workflow operate against a ready-made Bonsai project.
 
-The AI should:
+See the [Task Tracker Example README](.bonsai/projects/task-tracker/README.md) for both paths.
 
-1. load the existing `task-tracker` project memory
-2. summarize the current execution state
-3. identify the exact next implementation step
-4. recommend the appropriate AI level for that step
-5. stop for human approval or redirection before execution begins
-
-This is the fastest way to see the Bonsai implementation workflow in action.
+Starting from design is the best introduction when you want to evaluate Bonsai independently of any
+specific implementation stack. The included Java reference memory is useful when you want to inspect
+completed project artifacts or exercise the implementation workflow directly.
 
 ---
 
@@ -167,11 +159,19 @@ Open your AI coding tool and begin with:
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
 ```
 
-The AI will load the relevant Bonsai memory, summarize the current execution state, recommend the
-appropriate AI level for the exact next step, and then stop for human approval or redirection before
-execution begins.
+The AI will load the relevant Bonsai memory, summarize the current execution state, identify whether
+the exact next step affects approved final truth, recommend the appropriate AI level, and then stop at
+a structured startup gate before execution begins.
 
-This is the command you will use over and over.
+`implementation_prompt.md` stays compact by loading specialized procedures only when needed:
+
+* `phase_execution.md` when phase planning, execution-mode resolution, or contract gates are active
+* `dry_run.md` when the human requests an execution preview
+* `step_completion.md` when approved work is being closed and handed off
+
+This is the command you will use over and over. At completion, the agent reconciles the result against
+approved final truth and any approved dry-run baseline, updates operational project memory, reports
+the result, and recommends starting a clean session for the recorded next step.
 
 ---
 
@@ -269,6 +269,16 @@ Bonsai distinguishes between:
 
 Its durable project memory is intended to describe the **final desired system**, not merely chronicle
 the historical implementation journey.
+
+That truth is not only established during design. During implementation, Bonsai classifies proposed
+or discovered impact on requirements and architecture as:
+
+* `None`: existing final truth already covers the work
+* `Clarification`: intended behavior is unchanged, but final truth should be stated more precisely
+* `Revision`: intended behavior, constraints, architecture, or system boundaries change
+
+A revision does not silently slip through as code or planning detail. The affected final-truth
+documents must be updated and approved before substantive implementation proceeds.
 
 That enables a powerful workflow:
 
@@ -429,13 +439,16 @@ Bonsai is designed around the idea that **fresh sessions are good**.
 
 Instead of stretching one AI conversation until it becomes a swamp, you:
 
-1. end the current session when appropriate
-2. let `state.md` preserve the baton pass
-3. start a new session
-4. reload only the meaningful project memory
-5. continue cleanly
+1. execute one bounded, authorized step
+2. let the agent update `state.md` and report completion
+3. normally end the current session at that handoff
+4. start a new session
+5. reload only the meaningful project memory
+6. continue cleanly
 
-This keeps reasoning sharper and conversations easier to manage.
+The completion gate still lets you continue in the current session when that is more convenient, but
+the recommended path is a clean restart. This keeps reasoning sharper and conversations easier to
+manage.
 
 ---
 
@@ -454,7 +467,12 @@ Its documents are intended to be:
 The implementation workflow reads the high-level project memory first, then drills into deeper
 documents only when the current task requires it.
 
-A large project should not require dumping the entire project history into every AI session.
+The implementation instructions follow the same rule. The always-loaded prompt preserves startup,
+authority, final-truth, scope, and maintenance invariants. Stage-specific procedures for phase
+execution, dry runs, and step completion are loaded only when their trigger applies.
+
+A large project should not require dumping the entire project history or every implementation
+procedure into every AI session.
 
 ---
 
@@ -505,7 +523,12 @@ Others represent operational state the agent maintains.
 * `architecture/architecture_<SUBSYSTEM>.md`
 
 These should describe what the product is and how it is intended to work. They are not disposable
-scratchpads.
+scratchpads. They are maintained final truth.
+
+The coding agent does not silently modify them to match implementation drift. At implementation gates
+and completion, it identifies whether work has no final-truth impact, requires a clarification, or
+requires a revision. The human approves changes to final truth before revised behavior or architecture
+becomes the project direction.
 
 ### Agent-maintained execution memory
 
@@ -647,7 +670,21 @@ The human reviews:
 * Is this the right abstraction?
 * Is the API shaped correctly?
 * Do the tests express the right behavior?
-* Should implementation proceed?
+* Should implementation proceed directly or after a dry run?
+
+The gate makes that transition explicit: approve and proceed, approve and preview implementation
+with a dry run, request revisions, or return to the phase plan.
+
+When the proposed contract changes final truth, contract approval alone is not enough. The affected
+requirements or architecture must also be updated and approved before Pass B begins.
+
+The detailed phase and contract-gate procedure lives in:
+
+```text
+.bonsai/phase_execution.md
+```
+
+and is loaded only when that workflow is active.
 
 ### Pass B: Implementation
 
@@ -659,7 +696,7 @@ This keeps the human involved at the highest-leverage moment:
 
 ---
 
-## 12. A startup gate before implementation begins
+## 12. Explicit human gates
 
 Bonsai does not treat “read the prompt” as permission to start editing immediately.
 
@@ -668,17 +705,51 @@ At the beginning of an implementation session, the coding AI:
 1. reads the relevant Bonsai memory
 2. identifies the active project state
 3. surfaces the exact next step
-4. recommends the appropriate AI level
-5. stops for human approval or redirection
+4. classifies its anticipated final-truth impact
+5. recommends the appropriate AI level
+6. stops at a structured startup gate
 
-That pause matters.
+The startup gate is an execution decision: proceed with the identified step, request a dry run first,
+correct the next step, or stop.
 
-It lets the human catch stale state, shift direction, or change priorities before the agent commits to
-the next block of work.
+Other gates name what the human is deciding. A phase plan or API contract is **approved**. A named
+implementation step is authorized to **proceed**. If execution would materially change approved scope,
+contract boundaries, requirements, or architecture, the agent stops and requests a decision instead
+of quietly broadening the work or silently rewriting final truth.
+
+That precision matters. It lets the human catch stale state, shift direction, or review a high-value
+boundary before the agent commits to the next block of work.
 
 ---
 
-## 13. AI effort right-sizing
+## 13. Optional dry runs
+
+When a planned step is risky, unclear, or expensive to reverse, Bonsai can preview execution before
+the agent changes files.
+
+A dry run is intentionally compact. It identifies:
+
+* the approved basis for the work
+* expected touch points
+* intended result
+* planned checks
+* likely scope concerns
+* anticipated final-truth impact and affected truth documents, when any
+
+When the dry run is approved, the agent can compare actual results and actual final-truth impact
+against that execution baseline in its completion summary.
+
+The procedure lives in:
+
+```text
+.bonsai/dry_run.md
+```
+
+and is loaded only when a dry run is requested.
+
+---
+
+## 14. AI effort right-sizing
 
 Not every task deserves the most expensive or capable model.
 
@@ -697,7 +768,7 @@ This is another way Bonsai keeps AI-assisted development focused, economical, an
 
 ---
 
-## 14. Tool-agnostic and lightweight
+## 15. Tool-agnostic and lightweight
 
 Bonsai is intentionally boring technology:
 
@@ -715,52 +786,14 @@ If your AI tool can read files and follow instructions, it can probably work wit
 
 # Getting Started
 
-## Option 1: Try the included example
+## Option 1: Try the included Task Tracker example
 
-The fastest way to understand Bonsai is to run the included example project.
+The included Task Tracker example is a compact project scenario intended to demonstrate Bonsai's
+design and implementation workflows.
 
-This repository already contains:
-
-```text
-.bonsai/projects/task-tracker/
-```
-
-a small example project memory package produced by a completed Bonsai design session.
-
-Open your AI coding tool and run:
-
-```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker.
-```
-
-The coding AI should:
-
-1. read the `task-tracker` project memory
-2. summarize the current implementation state
-3. identify the exact next step
-4. recommend the appropriate AI level
-5. stop for approval or redirection before making changes
-
-A startup summary should look roughly like this:
-
-```text
-Active project: task-tracker
-
-Current phase:
-Phase 1 — Establish the initial application contract and core project scaffolding
-
-Exact next step:
-Review the active phase plan, then prepare the contract-first implementation work for the first approved slice of the project.
-
-Recommended AI level:
-Medium / Thinking
-
-No code changes have been made yet.
-Proceed, or redirect?
-```
-
-That startup gate is central to Bonsai. It gives the human a chance to catch stale state or redirect the
-agent before execution begins.
+See the [Task Tracker Example README](.bonsai/projects/task-tracker/README.md) for the two available
+paths: designing your own implementation in your preferred stack or exploring the included Java
+command-line reference memory package.
 
 ---
 
@@ -842,16 +875,12 @@ Run:
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
 ```
 
-The AI will summarize the next step, recommend an AI effort level, and stop for your approval before
-execution.
+The AI will summarize the next step, recommend an AI effort level, and stop at a structured startup
+gate before execution.
 
 ### 6. Add code maps when they become useful
 
-For large, mature, or unfamiliar repositories, build code maps using:
-
-```text
-.bonsai/maps/README.md
-```
+For large, mature, or unfamiliar repositories, build code maps using [.bonsai/maps/README.md](.bonsai/maps/README.md).
 
 Code maps are optional. Add them when repository rediscovery starts costing real time.
 
@@ -889,7 +918,11 @@ It is already useful for:
 
 * shaping a project in Web AI and handing it cleanly to a coding agent
 * maintaining durable project memory across many implementation sessions
-* keeping agents aligned through startup gates, execution state, and focused next steps
+* keeping agents aligned through structured gates, execution state, and focused next steps
+* preserving final truth by surfacing clarifications and blocking unapproved revisions during implementation
+* reducing always-loaded implementation instructions through triggered phase and completion procedures
+* previewing risky execution with optional compact dry runs
+* recommending clean-session continuation after completed work
 * mapping large repositories so agents spend less time rediscovering structure
 * preserving architectural intent while letting execution state evolve
 
@@ -899,6 +932,7 @@ The system is still being refined. Areas currently evolving include:
 * example-driven documentation
 * the code mapping workflow
 * the balance between layered depth and operational simplicity
+* real-project feedback on final-truth reconciliation and triggered implementation procedures
 * better conventions for preserving useful discoveries without expanding active scope
 
 ---
