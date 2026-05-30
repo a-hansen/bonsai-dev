@@ -42,7 +42,7 @@ All Bonsai code-map files live under this directory unless explicitly stated oth
 
 ### Control files
 
-* `repo_prompt.md`
+* `repo_session.md`
 * `map_prompt.md`
 * `map_system.md`
 * `map_repo.md`
@@ -83,9 +83,9 @@ All Bonsai code-map files live under this directory unless explicitly stated oth
 
 ## Control File Responsibilities
 
-### `repo_prompt.md`
+### `repo_session.md`
 
-**Purpose:** Web UI prompt for producing or refreshing repository calibration.
+**Purpose:** Web UI session prompt for producing or refreshing repository calibration.
 
 Use this to help a human work with an AI conversation to synthesize:
 
@@ -203,7 +203,7 @@ It must not:
 * record active phase status, deferred work, pending implementation work, or session progress
 * translate requirement IDs or project-plan vocabulary into repository-map claims
 * include transient tool-availability or execution-status notes that belong in project state or a session summary
-* describe absent future features as â€œintentionally absentâ€ merely because a project plan says so
+* describe absent future features as "intentionally absent" merely because a project plan says so
 
 A source-observed absence may be recorded only when it materially improves repository navigation and is
 phrased as a repository fact, not as project intent or implementation progress.

@@ -11,3 +11,6 @@
 # Gradle
 .gradle/
 build/
+
+#bonsai
+.bonsai/developer_context.md
