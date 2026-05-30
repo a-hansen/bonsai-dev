@@ -1,16 +1,16 @@
 # AI Plan - Phase <N>: <Phase Name>
 
-**[Meta: Agent-maintained | Active Phase Detail | Compress when done]**
-**Project:** <Project name> | **Parent:** `plan.md`
-**Status:** <Not started | Active | Awaiting Review | Blocked | Complete>
+**[Meta: Agent-maintained | Active Phase Detail | Compress when done]**  
+**Project:** <Project name> | **Parent:** `../plan.md`  
+**Status:** <Not started | Active | Awaiting Review | Blocked | Complete>  
 **Mode:** <Single-pass | Two-pass contract-first>
 
 ## Objective & Scope
 
-**Objective:** <Concrete outcome this phase must produce>
-**Inputs:** [Requirements Section] | [Architecture Section] | [Prior Phase Output]
-**In Scope:** [List items]
-**Out of Scope / Do Not Do Yet:** [List items]
+**Objective:** <Concrete outcome this phase must produce>  
+**Inputs:** [Requirements Section] | [Architecture Section] | [Prior Phase Output]  
+**In Scope:** [List items]  
+**Out of Scope / Do Not Do Yet:** [List items]  
 **Expected Deliverables:** [List deliverables]
 
 ## Ordered Work

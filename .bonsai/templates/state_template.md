@@ -7,7 +7,7 @@
 
 **Current Phase:** <Phase Name>  
 **Active Phase Plan File:** <`plan/plan_phase_<N>.md` or `None`>  
-**Current Phase Pass:** <Not applicable | Pass A (Contract) | Awaiting Review | Pass B (Implementation)>  
+**Current Phase Pass:** <Not applicable | Phase Planning | Phase Plan Review | Pass A (Contract) | Contract Review | Pass B (Implementation) | Awaiting Review>  
 **Phase Execution Mode:** <Single-pass | Two-pass contract-first | To determine at activation>  
 **Current Objective:** <Single concrete objective>
 

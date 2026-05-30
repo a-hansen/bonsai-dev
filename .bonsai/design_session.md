@@ -113,50 +113,62 @@ project files.
 Use them as follows:
 
 1. **Select the correct template for each output file.**
-   * Use the top-level requirements template for `requirements.md`.
-   * Use the top-level architecture template for `architecture.md`.
-   * Use the top-level plan template for `plan.md`.
-   * Use the state template for `state.md`.
-   * Use an area requirements template only when generating
-     `requirements/requirements_<AREA>.md`.
-   * Use a subsystem architecture template only when generating
-     `architecture/architecture_<SUBSYSTEM>.md`.
-   * Use a phase plan template only when generating
-     `plan/plan_phase_<N>.md`.
+
+    * Use the top-level requirements template for `requirements.md`.
+    * Use the top-level architecture template for `architecture.md`.
+    * Use the top-level plan template for `plan.md`.
+    * Use the state template for `state.md`.
+    * Use an area requirements template only when generating
+      `requirements/requirements_<AREA>.md`.
+    * Use a subsystem architecture template only when generating
+      `architecture/architecture_<SUBSYSTEM>.md`.
+    * Use a phase plan template only when generating
+      `plan/plan_phase_<N>.md`.
 
 2. **Instantiate templates; do not merely repeat them.**
-   * Replace every placeholder with synthesized project-specific content.
-   * Preserve the document structure, heading order, metadata line style, and dense field format.
-   * Do not output the blank templates themselves.
+
+    * Replace every placeholder with synthesized project-specific content.
+    * Preserve the document structure, heading order, metadata line style, and dense field format.
+    * Do not output the blank templates themselves.
 
 3. **Do not generate optional documents merely because templates exist.**
-   * Optional templates are available only when the project discussion clearly justifies those files.
-   * If no optional file is warranted, omit it entirely.
+
+    * Optional templates are available only when the project discussion clearly justifies those files.
+    * If no optional file is warranted, omit it entirely.
 
 4. **Keep cross-document references internally consistent.**
-   * If `requirements.md` points to `requirements/requirements_<AREA>.md`, that file must also be generated.
-   * If `architecture.md` points to `architecture/architecture_<SUBSYSTEM>.md`, that file must also be generated.
-   * If `plan.md` points to `plan/plan_phase_<N>.md`, that file must also be generated.
-   * If no linked optional file is generated, the corresponding field must say `None`.
+
+    * If `requirements.md` points to `requirements/requirements_<AREA>.md`, that file must also be generated.
+    * If `architecture.md` points to `architecture/architecture_<SUBSYSTEM>.md`, that file must also be generated.
+    * If `plan.md` points to `plan/plan_phase_<N>.md`, that file must also be generated.
+    * If no linked optional file is generated, the corresponding field must say `None`.
 
 5. **Keep execution state aligned.**
-   * `plan.md` and `state.md` must agree on:
-     * active phase,
-     * phase status,
-     * phase execution mode,
-     * whether an active phase plan file exists.
-   * If a phase plan is generated, `state.md` must reference it.
-   * If no phase plan is generated, `state.md` must say `None`.
+
+    * `plan.md` and `state.md` must agree on:
+
+        * active phase,
+        * phase status,
+        * phase execution mode,
+        * whether an active phase plan file exists.
+    * If a phase plan is generated, `state.md` must reference it.
+    * If no phase plan is generated, `state.md` must say `None`.
 
 6. **Use question sections rather than weakening the document.**
-   * Do not soften a statement with vague language when the design is actually unresolved.
-   * State known decisions plainly.
-   * Put unresolved items in `Foundational Open Questions` or `Open Questions`, whichever applies.
+
+    * Do not soften a statement with vague language when the design is actually unresolved.
+    * State known decisions plainly.
+    * Put unresolved items in `Foundational Open Questions` or `Open Questions`, whichever applies.
 
 7. **Respect ownership boundaries.**
-   * Requirements and architecture documents are human-owned durable truth.
-   * Plan and state documents are agent-maintained execution memory.
-   * Do not let implementation conveniences rewrite product intent or target architecture.
+
+    * Requirements and architecture documents are human-owned durable truth.
+    * Plan and state documents are agent-maintained execution memory.
+    * Developer-local preferences, SDK paths, machine-specific setup, recurring AI session preferences,
+      and local build/runtime quirks belong in `.bonsai/developer_context.md`, not in project memory.
+    * Do not generate `.bonsai/developer_context.md` unless the user explicitly asks for developer-local
+      context.
+    * Do not let implementation conveniences rewrite product intent or target architecture.
 
 ---
 
@@ -171,6 +183,7 @@ In `plan.md`, define:
 Use:
 
 * **Single-pass execution**, when the first phase:
+
     * implements already-approved behavior,
     * is bounded and localized,
     * has a clear implementation direction,
@@ -178,6 +191,7 @@ Use:
     * can be safely reviewed after code and tests are produced.
 
 * **Two-pass contract-first execution**, when the first phase:
+
     * introduces or materially reshapes a public API,
     * defines or changes a schema, persistent format, protocol, extension contract, or integration surface,
     * establishes an important abstraction or subsystem boundary,
@@ -199,8 +213,8 @@ complex in the abstract, or two-pass.
 Generate it only when our design discussion already contains enough execution-level sequencing,
 review gates, or validation detail to justify preserving a phase-level plan before implementation begins.
 
-Otherwise, leave the phase plan absent so the implementation agent can create it closer to execution
-when repository reality is available.
+Otherwise, leave the phase plan absent so the implementation workflow can create it through the phase
+execution skill closer to execution, when repository reality is available.
 
 ---
 
@@ -213,6 +227,7 @@ In `state.md`, initialize:
 * The current phase pass
 * The phase execution mode, or `To determine at activation` when that is the honest result of synthesis
 * The exact first implementation step, expressed at the correct execution unit:
+
     * use the full current pass through its next review gate for two-pass phases,
     * use the first bounded implementation step for single-pass phases,
     * use phase-mode resolution and any required phase-plan drafting when the mode remains unresolved
@@ -521,17 +536,17 @@ write: "See active phase plan file.")*
 ```markdown
 # AI Plan - Phase <N>: <Phase Name>
 
-**[Meta: Agent-maintained | Active Phase Detail | Compress when done]**
-**Project:** <Project name> | **Parent:** `plan.md`
-**Status:** <Not started | Active | Awaiting Review | Blocked | Complete>
+**[Meta: Agent-maintained | Active Phase Detail | Compress when done]**  
+**Project:** <Project name> | **Parent:** `../plan.md`  
+**Status:** <Not started | Active | Awaiting Review | Blocked | Complete>  
 **Mode:** <Single-pass | Two-pass contract-first>
 
 ## Objective & Scope
 
-**Objective:** <Concrete outcome this phase must produce>
-**Inputs:** [Requirements Section] | [Architecture Section] | [Prior Phase Output]
-**In Scope:** [List items]
-**Out of Scope / Do Not Do Yet:** [List items]
+**Objective:** <Concrete outcome this phase must produce>  
+**Inputs:** [Requirements Section] | [Architecture Section] | [Prior Phase Output]  
+**In Scope:** [List items]  
+**Out of Scope / Do Not Do Yet:** [List items]  
 **Expected Deliverables:** [List deliverables]
 
 ## Ordered Work
@@ -601,7 +616,7 @@ Pass A should normally produce:
 
 **Current Phase:** <Phase Name>  
 **Active Phase Plan File:** <`plan/plan_phase_<N>.md` or `None`>  
-**Current Phase Pass:** <Not applicable | Pass A (Contract) | Awaiting Review | Pass B (Implementation)>  
+**Current Phase Pass:** <Not applicable | Phase Planning | Phase Plan Review | Pass A (Contract) | Contract Review | Pass B (Implementation) | Awaiting Review>  
 **Phase Execution Mode:** <Single-pass | Two-pass contract-first | To determine at activation>  
 **Current Objective:** <Single concrete objective>
 
