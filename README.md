@@ -2,23 +2,23 @@
 
 **Structured project memory for serious AI-assisted software development.**
 
-Current release: **v1.1.0**
+Current release: **v1.2.0**
 
 Bonsai is a repo-local memory system and workflow for using AI to design, build, and evolve software
 over many sessions without losing the thread.
 
 It helps you:
 
-* start fresh AI sessions frequently without starting over
 * keep context small, structured, and high-signal
-* move cleanly from Web AI design to IDE / CLI implementation
-* preserve and actively reconcile product intent, architecture, roadmap, current execution state, and useful out-of-scope observations separately
-* layer deep product requirements, subsystem architecture, detailed phase plans, and stage-specific implementation procedures without bloating always-loaded context
-* guide coding agents through large codebases using layered code maps
-* right-size AI effort instead of burning maximum reasoning on every step
+* start fresh AI sessions frequently without starting over
 * keep the human in the loop through explicit approval and execution gates
-* preview risky execution with optional compact dry runs
 * rebuild a project cleanly from its final intended form after early pivots and experimentation
+* move cleanly from Web AI design to IDE / CLI implementation
+* guide coding agents through large codebases using layered code maps
+* preview risky execution with optional compact dry runs
+* right-size AI effort instead of burning maximum reasoning on every step
+* layer deep product requirements, subsystem architecture, detailed phase plans, and stage-specific implementation skills without bloating always-loaded context
+* preserve and actively reconcile product intent, architecture, roadmap, current execution state, and useful out-of-scope observations separately
 
 Bonsai is plain Markdown plus a small set of prompts.
 
@@ -47,10 +47,12 @@ bonsai-dev/
     ├── README.md
     ├── design_session.md
     ├── implementation_prompt.md
-    ├── phase_execution.md
-    ├── step_completion.md
-    ├── dry_run.md
-    ├── style_guide.md
+    ├── developer_context.example.md
+    ├── skills/
+    │   ├── phase_execution.md
+    │   ├── dry_run.md
+    │   ├── handoff.md
+    │   └── final_truth_update.md
     ├── maps/
     │   └── ...
     └── projects/
@@ -163,11 +165,12 @@ The AI will load the relevant Bonsai memory, summarize the current execution sta
 the exact next step affects approved final truth, recommend the appropriate AI level, and then stop at
 a structured startup gate before execution begins.
 
-`implementation_prompt.md` stays compact by loading specialized procedures only when needed:
+`implementation_prompt.md` stays compact by loading specialized skills only when needed:
 
-* `phase_execution.md` when phase planning, execution-mode resolution, or contract gates are active
-* `dry_run.md` when the human requests an execution preview
-* `step_completion.md` when approved work is being closed and handed off
+* `.bonsai/skills/phase_execution.md` when phase planning, execution-mode resolution, or contract gates are active
+* `.bonsai/skills/dry_run.md` when the human requests an execution preview
+* `.bonsai/skills/handoff.md` when approved work is being closed or handed off
+* `.bonsai/skills/final_truth_update.md` when final-truth clarification or revision handling is needed
 
 This is the command you will use over and over. At completion, the agent reconciles the result against
 approved final truth and any approved dry-run baseline, updates operational project memory, reports
@@ -379,13 +382,13 @@ The principle is the same:
 
 Many AI workflows are good at helping you move forward from wherever you currently are.
 
-Bonsai is also designed to preserve the final product shape that emerges after experimentation,
-reconsideration, and change.
+Bonsai is also designed to preserve the final product shape that emerges after experimentation, reconsideration, and change.
 
-That means it can support a clean rebuild later:
+Design pivots are expected. When a major product, architecture, or roadmap decision changes, bring the current Bonsai memory documents back into a Web AI design session, revise the affected files, approve them, and then restart implementation from the revised memory.
 
-> **Not a replay of every development detour, but a fresh implementation of the final system you now
-> know you wanted.**
+That means Bonsai can support a clean rebuild later:
+
+> **Not a replay of every development detour, but a fresh implementation of the final system you now know you wanted.**
 
 ---
 
@@ -403,6 +406,7 @@ It separates:
 * active session state
 * useful out-of-scope observations
 * phase-level execution detail
+* stable developer or local context
 * shared codebase navigation knowledge
 
 These are different kinds of memory, and mixing them together makes both humans and agents worse at
@@ -678,10 +682,10 @@ with a dry run, request revisions, or return to the phase plan.
 When the proposed contract changes final truth, contract approval alone is not enough. The affected
 requirements or architecture must also be updated and approved before Pass B begins.
 
-The detailed phase and contract-gate procedure lives in:
+The detailed phase and contract-gate skill lives in:
 
 ```text
-.bonsai/phase_execution.md
+.bonsai/skills/phase_execution.md
 ```
 
 and is loaded only when that workflow is active.
@@ -739,10 +743,10 @@ A dry run is intentionally compact. It identifies:
 When the dry run is approved, the agent can compare actual results and actual final-truth impact
 against that execution baseline in its completion summary.
 
-The procedure lives in:
+The skill lives in:
 
 ```text
-.bonsai/dry_run.md
+.bonsai/skills/dry_run.md
 ```
 
 and is loaded only when a dry run is requested.
@@ -867,7 +871,25 @@ For example:
 └── state.md
 ```
 
-### 5. Start implementation in your coding tool
+### 5. Optionally add developer context
+
+Copy:
+
+```text
+.bonsai/developer_context.example.md
+```
+
+to:
+
+```text
+.bonsai/developer_context.md
+```
+
+Use it for stable developer preferences, local SDK paths, build/runtime quirks, and recurring AI session preferences.
+
+Do not use it for product requirements, target architecture, roadmap, or current execution state.
+
+### 6. Start implementation in your coding tool
 
 Run:
 
@@ -878,7 +900,7 @@ Read .bonsai/implementation_prompt.md and follow its instructions. Active projec
 The AI will summarize the next step, recommend an AI effort level, and stop at a structured startup
 gate before execution.
 
-### 6. Add code maps when they become useful
+### 7. Add code maps when they become useful
 
 For large, mature, or unfamiliar repositories, build code maps using [.bonsai/maps/README.md](.bonsai/maps/README.md).
 
@@ -920,7 +942,7 @@ It is already useful for:
 * maintaining durable project memory across many implementation sessions
 * keeping agents aligned through structured gates, execution state, and focused next steps
 * preserving final truth by surfacing clarifications and blocking unapproved revisions during implementation
-* reducing always-loaded implementation instructions through triggered phase and completion procedures
+* reducing always-loaded implementation instructions through triggered skills
 * previewing risky execution with optional compact dry runs
 * recommending clean-session continuation after completed work
 * mapping large repositories so agents spend less time rediscovering structure
@@ -932,7 +954,7 @@ The system is still being refined. Areas currently evolving include:
 * example-driven documentation
 * the code mapping workflow
 * the balance between layered depth and operational simplicity
-* real-project feedback on final-truth reconciliation and triggered implementation procedures
+* real-project feedback on final-truth reconciliation and triggered implementation skills
 * better conventions for preserving useful discoveries without expanding active scope
 
 ---

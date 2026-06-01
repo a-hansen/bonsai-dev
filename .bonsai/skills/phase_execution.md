@@ -1,20 +1,24 @@
-# Phase Execution Procedure
+# Phase Execution Skill
 
 ## Purpose
 
 Handle phase activation, execution-mode selection, detailed phase planning, and contract-first gates during an implementation session.
 
-## When to Read
+This skill is subordinate to `implementation_prompt.md`. Apply its execution rules, final-truth reconciliation rules, and maintenance discipline throughout.
 
-Read this file when:
+## Required Inputs
 
-* Activating a new phase.
-* The active phase execution mode is unresolved.
-* A detailed `plan/plan_phase_<N>.md` may need to be created or materially corrected.
-* Pass A of a two-pass contract-first phase is active.
-* The exact next step requires a phase-plan or contract approval gate.
+Before executing this skill, inspect the project memory needed for the current step:
 
-This procedure is subordinate to `implementation_prompt.md`. Apply its execution rules, final-truth reconciliation rules, and maintenance discipline throughout.
+* `requirements.md`
+* `architecture.md`
+* `plan.md`
+* `state.md`
+* Active `plan/plan_phase_<N>.md`, when one exists
+* The approved contract, approved dry-run baseline, or recorded exact next step, when applicable
+* Any relevant maps or developer context needed to understand execution constraints
+
+Do not treat missing optional files as permission to guess. Surface missing or inconsistent project memory before substantive execution.
 
 ## Phase Execution Mode Assessment
 
@@ -45,7 +49,9 @@ Do not resolve the mode, update files, or proceed into planning until the user e
 
 ## Phase Plan Creation
 
-When activating a new phase, determine whether that phase needs a detailed `plan/plan_phase_<N>.md`. Create one before substantive phase execution when the phase:
+When activating a new phase, determine whether that phase needs a detailed `plan/plan_phase_<N>.md`.
+
+Create one before substantive phase execution when the phase:
 
 * is complex enough to need ordered sequencing,
 * uses two-pass contract-first execution,
@@ -76,7 +82,7 @@ For an unresolved `Revision`, use the Final-Truth Reconciliation choices from `i
 
 Otherwise present:
 
-1. Approve the phase plan. Record approval and the exact next step for the next planned pass, provide the startup instruction for a fresh session, then terminate this session.
+1. Approve the phase plan. Record approval and the exact next step for the next planned pass, provide a copyable startup prompt for a fresh session, then terminate this session.
 2. Request revisions to the phase plan in this session.
 3. Discuss concerns before deciding.
 4. Return to roadmap-level planning.
@@ -97,9 +103,54 @@ For an unresolved `Revision`, use the Final-Truth Reconciliation choices from `i
 
 Otherwise present:
 
-1. Approve the contract. Record approval and the exact next step for Pass B implementation, provide the startup instruction for a fresh session, then terminate this session.
-2. Approve the contract and require an implementation dry run first. Record the approved dry-run next step, provide the startup instruction for a fresh session, then terminate this session.
+1. Approve the contract. Record approval and the exact next step for Pass B implementation, provide a copyable startup prompt for a fresh session, then terminate this session.
+2. Approve the contract and require an implementation dry run first. Record the approved dry-run next step, provide a copyable startup prompt for a fresh session, then terminate this session.
 3. Request revisions to the contract in this session.
 4. Return to the phase plan.
 
 After contract approval, do not begin Pass B or its dry run in this session unless the human explicitly requests continuation here.
+
+## Fresh Session Startup Prompt
+
+When a gate option terminates the session and continues in a clean session, the response must include a ready-to-copy prompt for the next session.
+
+The prompt must include:
+
+* the project path or project name,
+* the approved basis for the next step,
+* the exact next step to execute,
+* any required skill to load first,
+* whether a dry run is required before implementation,
+* the expected gate or stopping point.
+
+Use a fenced block so the user can copy it directly.
+
+Example shape:
+
+````markdown
+Continue Bonsai implementation for `<project>`.
+
+Read `.bonsai/implementation_prompt.md`, required project memory, and `.bonsai/skills/phase_execution.md`.
+
+The previous session approved: `<approved phase plan or contract>`.
+
+Exact next step: `<next step>`.
+
+Dry run required before implementation: `<yes/no>`.
+
+Stop at: `<next gate or handoff condition>`.
+````
+
+Do not merely say to start a fresh session. Provide the actual startup prompt.
+
+## Stop Conditions
+
+STOP and ask for human direction when:
+
+* phase execution mode is unresolved and the user has not authorized planning,
+* a required phase plan is missing, stale, or inconsistent,
+* a phase plan has been created or materially corrected,
+* Pass A has produced a contract package,
+* actual work requires a `Revision` to final-truth documents,
+* the requested next step exceeds the approved phase plan, contract, dry-run baseline, or recorded exact next step,
+* the user selects a terminate-session option.

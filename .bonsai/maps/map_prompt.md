@@ -65,15 +65,17 @@ If `map_state.md` already exists, read it at startup and update it as the sessio
 
 ```text
 .bonsai/maps/map_system.md
-.bonsai/maps/map_repo.md
 .bonsai/maps/map_state.md
 ```
 
 2. Read, if it exists:
 
 ```text
+.bonsai/maps/map_repo.md
 .bonsai/maps/code_map.md
 ```
+
+If `map_repo.md` is absent, do not invent repository calibration. Proceed only with observed repository evidence and record the absence as a mapping uncertainty or recommend running `repo_session.md` first when owner calibration is needed.
 
 3. Determine:
 
