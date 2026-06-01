@@ -17,16 +17,21 @@ This file is the implementation kernel. Keep it small. Load detailed skills only
 ## File Roles
 
 * **Project truth:** `.bonsai/projects/<project>/requirements.md`, `architecture.md`, `plan.md`, active phase plans, and `state.md`.
+* **Observation store:** `.bonsai/projects/<project>/icebox.md`.
 * **Framework skills:** `.bonsai/skills/*.md`. These describe how the agent should work.
 * **Developer context:** `.bonsai/developer_context.md`. This is stable developer/local context, not project truth.
 * **Repository maps:** `.bonsai/maps/*.md`. These are navigation aids, not project truth.
 
-Do not use framework skills, developer context, or maps as substitutes for approved project memory.
+Do not use framework skills, developer context, maps, or icebox observations as substitutes for approved project memory.
+
+`icebox.md` is non-authoritative. It preserves useful out-of-scope observations for later human triage. It is not an approved backlog, requirement source, architecture source, roadmap, or execution plan.
 
 ## Startup Sequence
 
 1. Read `.bonsai/maps/code_map.md`, when present. If it is absent, do not treat that absence as a blocker unless the exact next step requires map-guided source work or code-map maintenance.
+
 2. Read optional `.bonsai/developer_context.md`, when present.
+
 3. Read project core:
 
     * `requirements.md`
@@ -55,6 +60,7 @@ Do not use framework skills, developer context, or maps as substitutes for appro
     * Recommended AI level
     * Loaded skills, if any
     * If phase execution mode is unresolved or must be resolved before work proceeds:
+
         * Recommended mode
         * One-sentence rationale
 
@@ -73,19 +79,20 @@ Present:
 
 Load a skill only when the current task requires it.
 
-| Situation | Skill or instruction |
-| --- | --- |
-| Phase execution mode is unresolved, a phase plan must be created or corrected, Pass A is active, or a phase-plan or contract gate is required | `.bonsai/skills/phase_execution.md` |
-| The human requests a dry run at an execution authorization gate | `.bonsai/skills/dry_run.md` |
-| The exact next step is complete, the session is ending, or a handoff is being prepared | `.bonsai/skills/handoff.md` |
-| Proposed or completed work may clarify or revise final-truth documents | `.bonsai/skills/final_truth_update.md` |
-| Repository navigation or code-map updates are needed | Use `.bonsai/maps/code_map.md`; follow its instructions and any required rules in `.bonsai/maps/map_system.md` |
+| Situation                                                                                                                                     | Skill or instruction                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Phase execution mode is unresolved, a phase plan must be created or corrected, Pass A is active, or a phase-plan or contract gate is required | `.bonsai/skills/phase_execution.md`                                                                            |
+| The human requests a dry run at an execution authorization gate                                                                               | `.bonsai/skills/dry_run.md`                                                                                    |
+| The exact next step is complete, the session is ending, or a handoff is being prepared                                                        | `.bonsai/skills/handoff.md`                                                                                    |
+| Proposed or completed work may clarify or revise final-truth documents                                                                        | `.bonsai/skills/final_truth_update.md`                                                                         |
+| Repository navigation or code-map updates are needed                                                                                          | Use `.bonsai/maps/code_map.md`; follow its instructions and any required rules in `.bonsai/maps/map_system.md` |
 
 Do not begin substantive execution until any required phase-planning, contract, dry-run, or final-truth gate has been satisfied. Do not claim an exact next step is complete until `.bonsai/skills/handoff.md` has been followed.
 
 ## Execution Rules
 
 * **Authority:** Never modify Human-owned files (`requirements.md`, `architecture.md`) without explicit instruction.
+
 * **Agent-Owned Maintenance:** Actively maintain:
 
     * `plan.md`
@@ -94,6 +101,7 @@ Do not begin substantive execution until any required phase-planning, contract, 
     * `icebox.md`, when out-of-scope observations need to be preserved
 
 * **Focus:** Execute only the exact next step in `state.md`. Do not broaden scope casually.
+
 * **Working-Tree Baseline:** Treat the current contents of the working tree as the human's intended starting state.
 
     * Do not gate approved work on whether the repository is clean.
@@ -102,13 +110,16 @@ Do not begin substantive execution until any required phase-planning, contract, 
     * Stop only when the exact next step conflicts with required project-memory contents or cannot be completed within approved scope.
 
 * **Completion Reporting:** Report files added or modified as part of the completed step and the checks performed. Do not enumerate unrelated pre-existing workspace changes unless they affected execution or require human attention.
+
 * **Dry Runs:** Offer at execution authorization gates. If requested, read `.bonsai/skills/dry_run.md` before beginning work.
+
 * **Out-of-Scope Discoveries:** If you notice adjacent bugs, technical debt, missing tests, refactor opportunities, documentation gaps, or other useful work outside the exact next step:
 
     * Do not fix them unless the user explicitly expands scope.
     * Record them concisely in `icebox.md`.
     * Continue the assigned work.
     * Treat `icebox.md` as agent-maintained, non-authoritative observation storage, not an approved backlog or execution plan.
+    * Do not create durable `Icebox` sections inside phase plans or other project-memory files. Use `icebox.md` as the single durable home for out-of-scope observations.
 
 * **Material Deviations:** If continuing requires a contract change, expanded subsystem scope, material change to approved execution basis, acceptance of failed required checks, or new human design decision, STOP before the deviating change. If it is a `Revision`, use `.bonsai/skills/final_truth_update.md`. Otherwise present:
 
@@ -117,6 +128,7 @@ Do not begin substantive execution until any required phase-planning, contract, 
     3. Stop here and preserve the issue in the icebox.
 
 * **Framework:** Zero trust. Do not invent framework behavior. Consult deeper `.bonsai/maps/` files and relevant source guidance before relying on non-obvious APIs, lifecycle assumptions, or platform conventions.
+
 * **Framework Evidence:** State which maps or source guidance were checked when framework-specific behavior materially affects the implementation.
 
 ## Final-Truth Reconciliation
@@ -149,6 +161,14 @@ For phase-plan approval and contract approval:
 * Provide a copyable startup prompt for the next session.
 * End the current session without beginning the newly approved pass.
 
+The fresh-session prompt must be the canonical pointer only:
+
+```text
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
+```
+
+All next-step, approval, phase, pass, dry-run, required-skill, and stop-condition details must be recorded in `state.md`, not embedded in the prompt.
+
 Do not continue from phase-plan approval into contract work, or from contract approval into implementation, unless the human explicitly requests same-session continuation.
 
 ## Maintenance Discipline
@@ -166,6 +186,11 @@ Do not continue from phase-plan approval into contract work, or from contract ap
 * **Dry-Run Baseline Discipline:** When a dry run is approved, preserve only its compact execution baseline in `state.md` until that work completes or is abandoned. Remove or replace stale active baseline content after completion or redirection.
 
 * **Icebox Discipline:** Update `icebox.md` only for observations that are useful to preserve but not approved for immediate execution. Keep entries compact, specific, and easy for a human to triage later.
+
+    * Use `icebox.md` as the single durable home for out-of-scope observations.
+    * Do not create or maintain durable `Icebox` sections inside `plan.md`, `state.md`, active phase plans, or handoff summaries.
+    * If a phase plan already contains durable icebox content, migrate the entries to `icebox.md` during handoff or the next relevant maintenance pass.
+    * Do not treat icebox entries as requirements, architecture decisions, roadmap commitments, or authorized execution work.
 
 * **Map Updates:** After code changes, update shared maps only if public structure, extension points, lifecycles, or rebuild-relevant behavior changed. Follow `.bonsai/maps/code_map.md` and any required `.bonsai/maps/map_system.md` instructions.
 

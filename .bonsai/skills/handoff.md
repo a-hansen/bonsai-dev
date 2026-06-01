@@ -15,6 +15,7 @@ Before producing a handoff, inspect the relevant approved basis for the work:
 * Approved final-truth impact, when one exists.
 * Current `state.md`.
 * Active `plan/plan_phase_<N>.md`, when applicable.
+* `icebox.md`, when present.
 * Any project memory documents affected by the completed work.
 
 ## Handoff Procedure
@@ -51,6 +52,20 @@ After completing the exact next step:
 
 8. If presenting a terminate-session option, include a ready-to-copy prompt for starting the next session.
 
+## Icebox Placement
+
+Out-of-scope observations must be recorded in `icebox.md`, not as durable Icebox sections inside `plan.md`, `state.md`, active phase plans, handoff summaries, or other project-memory documents.
+
+A phase plan may mention that icebox items were captured during the phase, but the durable entries must live in `icebox.md`.
+
+At handoff, if an active phase plan contains a durable `Icebox` section, migrate those entries to `icebox.md` and replace the phase-plan section with a brief note such as:
+
+```text
+Out-of-scope observations captured during this phase were moved to `../icebox.md`.
+```
+
+Do not treat migrated icebox entries as approved backlog, requirements, architecture, roadmap, or authorized next work.
+
 ## Completion Summary
 
 Output a compact completion summary containing:
@@ -74,56 +89,64 @@ At completion, report files added or modified as part of the completed step. Do 
 
 ## Clean Session Prompt
 
-When the handoff offers a clean-session option, provide a copyable prompt immediately after the choice.
-
-The prompt must be specific enough that the next agent can restart without guessing. Include:
-
-* The project path.
-* The relevant Bonsai project memory path.
-* The recorded exact next step.
-* The skill or workflow the next session should use, when known.
-* Any required gate, dry-run baseline, or approval state.
-* A clear instruction to begin with the normal Bonsai startup/read-only pass.
-
-Use this format:
+When the handoff offers a clean-session option, provide this exact copyable prompt format:
 
 ```text
-Start a new Bonsai implementation session for this repository.
-
-Project path: <repo or project path>
-Bonsai project memory: .bonsai/projects/<project>/
-
-Begin with the normal Bonsai startup/read-only pass. Read the required project memory, report current state, and stop before making changes.
-
-Recorded exact next step:
-<exact next step from state.md>
-
-Relevant skill/workflow:
-<phase execution, dry run, handoff, repo mapping, or other applicable skill>
-
-Approval/gate status:
-<any phase, contract, dry-run, or final-truth approval status the next session needs>
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
-If any field is unknown, write `Unknown` rather than inventing it.
+Replace `<project>` with the active Bonsai project key or project memory directory name.
 
-Do not merely tell the user to start a clean session. Provide the prompt text so the user can copy it directly.
+Do not add project path, recorded exact next step, approval status, dry-run status, workflow name, phase name, pass name, gate instructions, required skills, stop conditions, previous-session summary, or next-session instructions to the copyable prompt.
+
+Those details must be recorded in `state.md` before handoff. The next session must discover them through the normal `implementation_prompt.md` startup/read-only pass.
+
+The clean-session prompt is only a pointer into Bonsai. It is not a handoff summary.
+
+### Canonical Prompt Self-Check
+
+Before presenting a clean-session prompt, verify that the prompt contains only:
+
+```text
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
+```
+
+The clean-session prompt must not contain:
+
+* The exact next step.
+* Phase name or phase number.
+* Pass name.
+* Approval status.
+* Dry-run status.
+* Stop condition.
+* Required skills.
+* Project path.
+* Summary of previous work.
+* Instructions copied from `state.md`.
+
+If any of that information seems useful for the next session, update `state.md` instead.
+
+The clean-session prompt is a pointer, not a handoff packet.
 
 ## Handoff Choices
 
 Unless the recorded next step requires a named gate, present:
 
-1. Terminate this session; continue in a clean session.
+1. Terminate this session and continue in a clean session using the canonical startup prompt.
 2. Proceed to the recorded next step in this session.
 3. Show a dry run for the recorded next step in this session.
 4. Discuss or correct the result or next step.
 
-If option 1 is presented, include the clean session prompt before or immediately after the choices.
+If option 1 is presented, include the clean-session prompt before or immediately after the choices.
+
+When presenting option 1, show only the canonical startup prompt. Do not append explanatory context inside the copyable prompt block.
+
+Any explanatory context must appear in the completion summary or handoff summary outside the copyable prompt.
 
 If the recorded next step requires a named gate, present that gate instead of immediate proceed choices.
 
 ## Stop Conditions
 
-Stop after presenting the completion summary, handoff choices, and clean session prompt when applicable.
+Stop after presenting the completion summary, handoff choices, and clean-session prompt when applicable.
 
 Do not continue into the next step unless the user explicitly chooses to proceed in the current session.
