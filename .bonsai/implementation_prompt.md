@@ -4,7 +4,25 @@
 
 Run implementation sessions inside an existing project workspace (`.bonsai/projects/<project>/`).
 
-This file is the implementation kernel. Keep it small. Load detailed skills only when the current task requires them.
+This file is the implementation kernel. Keep it small, stable, and commonly reused. Load detailed skills only when the current task requires them.
+
+## Prompt-Cache Friendly Startup
+
+Keep startup prompts short and stable. The canonical fresh-session prompt is:
+
+```text
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
+```
+
+This file is the stable root loader. Do not merge project-specific truth into this file only to reduce file count. Project memory stays separate so Bonsai can load stable shared instructions first, then project-specific truth, then volatile state.
+
+At startup:
+
+* Read required Bonsai files in the exact order defined by this document.
+* Do not skip, reorder, summarize from memory, or substitute required startup files.
+* Do not decide whether required startup files are necessary. They are necessary.
+* Read first, then reason from the loaded context.
+* Keep volatile details, current task notes, phase/pass specifics, and handoff details in project memory, especially `state.md`, not in the fresh-session prompt.
 
 ## Communication & Style
 
@@ -16,6 +34,7 @@ This file is the implementation kernel. Keep it small. Load detailed skills only
 
 ## File Roles
 
+* **Stable root loader:** `.bonsai/implementation_prompt.md`.
 * **Project truth:** `.bonsai/projects/<project>/requirements.md`, `architecture.md`, `plan.md`, active phase plans, and `state.md`.
 * **Observation store:** `.bonsai/projects/<project>/icebox.md`.
 * **Framework skills:** `.bonsai/skills/*.md`. These describe how the agent should work.
@@ -28,41 +47,57 @@ Do not use framework skills, developer context, maps, or icebox observations as 
 
 ## Startup Sequence
 
-1. Read `.bonsai/maps/code_map.md`, when present. If it is absent, do not treat that absence as a blocker unless the exact next step requires map-guided source work or code-map maintenance.
+Perform a read-only startup pass.
 
-2. Read optional `.bonsai/developer_context.md`, when present.
+Read required files immediately and in the exact order below before proposing changes, making edits, inspecting implementation targets beyond required startup reads, or analyzing implementation choices.
 
-3. Read project core:
+### 1. Stable repository navigation
 
-    * `requirements.md`
-    * `architecture.md`
-    * `plan.md`
-    * `state.md`
+Read `.bonsai/maps/code_map.md`, when present.
 
-4. **Conditionally Read:**
+If it is absent, do not treat that absence as a blocker unless the exact next step requires map-guided source work or code-map maintenance.
 
-    * Active phase plan, if named in `state.md`.
-    * If `state.md` does not identify a phase plan, use `plan.md` to determine whether one exists.
-    * `.bonsai/skills/phase_execution.md`, when phase execution mode is unresolved, a phase plan must be created or corrected, Pass A is active, or the exact next step involves a phase-plan or contract gate.
-    * Subsystem architecture files only when relevant to the exact next step.
-    * `icebox.md`, only when present and only if its contents are relevant to the exact next step or recent project context.
+### 2. Stable developer context
 
-5. **Respond:** Output a telegraphic summary:
+Read optional `.bonsai/developer_context.md`, when present.
 
-    * Active project
-    * Current phase
-    * Current phase pass
-    * Phase execution mode
-    * Exact next step
-    * Final-truth impact: `None`, `Clarification`, or `Revision`
-    * Affected final-truth documents, when impact is not `None`
-    * Blockers to the exact next step, if any
-    * Recommended AI level
-    * Loaded skills, if any
-    * If phase execution mode is unresolved or must be resolved before work proceeds:
+### 3. Project core truth
 
-        * Recommended mode
-        * One-sentence rationale
+Read project core files in this order:
+
+1. `.bonsai/projects/<project>/requirements.md`
+2. `.bonsai/projects/<project>/architecture.md`
+3. `.bonsai/projects/<project>/plan.md`
+4. `.bonsai/projects/<project>/state.md`
+
+### 4. Conditional project and skill context
+
+Read only when required by the rules below:
+
+* Active phase plan, if named in `state.md`.
+* If `state.md` does not identify a phase plan, use `plan.md` to determine whether one exists.
+* `.bonsai/skills/phase_execution.md`, when phase execution mode is unresolved, a phase plan must be created or corrected, Pass A is active, or the exact next step involves a phase-plan or contract gate.
+* Subsystem architecture files only when relevant to the exact next step.
+* `icebox.md`, only when present and only if its contents are relevant to the exact next step or recent project context.
+
+### 5. Startup response
+
+Output a telegraphic summary:
+
+* Active project
+* Current phase
+* Current phase pass
+* Phase execution mode
+* Exact next step
+* Final-truth impact: `None`, `Clarification`, or `Revision`
+* Affected final-truth documents, when impact is not `None`
+* Blockers to the exact next step, if any
+* Recommended AI level
+* Loaded skills, if any
+* If phase execution mode is unresolved or must be resolved before work proceeds:
+
+    * Recommended mode
+    * One-sentence rationale
 
 ## Startup Gate
 

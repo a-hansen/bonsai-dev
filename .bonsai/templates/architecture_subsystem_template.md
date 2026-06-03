@@ -42,6 +42,7 @@
 ## Guardrails
 
 * **Implementation Guardrails:** [List strict rules preventing regression]
+* **Modularity Guardrails:** [Rules preserving subsystem responsibility, public seams, dependency direction, and human-digestible structure]
 * **Rejected Approaches:** [Approach] - [Why rejected]
 * **Open Questions:** [Active design questions, prioritized by importance]
 * **Fitness Criteria:** [Condition] | [Condition]
