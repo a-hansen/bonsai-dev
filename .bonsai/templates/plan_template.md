@@ -25,6 +25,8 @@ risk>
 write: "See active phase plan file.")*
 
 * **Goal:** <Concrete phase outcome>
+* **Module Scope:** [Modules/subsystems this phase may touch, if known]
+* **Boundary Constraints:** [Modules/subsystems this phase must not touch, dependency directions it must preserve, or `None`]
 * **Ordered Steps:**
     1. <Step>
     2. <Step>
@@ -43,7 +45,8 @@ write: "See active phase plan file.")*
 * Keep phase status, execution mode, and active phase plan references consistent with `state.md`.
 * When `state.md` records a phase-level or pass-level transition, verify whether this roadmap also requires a corresponding update.
 * Add a separate `plan/plan_phase_<N>.md` when a phase requires deep sequencing, two-pass execution,
-  multiple meaningful review or validation gates, or enough detail that it would bloat this file.
+  multiple meaningful review or validation gates, explicit module-scope control, boundary review, or
+  enough detail that it would bloat this file.
 * When a `plan/plan_phase_<N>.md` file exists, treat it as the authoritative detailed plan for that phase.
   Do not partially duplicate phase-level sequencing here.
 * If an active phase plan file exists but is incomplete, stale, or inconsistent with current approved

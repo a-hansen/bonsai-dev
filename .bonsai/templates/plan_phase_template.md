@@ -13,6 +13,14 @@
 **Out of Scope / Do Not Do Yet:** [List items]  
 **Expected Deliverables:** [List deliverables]
 
+## Module Scope & Boundaries
+
+* **Modules In Scope:** [Modules/subsystems/packages/layers this phase may create or modify]
+* **Modules Out of Scope:** [Modules/subsystems/packages/layers this phase must not modify]
+* **Boundary Rules:** [Dependency direction, ownership rules, adapter/domain/runtime/protocol separation rules, or `None`]
+* **Public Seams / Contracts:** [Interfaces, schemas, entry points, extension points, tests, examples, or review artifacts that should make the boundary human-reviewable]
+* **Human Review Focus:** [What the reviewer should inspect to confirm the implementation shape remains understandable]
+
 ## Ordered Work
 
 *(Note: If Single-Pass, delete Pass A and use only Pass B / Implementation steps.)*
@@ -24,11 +32,12 @@
 
 Pass A should normally produce:
 
-* the reviewable API, structural contract, or design surface being established, and
+* the reviewable API, structural contract, or design surface being established,
+* the module seams, subsystem boundaries, or dependency rules this phase will rely on, when relevant, and
 * behavior-focused tests, usage examples, or equivalent review artifacts that make the intended
   behavior concrete before full implementation.
 
-**Stop here for Human Review of the contract and review artifacts before Pass B.**
+**Stop here for Human Review of the contract, module boundaries, and review artifacts before Pass B.**
 
 ### Pass B: Implementation (Or Single-Pass)
 
@@ -38,7 +47,8 @@ Pass A should normally produce:
 ## Validation & Done Criteria
 
 * **Validation Strategy:** [List specific tests, manual checks, and verifications]
-* **Definition of Done:** [List completion conditions. For two-pass, include "Faithful to approved contract"]
+* **Module Boundary Validation:** [How to confirm responsibilities, dependency direction, public seams, and human-digestible structure were preserved]
+* **Definition of Done:** [List completion conditions. For two-pass, include "Faithful to approved contract and module boundaries"]
 
 ## Context & Wrap-up
 
@@ -58,6 +68,9 @@ Pass A should normally produce:
     * review-gate status,
     * blockers,
     * phase completion state.
+* Preserve the approved module scope and boundary rules during execution.
+* Do not collapse responsibilities into convenience classes, add cross-module shortcuts, or introduce new dependencies outside the approved boundary shape without human approval.
+* If required behavior does not fit the approved module structure, stop and require phase-plan correction, architecture clarification, architecture revision, or icebox capture before continuing.
 * When a pass boundary, review gate, blocker state, or phase status changes, verify whether
   `state.md` and `plan.md` require corresponding updates.
 * If this phase plan becomes incomplete, stale, or inconsistent with current approved project

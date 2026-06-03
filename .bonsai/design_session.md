@@ -32,11 +32,13 @@ Generate optional documents ONLY if our design explicitly demands them:
     * **Two-Pass Contract-First Semantics:** When a generated phase plan uses two-pass
       contract-first execution, Pass A should normally produce both:
 
-        * the reviewable API / structural contract, and
+        * the reviewable API / structural contract,
+        * the module seams or subsystem boundaries the phase will rely on, when the phase establishes
+          or changes implementation structure, and
         * tests or usage examples that make the intended behavior concrete for human review.
 
       Pass A should end at a human review gate. Pass B should implement against the approved
-      contract and tests.
+      contract, module seams, and tests.
 
 * `architecture/architecture_<SUBSYSTEM>.md`
   *(If a subsystem has deep, isolated complexity that should not bloat the top-level architecture.)*
@@ -61,9 +63,11 @@ Ask rather than guess when needed for:
 * Test framework
 * Repository or module layout, when it affects the plan
 * Execution environment, when it constrains implementation
+* Required module boundaries or dependency direction, when they materially shape the architecture or
+  first implementation phase
 
 Do not hide missing foundational decisions behind vague assumptions such as
-“standard tooling,” “conventional test framework,” or “normal project layout.”
+“standard tooling,” “conventional test framework,” “normal project layout,” or “clean modular design.”
 
 If a missing decision can reasonably shape architecture, phase planning, or the
 first implementation step, ask first.
@@ -81,6 +85,30 @@ If the user explicitly asks you to proceed without resolving a foundational unce
 
 ---
 
+## Module Boundary Clarification
+
+When the project is expected to contain more than one meaningful implementation concern, ask the
+user to define or approve the major module shape before synthesis if it is not already clear.
+
+Clarify:
+
+* **Major modules:** The human-digestible parts of the system, such as domain, protocol, runtime,
+  persistence, adapters, UI, CLI, integration, or test support.
+* **Public seams:** APIs, interfaces, schemas, contracts, entry points, extension points, or message
+  formats that other modules, users, or future phases will depend on.
+* **Internal seams:** Boundaries that should remain understandable to humans but are not public API.
+* **Dependency direction:** Which modules may depend on which other modules.
+* **Forbidden coupling:** Dependencies, shortcuts, or mixed responsibilities the implementation
+  should avoid.
+
+If the user does not know the module shape yet, propose a minimal candidate module map and ask for
+approval rather than silently inventing one.
+
+If the module shape is intentionally deferred, preserve that under `Foundational Open Questions` or
+make module-boundary discovery part of the first phase.
+
+---
+
 ## Synthesis Rules
 
 * **No Hallucinations:** Base the outputs strictly on our chat history. Do not invent features,
@@ -89,8 +117,12 @@ If the user explicitly asks you to proceed without resolving a foundational unce
   `Open Questions` in the appropriate file. Include every materially relevant gap; keep the questions
   concise and prioritized by importance rather than limiting them to an arbitrary count.
 * **Foundational Gaps:** Use `Foundational Open Questions` only for unresolved decisions that can
-  materially shape architecture, roadmap, execution mode, or the first implementation step.
-  Use ordinary `Open Questions` for non-blocking uncertainty.
+  materially shape architecture, roadmap, execution mode, module boundaries, dependency direction, or
+  the first implementation step. Use ordinary `Open Questions` for non-blocking uncertainty.
+* **Human-Digestible Modularity:** Preserve the intended implementation shape. When the discussion
+  establishes modules, subsystems, layers, adapters, protocol surfaces, domain boundaries, or
+  dependency direction, capture them explicitly in `architecture.md` rather than leaving them as
+  informal implementation preference.
 * **Format:** Adhere strictly to the dense, pipe-delimited `[Meta]` templates provided below.
   Do not add conversational filler outside the code blocks.
 * **Project Memory Quality:** Write the generated documents as durable project memory, not as a
@@ -187,7 +219,8 @@ Use:
     * implements already-approved behavior,
     * is bounded and localized,
     * has a clear implementation direction,
-    * does not materially shape downstream design, and
+    * does not materially shape downstream design,
+    * does not establish or reshape important module boundaries, and
     * can be safely reviewed after code and tests are produced.
 
 * **Two-pass contract-first execution**, when the first phase:
@@ -195,6 +228,8 @@ Use:
     * introduces or materially reshapes a public API,
     * defines or changes a schema, persistent format, protocol, extension contract, or integration surface,
     * establishes an important abstraction or subsystem boundary,
+    * establishes or changes human-digestible module boundaries,
+    * changes dependency direction or cross-module seams,
     * changes rebuild-relevant structure that later phases will rely on,
     * creates a high-leverage design surface where human review before full implementation is valuable, or
     * is otherwise likely to become costly to reverse after implementation begins.
@@ -211,7 +246,8 @@ Do not generate `plan/plan_phase_<N>.md` merely because a phase is active,
 complex in the abstract, or two-pass.
 
 Generate it only when our design discussion already contains enough execution-level sequencing,
-review gates, or validation detail to justify preserving a phase-level plan before implementation begins.
+review gates, module-scope decisions, boundary constraints, or validation detail to justify preserving
+a phase-level plan before implementation begins.
 
 Otherwise, leave the phase plan absent so the implementation workflow can create it through the phase
 execution skill closer to execution, when repository reality is available.
@@ -245,6 +281,8 @@ human review gate, unless our design discussion explicitly requires a smaller st
 For an initial Pass A, this usually means:
 
 * define the reviewable API / contract shape,
+* define the module seams, subsystem boundaries, or dependency rules the phase will rely on, when
+  relevant,
 * create behavior-focused tests that demonstrate intended usage and edge cases,
 * stop for human review before Pass B implementation.
 
@@ -387,6 +425,15 @@ it here.*
 * **<Subsystem Name>:** <Purpose> | **Owns:** [Responsibilities] | **Must Not Own:** [Boundaries] |
   **Dependencies:** [List] | **Details:** <Link to subsystem file or `None`>
 
+## Module Boundaries & Dependency Shape
+
+* **Human-Digestible Modules:** [List major modules/layers/packages the implementation should preserve]
+* **Module Ownership:** [Module]: <Responsibilities owned by this module> | [Module]: <Responsibilities owned by this module>
+* **Public Seams:** [Seam/Interface]: <Purpose, consumers, and stability expectation> | [Seam/Interface]: <Purpose, consumers, and stability expectation>
+* **Dependency Direction:** **Allowed:** [Directions] | **Forbidden:** [Directions]
+* **Boundary Rules:** [Rules that keep protocol, domain, runtime, adapters, persistence, UI, or infrastructure concerns separated]
+* **Review Anchors:** [Files, interfaces, tests, examples, or module entry points that should make the generated implementation easy for a human to inspect]
+
 ## Canonical Domain Model & Data
 
 * **<Concept>:** <Purpose> | **Owned by:** <Subsystem> | **Properties:** [List] |
@@ -410,8 +457,9 @@ it here.*
 ## Guardrails & Rejections
 
 * **Implementation Guardrails:** [Strict technical boundaries to prevent regression]
+* **Modularity Guardrails:** [Rules preventing collapsed responsibilities, convenience dependencies, oversized classes, leaky adapters, or cross-module shortcuts]
 * **Explicitly Rejected:** [Approach] - [Why rejected]
-* **Foundational Open Questions:** [Unresolved architecture-shaping questions that materially affect the target design, if any]
+* **Foundational Open Questions:** [Unresolved architecture-shaping questions that materially affect the target design, module boundaries, dependency direction, or first implementation phase, if any]
 * **Open Questions:** [Active architecture questions, prioritized by importance]
 ```
 
@@ -464,6 +512,7 @@ it here.*
 ## Guardrails
 
 * **Implementation Guardrails:** [List strict rules preventing regression]
+* **Modularity Guardrails:** [Rules preserving subsystem responsibility, public seams, dependency direction, and human-digestible structure]
 * **Rejected Approaches:** [Approach] - [Why rejected]
 * **Open Questions:** [Active design questions, prioritized by importance]
 * **Fitness Criteria:** [Condition] | [Condition]
@@ -501,6 +550,8 @@ risk>
 write: "See active phase plan file.")*
 
 * **Goal:** <Concrete phase outcome>
+* **Module Scope:** [Modules/subsystems this phase may touch, if known]
+* **Boundary Constraints:** [Modules/subsystems this phase must not touch, dependency directions it must preserve, or `None`]
 * **Ordered Steps:**
     1. <Step>
     2. <Step>
@@ -519,7 +570,8 @@ write: "See active phase plan file.")*
 * Keep phase status, execution mode, and active phase plan references consistent with `state.md`.
 * When `state.md` records a phase-level or pass-level transition, verify whether this roadmap also requires a corresponding update.
 * Add a separate `plan/plan_phase_<N>.md` when a phase requires deep sequencing, two-pass execution,
-  multiple meaningful review or validation gates, or enough detail that it would bloat this file.
+  multiple meaningful review or validation gates, explicit module-scope control, boundary review, or
+  enough detail that it would bloat this file.
 * When a `plan/plan_phase_<N>.md` file exists, treat it as the authoritative detailed plan for that phase.
   Do not partially duplicate phase-level sequencing here.
 * If an active phase plan file exists but is incomplete, stale, or inconsistent with current approved
@@ -549,6 +601,14 @@ write: "See active phase plan file.")*
 **Out of Scope / Do Not Do Yet:** [List items]  
 **Expected Deliverables:** [List deliverables]
 
+## Module Scope & Boundaries
+
+* **Modules In Scope:** [Modules/subsystems/packages/layers this phase may create or modify]
+* **Modules Out of Scope:** [Modules/subsystems/packages/layers this phase must not modify]
+* **Boundary Rules:** [Dependency direction, ownership rules, adapter/domain/runtime/protocol separation rules, or `None`]
+* **Public Seams / Contracts:** [Interfaces, schemas, entry points, extension points, tests, examples, or review artifacts that should make the boundary human-reviewable]
+* **Human Review Focus:** [What the reviewer should inspect to confirm the implementation shape remains understandable]
+
 ## Ordered Work
 
 *(Note: If Single-Pass, delete Pass A and use only Pass B / Implementation steps.)*
@@ -560,11 +620,12 @@ write: "See active phase plan file.")*
 
 Pass A should normally produce:
 
-* the reviewable API, structural contract, or design surface being established, and
+* the reviewable API, structural contract, or design surface being established,
+* the module seams, subsystem boundaries, or dependency rules this phase will rely on, when relevant, and
 * behavior-focused tests, usage examples, or equivalent review artifacts that make the intended
   behavior concrete before full implementation.
 
-**Stop here for Human Review of the contract and review artifacts before Pass B.**
+**Stop here for Human Review of the contract, module boundaries, and review artifacts before Pass B.**
 
 ### Pass B: Implementation (Or Single-Pass)
 
@@ -574,7 +635,8 @@ Pass A should normally produce:
 ## Validation & Done Criteria
 
 * **Validation Strategy:** [List specific tests, manual checks, and verifications]
-* **Definition of Done:** [List completion conditions. For two-pass, include "Faithful to approved contract"]
+* **Module Boundary Validation:** [How to confirm responsibilities, dependency direction, public seams, and human-digestible structure were preserved]
+* **Definition of Done:** [List completion conditions. For two-pass, include "Faithful to approved contract and module boundaries"]
 
 ## Context & Wrap-up
 
@@ -594,6 +656,9 @@ Pass A should normally produce:
     * review-gate status,
     * blockers,
     * phase completion state.
+* Preserve the approved module scope and boundary rules during execution.
+* Do not collapse responsibilities into convenience classes, add cross-module shortcuts, or introduce new dependencies outside the approved boundary shape without human approval.
+* If required behavior does not fit the approved module structure, stop and require phase-plan correction, architecture clarification, architecture revision, or icebox capture before continuing.
 * When a pass boundary, review gate, blocker state, or phase status changes, verify whether
   `state.md` and `plan.md` require corresponding updates.
 * If this phase plan becomes incomplete, stale, or inconsistent with current approved project
