@@ -26,7 +26,7 @@ to populate this section.
 
 ## Ordered Work
 
-*(If Single-Pass, delete Pass A and use only Pass B / Implementation steps.)*
+*(If Single-Pass, delete Pass A and rename the implementation section to `### Implementation`. Do not use a Pass B label for single-pass work.)*
 
 ### Pass A: Contract (Review Gate)
 
@@ -49,10 +49,10 @@ injection, abstraction layers, or similar indirection.
 
 **Stop here for Human Review before Pass B.**
 
-### Pass B: Implementation (Or Single-Pass)
+### Pass B: Implementation
 
-* **Step B1 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
-* **Step B2 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
+* **Step 1 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
+* **Step 2 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
 
 ## Validation & Done Criteria
 

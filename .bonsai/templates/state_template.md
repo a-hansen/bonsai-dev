@@ -8,7 +8,7 @@
 **Current Phase:** <Phase Name>  
 **Active Phase Plan File:** <`plan/plan_phase_<N>.md` or `None`>  
 **Phase Plan Status:** <None / Draft / Ready for Review / Approved / Superseded>  
-**Current Phase Pass:** <Not applicable | Phase Planning | Phase Plan Review | Pass A (Contract) | Contract Review | Pass B (Implementation) | Awaiting Review>  
+**Current Phase Pass:** <Not applicable | Phase Planning | Phase Plan Review | Single-pass Implementation | Pass A (Contract) | Contract Review | Pass B (Implementation) | Awaiting Review>  
 **Phase Execution Mode:** <Single-pass | Two-pass contract-first | To determine at activation>  
 **Execution Readiness:** <Design required | Phase planning required | Awaiting human review | Ready to execute | Blocked | Complete>  
 **Current Objective:** <Single concrete objective>
