@@ -2,21 +2,26 @@
 
 ## Purpose
 
-Provide a compact, read-only execution preview before files are modified.
+Provide an optional compact, read-only execution preview before files are modified.
 
-A dry run supports human steering. It is not a design document, implementation walkthrough, or substitute for a required approval gate.
+A dry run supports human steering when requested or when the human accepts a dry run suggested because
+of unusual execution risk or ambiguity.
+
+It is not a routine Bonsai gate, design document, implementation walkthrough, or substitute for a
+required approval gate.
 
 ## Required Inputs
 
 Use the most specific approved execution basis available:
 
-* Approved contract.
-* Active phase plan.
+* Approved contract, when one exists.
+* Approved active phase plan, when one exists.
 * Recorded exact next step.
 * Approved final-truth impact, when already known.
 * Approved dry-run baseline, when revising or replacing a prior dry run.
 
-If no approved execution basis exists, do not invent one. Return to the applicable planning, contract, or handoff gate.
+If no approved execution basis exists, do not invent one. Return to the applicable planning, contract,
+or handoff gate.
 
 ## Rules
 
@@ -25,11 +30,15 @@ If no approved execution basis exists, do not invent one. Return to the applicab
 * Prefer Bonsai maps and architecture guidance before broad source exploration.
 * Keep the output compact.
 * Identify file groups, subsystems, or artifacts rather than speculative line-by-line edits.
-* Do not restate requirements, architecture, or contract detail already available in the approved basis.
+* Do not restate requirements, architecture, contract detail, or phase-plan detail already available in
+  the approved basis.
 * Surface uncertainty explicitly.
 * Do not turn assumptions into approved scope.
-* Classify anticipated final-truth impact using `None`, `Clarification`, or `Revision`.
-* A `Revision` may be previewed, but cannot authorize substantive implementation before affected final-truth documents are updated and approved.
+* Classify anticipated impact on human-owned final truth using `None`, `Clarification`, or `Revision`.
+* A `Revision` may be previewed, but cannot authorize substantive implementation before affected
+  human-owned final-truth documents are updated and approved.
+* Do not use the dry run to invent implementation abstractions, interfaces, module seams, test structure,
+  or coding conventions not already required by project direction.
 
 ## Procedure
 
@@ -47,7 +56,7 @@ If no approved execution basis exists, do not invent one. Return to the applicab
 
 Output:
 
-````markdown
+```markdown
 ## Dry Run: <exact next step>
 
 Basis:
@@ -60,7 +69,7 @@ Intended result:
 - <concrete outcome>
 
 Final-truth impact: <None | Clarification | Revision>
-- Affected documents: <None, or final-truth document paths>
+- Affected documents: <None, or human-owned final-truth document paths>
 - Required update before implementation: <None, proposed clarification, or required approved revision>
 
 Planned checks:
@@ -73,13 +82,13 @@ Scope concerns:
 2. Request revisions to this dry run.
 3. Return to the prior gate.
 4. Stop here.
-````
+```
 
 For a `Revision`, replace option 1 with:
 
-````markdown
+```markdown
 1. Draft proposed updates to the affected final-truth documents for review.
-````
+```
 
 Add detail only when needed to prevent material ambiguity.
 
@@ -88,16 +97,24 @@ Add detail only when needed to prevent material ambiguity.
 If the user approves the dry run:
 
 1. Record a compact approved execution baseline in `state.md`.
-2. Include the basis, intended result, expected touch points, anticipated final-truth impact, affected final-truth documents when applicable, and planned checks.
+2. Include only:
+    * approved basis,
+    * intended result,
+    * expected touch points,
+    * anticipated final-truth impact,
+    * affected final-truth documents when applicable,
+    * planned checks.
 3. Execute only against that baseline and already-approved project direction.
-4. Do not implement work classified as `Revision` until affected final-truth documents have been updated and approved.
+4. Do not implement work classified as `Revision` until affected final-truth documents have been updated
+   and approved.
 5. Before implementing a material deviation, stop and use the applicable gate from `implementation_prompt.md`.
 6. At completion, compare actual changes, checks, and final-truth impact against the approved baseline.
-7. Remove or replace the active baseline after completion or redirection.
+7. Remove the active baseline after completion, abandonment, or redirection.
 
 ## Compactness Test
 
-Before presenting a dry run, remove any detail that does not help the human decide whether to authorize the stated work.
+Before presenting a dry run, remove any detail that does not help the human decide whether to authorize
+the stated work.
 
 If the preview becomes a design discussion, stop and return to the appropriate planning or contract gate.
 
@@ -106,7 +123,8 @@ If the preview becomes a design discussion, stop and return to the appropriate p
 Stop instead of presenting or executing a dry run when:
 
 * There is no approved basis for the proposed work.
-* The requested work changes requirements, architecture, system boundaries, or intended behavior without approved final-truth updates.
+* The requested work changes requirements, architecture, system boundaries, or intended behavior without
+  approved final-truth updates.
 * The dry run would require destructive commands, code edits, or Bonsai document updates before approval.
 * The preview cannot be made credible without broader design or planning work.
 * The user chooses to return to the prior gate or stop here.

@@ -1,52 +1,58 @@
 # AI Icebox
 
 **Project:** <Project name>  
-**[Meta: Agent-maintained | Non-authoritative Observation Store | Human-triaged | Not an Approved Backlog]**
+**[Meta: Agent-maintained | Human-triaged Deferred Observations | Non-authoritative | Not an Approved Backlog]**
 
 ## Purpose
 
-Preserve useful out-of-scope observations discovered during design or implementation without
-silently expanding active scope.
+Preserve selected out-of-scope observations that the human has explicitly chosen to remember for possible
+future consideration.
 
-The icebox is for things worth remembering, not things approved for execution.
+The icebox is not an automatic observation log.
+
+Agents may notice out-of-scope issues during design or implementation, but must not write them here until
+the human chooses to preserve or defer them.
+
+An item in the icebox is worth remembering, not approved for execution.
 
 ## Entries
 
 ### ICE-001 — <Short observation title>
 
-**Status:** <Unreviewed | Reviewed | Promoted | Rejected | Superseded>  
+**Status:** <Deferred | Promoted | Rejected | Superseded>  
 **Observed During:** <Design synthesis | Phase <N> | Pass A | Pass B | Other context>  
-**Observation:** <Concise description of the issue, opportunity, gap, or follow-up idea>  
-**Why It May Matter:** <Short explanation of possible value, risk, or future relevance>  
-**Possible Destination if Promoted:** <requirements.md | architecture.md | plan.md | state.md | code/maps | issue tracker | None / Unknown>  
-**Notes:** <Optional concise context, constraints, or related files>
+**Observation:** <Concise independently understandable description>  
+**Why Keep It:** <Why the human chose to preserve it>  
+**Possible Destination:** <requirements.md | architecture.md | plan.md | code/maps | issue tracker | Unknown>
 
 ---
 
 ### ICE-002 — <Short observation title>
 
-**Status:** <Unreviewed | Reviewed | Promoted | Rejected | Superseded>  
+**Status:** <Deferred | Promoted | Rejected | Superseded>  
 **Observed During:** <Design synthesis | Phase <N> | Pass A | Pass B | Other context>  
-**Observation:** <Concise description of the issue, opportunity, gap, or follow-up idea>  
-**Why It May Matter:** <Short explanation of possible value, risk, or future relevance>  
-**Possible Destination if Promoted:** <requirements.md | architecture.md | plan.md | state.md | code/maps | issue tracker | None / Unknown>  
-**Notes:** <Optional concise context, constraints, or related files>
+**Observation:** <Concise independently understandable description>  
+**Why Keep It:** <Why the human chose to preserve it>  
+**Possible Destination:** <requirements.md | architecture.md | plan.md | code/maps | issue tracker | Unknown>
 
-## Triage Guidance
+## Status Guidance
 
-* **Unreviewed:** Preserved by an agent or during synthesis; no human disposition yet.
-* **Reviewed:** Human has seen it, but it has not been promoted, rejected, or superseded.
-* **Promoted:** Human approved moving it into authoritative project memory or active work.
-* **Rejected:** Human decided not to pursue it.
-* **Superseded:** Later project direction made the observation obsolete or redundant.
+* **Deferred:** Human chose to preserve the observation for possible future consideration.
+* **Promoted:** Human approved moving the item into authoritative project memory or active execution work.
+* **Rejected:** Human decided not to pursue a previously preserved item.
+* **Superseded:** Later project direction made the preserved item obsolete or redundant.
 
 ## Maintenance Rules
 
-* Add entries only for observations that are useful to preserve but outside the currently approved scope.
-* Do not treat icebox entries as requirements, architecture decisions, roadmap commitments, or authorized execution work.
-* Do not execute, promote, reject, or supersede entries without explicit human direction, unless the user has explicitly requested icebox triage.
+* Add an entry only after the human explicitly chooses to preserve or defer an out-of-scope observation.
+* Do not automatically create icebox entries for bugs, technical debt, missing tests, refactor opportunities,
+  documentation gaps, or speculative improvements discovered during implementation.
+* Do not treat icebox entries as requirements, architecture decisions, roadmap commitments, or authorized work.
 * Keep entries compact, specific, and independently understandable.
 * Prefer one entry per distinct observation rather than combining unrelated ideas.
-* Preserve enough context that a future human review can decide whether the item matters.
-* When an entry is promoted, update its status and record the authoritative destination rather than deleting it immediately.
-* Prune or compress rejected and superseded entries when they no longer provide useful project memory.
+* Preserve only enough context for a future human to decide whether the item still matters.
+* When an entry is promoted, update its status and destination.
+* Do not preserve rejected observations merely for historical completeness. Delete them when no continuing
+  value remains.
+* Prune superseded entries when they no longer provide useful project memory.
+* Do not copy icebox entries into `state.md`, phase plans, or handoff summaries unless one becomes active work.

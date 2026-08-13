@@ -11,12 +11,15 @@
 ## Boundaries
 
 * **Owns:** [List specific responsibilities]
-* **Must Not Own:** [List explicit boundary exclusions]
+* **Must Not Own:** [Explicit approved exclusions, or `None`]
 
 ## Interfaces & Domain
 
-* **Interface: <Name>:** <Purpose> | **Consumers:** [List] | **Rules:** [List]
+* **Public Contract: <Name>:** <Purpose> | **Consumers:** [List] | **Rules:** [List]
 * **Domain: <Concept>:** <Purpose> | **Properties:** [List] | **Lifecycle:** [Rules]
+
+If no durable public contract is part of this subsystem's approved architecture, state
+`Public Contracts: None`. Do not invent interfaces merely to populate this section.
 
 ## Data Flow & Persistence
 
@@ -26,23 +29,25 @@
 
 ## Dependencies
 
-* **Allowed Depends On:** [Dependency] - <Why>
-* **Forbidden Depends On:** [Forbidden Dependency] - <Why>
+* **Allowed Depends On:** [Approved dependency] - <Why>
+* **Forbidden Depends On:** [Explicitly forbidden dependency] - <Why>
+
+If dependency direction is not architecturally prescribed, state that rather than inventing a rule.
 
 ## Cross-Cutting Rules
 
 * **Lifecycle:** [Startup/Runtime/Shutdown behavior]
-* **Concurrency:** [Threading, locking, and execution rules]
+* **Concurrency:** [Threading, locking, and execution rules, if prescribed]
 * **Error/Recovery:** [Subsystem-specific fault tolerance]
-* **Extension/Config:** [Extension points and configuration model]
+* **Extension/Config:** [Approved extension points and configuration model, or `None`]
 * **Security/Integrity:** [Trust boundaries and validation]
-* **Observability:** [Logging, metrics, and diagnostics expectations]
+* **Observability:** [Logging, metrics, and diagnostics expectations, if prescribed]
 * **Assumptions:** [Build or runtime assumptions]
 
 ## Guardrails
 
-* **Implementation Guardrails:** [List strict rules preventing regression]
-* **Modularity Guardrails:** [Rules preserving subsystem responsibility, public seams, dependency direction, and human-digestible structure]
+* **Implementation Guardrails:** [Approved strict rules preventing architectural regression, or `None`]
+* **Architecture Guardrails:** [Rules preserving explicitly approved subsystem responsibility and contracts, or `None`]
 * **Rejected Approaches:** [Approach] - [Why rejected]
 * **Open Questions:** [Active design questions, prioritized by importance]
 * **Fitness Criteria:** [Condition] | [Condition]

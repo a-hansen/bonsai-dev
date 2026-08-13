@@ -8,7 +8,9 @@ Bonsai is meant to live inside a repository as:
 .bonsai/
 ```
 
-Its job is to preserve the structured memory an AI needs to design, build, and continue serious software work across many fresh sessions.
+Its job is to preserve the structured memory an AI needs to design, build, and continue serious software work across fresh sessions without requiring the chat history to remain authoritative.
+
+Bonsai governs project memory and execution workflow. It is intentionally not a general software-engineering style guide. Coding style, test philosophy, abstraction preferences, local tooling, and similar developer-specific concerns belong in project conventions, developer context, or external skills.
 
 This guide focuses on **how to use Bonsai inside a project**.
 
@@ -27,9 +29,9 @@ For repository code mapping, see [the Bonsai Maps guide](maps/README.md).
 ├── implementation_prompt.md             # Always-loaded implementation router and invariants
 ├── developer_context.example.md         # Optional template for local/developer-specific context
 ├── skills/
-│   ├── phase_execution.md               # Loaded only for phase planning or contract gates
-│   ├── dry_run.md                       # Loaded only when a dry run is requested
-│   ├── handoff.md                       # Loaded only when closing work or ending a session
+│   ├── phase_execution.md               # Loaded for phase planning or contract gates
+│   ├── dry_run.md                       # Loaded only when a dry run is requested or accepted
+│   ├── handoff.md                       # Loaded when closing work or preparing a handoff
 │   └── final_truth_update.md            # Loaded when final-truth clarification or revision is needed
 ├── maps/
 │   └── ...
@@ -41,7 +43,7 @@ For repository code mapping, see [the Bonsai Maps guide](maps/README.md).
         ├── architecture.md
         ├── plan.md
         ├── state.md
-        ├── icebox.md                    # Optional
+        ├── icebox.md                    # Optional, human-triaged deferred observations
         ├── plan/
         │   └── plan_phase_<N>.md        # Optional
         ├── requirements/
@@ -56,34 +58,67 @@ For repository code mapping, see [the Bonsai Maps guide](maps/README.md).
 
 Bonsai separates durable project memory by type.
 
-| File                                       | Role                                       | Ownership                 |
-| ------------------------------------------ | ------------------------------------------ | ------------------------- |
-| `requirements.md`                          | Product truth                              | Human-owned               |
-| `requirements/requirements_<AREA>.md`      | Deep product-area requirements             | Human-owned               |
-| `architecture.md`                          | Target implementation truth                | Human-owned               |
-| `architecture/architecture_<SUBSYSTEM>.md` | Deep subsystem architecture                | Human-owned               |
-| `plan.md`                                  | Execution roadmap                          | Agent-maintained          |
-| `state.md`                                 | Current-session baton pass                 | Agent-maintained          |
-| `icebox.md`                                | Out-of-scope observations worth preserving | Agent-maintained          |
-| `plan/plan_phase_<N>.md`                   | Detailed active phase execution plan       | Agent-maintained          |
-| `.bonsai/developer_context.md`             | Optional developer/local context           | Developer/team-maintained |
-| `.bonsai/skills/*.md`                      | Triggered implementation skills              | Framework skills          |
+| File | Role | Ownership |
+| --- | --- | --- |
+| `requirements.md` | Product truth | Human-owned |
+| `requirements/requirements_<AREA>.md` | Deep product-area requirements | Human-owned |
+| `architecture.md` | Target implementation truth | Human-owned |
+| `architecture/architecture_<SUBSYSTEM>.md` | Deep subsystem architecture | Human-owned |
+| `plan.md` | Execution roadmap | Agent-maintained |
+| `state.md` | Current resume state | Agent-maintained |
+| `plan/plan_phase_<N>.md` | Detailed active phase execution plan | Agent-maintained |
+| `icebox.md` | Human-triaged deferred observations | Agent-maintained, human-authorized |
+| `.bonsai/developer_context.md` | Optional developer/local context | Developer/team-maintained |
+| `.bonsai/skills/*.md` | Triggered implementation workflow | Framework skills |
 
 This separation matters.
 
 * Requirements should not become implementation notes.
 * Architecture should not become a task list.
 * Plans should not pretend to be product truth.
-* State should not become a historical journal.
-* Icebox notes should not become an unapproved backlog.
+* State should describe what matters now, not preserve session history.
+* Icebox entries should exist only because the human chose to preserve them.
 * Developer context should not override project truth.
 * Triggered skills should not be copied into project memory.
 * Deep requirement areas should not bloat top-level product truth.
 * Deep subsystem architecture should not bloat top-level implementation truth.
 
-Requirements and architecture are maintained final truth, not only design-session output. As work proceeds, the implementation workflow identifies whether an authorized step leaves that truth unchanged, clarifies it, or revises it. Revisions require explicit human approval of the affected final-truth documents before substantive implementation continues.
+## Human-owned final truth
 
-Each file has a narrow job.
+Human-owned final truth describes the product and target system intended to exist after successful implementation.
+
+It normally includes:
+
+```text
+requirements.md
+architecture.md
+requirements/requirements_<AREA>.md
+architecture/architecture_<SUBSYSTEM>.md
+```
+
+It may also include project-specific design or contract documents when the human explicitly designates them as durable project truth.
+
+During implementation, proposed or discovered work is classified against this truth as:
+
+* `None`
+* `Clarification`
+* `Revision`
+
+A `Revision` requires explicit human approval of the affected final-truth documents before substantive implementation continues.
+
+## Execution memory
+
+These files describe how the project is currently being executed:
+
+```text
+plan.md
+plan/plan_phase_<N>.md
+state.md
+```
+
+They are maintained by the agent as execution progresses.
+
+Changing execution memory is normal workflow maintenance. It is not itself a final-truth clarification or revision.
 
 ---
 
@@ -114,12 +149,15 @@ into the same conversation.
 
 `design_session.md` is a self-contained synthesis packet. It includes:
 
-* the design-synthesis instructions
-* the output rules
-* the clarification rules
-* the inline document templates the design AI should use
+* design-synthesis instructions
+* output rules
+* clarification rules
+* execution-readiness rules
+* inline document templates
 
 The design AI uses that single document to generate durable Bonsai project memory.
+
+Bonsai should preserve the design that emerged from the conversation. It should not invent interfaces, abstraction layers, builders, module boundaries, testing strategies, or other implementation conventions merely to make the generated documents look architecturally complete.
 
 ---
 
@@ -129,38 +167,41 @@ Use an IDE / CLI coding agent to:
 
 * read the project memory
 * inspect the repository
+* identify the exact next step
+* determine whether planning is actually complete
 * execute the active plan
 * reconcile proposed and completed work against approved final truth
-* update operational state
-* preserve useful out-of-scope observations without expanding scope
+* maintain compact operational state
+* surface useful out-of-scope observations without automatically preserving them
 * maintain code maps when structural changes justify it
 
 Start with:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
 The coding agent should:
 
-1. read the shared code map when present and relevant
-2. read the active project memory
-3. read deeper requirements, architecture, plans, or skills only when their trigger applies
-4. summarize the current state and exact next step
-5. classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`
-6. recommend the appropriate AI level for the exact next step
-7. stop at a structured startup gate
-8. proceed, preview the work with a dry run, or accept redirection from the human
-9. execute only the authorized next step
+1. read the shared code map when present
+2. read developer context when present
+3. read the active project memory
+4. read deeper requirements, architecture, phase plans, or skills only when their trigger applies
+5. summarize the current state and exact next step
+6. state execution readiness explicitly
+7. classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`
+8. stop at a structured startup gate
+9. execute only the human-authorized next step
 10. reconcile completed work against final truth and any approved dry-run baseline
-11. summarize completed work and recommend a clean session for the next step
+11. clean operational state and record the next exact step
+12. stop at the next natural gate
 
 `implementation_prompt.md` is the always-loaded router and invariant set. It conditionally loads skills only when the current state or requested action requires them:
 
 ```text
 .bonsai/skills/phase_execution.md       # Phase-mode resolution, phase plans, and contract gates
-.bonsai/skills/dry_run.md               # Requested execution previews
-.bonsai/skills/handoff.md               # Completion reconciliation and clean-session handoff
+.bonsai/skills/dry_run.md               # Optional execution previews
+.bonsai/skills/handoff.md               # Completion reconciliation and handoff
 .bonsai/skills/final_truth_update.md    # Final-truth clarification or revision handling
 ```
 
@@ -187,13 +228,19 @@ Use this file for stable context that is useful across AI sessions but does not 
 Good examples:
 
 * preferred coding style
+* testing philosophy
+* abstraction preferences
 * local SDK or toolchain paths
 * machine-specific setup notes
 * unusual build/runtime quirks
 * AI session preferences
 * recurring constraints that apply when AI tools work with you
 
-Do not use developer context for product requirements, target architecture, phase plans, or current state.
+This distinction is important.
+
+Bonsai itself should remain usable with different developer styles and different external skills. A rule about how code should normally be structured or tested belongs here, in repository guidance, or in another applicable skill unless it is genuinely part of the project's approved architecture.
+
+Do not use developer context for product requirements, target architecture, phase plans, or current execution state.
 
 Those belong in project memory.
 
@@ -224,12 +271,12 @@ This repository includes:
 
 a small example Bonsai project produced by a completed design session.
 
-It is useful for seeing what the initial project memory looks like before implementation begins.
+It is useful for seeing what initial project memory looks like before implementation begins.
 
 To try it, open your coding AI and run:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker
 ```
 
 The agent should:
@@ -237,10 +284,16 @@ The agent should:
 1. read the example project memory
 2. summarize the current implementation state
 3. identify the exact next step
-4. recommend an AI effort level
+4. state whether the project is ready to execute
 5. stop at a structured startup gate before making changes
 
-The startup gate offers a clear choice: proceed with the identified next step, show a dry run first, correct the identified next step, or stop. That explicit authorization is a core Bonsai behavior.
+The startup gate normally offers:
+
+1. Proceed with the identified next step.
+2. Correct or discuss the identified next step.
+3. Stop here.
+
+Dry runs remain available when requested. They are not advertised at every routine gate.
 
 ---
 
@@ -262,7 +315,9 @@ Work through:
 * open questions
 * likely implementation phases
 
-Do not try to prematurely fill templates by hand unless that is genuinely easier. The design session is where ambiguity gets resolved.
+Do not try to prematurely fill templates by hand unless that is genuinely easier.
+
+The design session is where meaningful ambiguity gets resolved.
 
 ---
 
@@ -300,7 +355,23 @@ plan.md
 state.md
 ```
 
-Layered requirements, subsystem architecture files, and detailed phase plans are created only when their extra structure materially improves the project memory.
+Layered requirements, subsystem architecture files, and detailed phase plans are created only when their extra structure materially improves project memory.
+
+A detailed phase plan should not exist merely because a phase is complicated or touches several modules.
+
+If a phase plan is generated during design synthesis, it begins as:
+
+```text
+Plan Status: Ready for Review
+```
+
+not as approved implementation authority.
+
+`state.md` should make that clear with:
+
+```text
+Execution Readiness: Awaiting human review
+```
 
 ---
 
@@ -369,7 +440,8 @@ Examples:
 * local SDK locations
 * preferred build commands
 * runtime caveats
-* personal coding preferences
+* coding preferences
+* testing preferences
 * how direct or cautious you want the agent to be
 
 Keep project truth out of this file.
@@ -381,18 +453,59 @@ Keep project truth out of this file.
 Open your coding AI and begin with:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
 Example:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: audit-logging.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: audit-logging
 ```
 
-The coding agent will load the project memory, summarize the next execution step, classify its anticipated final-truth impact, recommend an AI effort level, and stop at a structured startup gate before substantive work begins.
+The coding agent will load the project memory, summarize the next execution step, state execution readiness, classify anticipated final-truth impact, and stop at a structured startup gate before substantive work begins.
 
-The human may authorize the step, request a compact dry run first, correct the next step, or stop.
+The human may authorize the step, correct or discuss the proposed next step, or stop.
+
+A dry run can be requested when useful.
+
+---
+
+# Execution Readiness
+
+One of Bonsai's jobs is to make it obvious whether planning is actually finished.
+
+`state.md` uses explicit execution-readiness values:
+
+| Value | Meaning |
+| --- | --- |
+| `Design required` | Product or architecture decisions must be resolved first. |
+| `Phase planning required` | Durable design is sufficient, but execution planning is incomplete. |
+| `Awaiting human review` | A plan, contract, or other required artifact is waiting for human approval. |
+| `Ready to execute` | The exact next implementation step has an approved basis and no required planning gate remains. |
+| `Blocked` | A concrete blocker prevents safe execution. |
+| `Complete` | No further implementation work is currently required. |
+
+A plan document merely existing does not mean planning is complete.
+
+For example:
+
+```text
+Plan Status: Ready for Review
+Execution Readiness: Awaiting human review
+```
+
+means the phase has been planned but implementation is not yet authorized.
+
+After explicit human approval:
+
+```text
+Plan Status: Approved
+Execution Readiness: Ready to execute
+```
+
+may be appropriate if no other gate remains.
+
+This distinction prevents a completed-looking planning artifact from being mistaken for an approved implementation basis.
 
 ---
 
@@ -408,7 +521,6 @@ A design pivot is any change that materially affects:
 * user workflows
 * scope boundaries
 * architectural direction
-* subsystem boundaries
 * accepted constraints
 * implementation sequencing at the roadmap level
 
@@ -444,31 +556,30 @@ Examples:
 
 3. Explain the proposed pivot and the reason for it.
 4. Ask the AI to update only the affected Bonsai documents.
-5. Review the changes as the human owner of final truth.
+5. Review changes to human-owned final truth explicitly.
 6. Save the approved updated documents back into `.bonsai/projects/<project>/`.
-7. Start a fresh implementation session.
+7. Reconcile `plan.md`, phase plans, and `state.md` with the revised truth.
+8. Continue implementation using the normal startup process.
 
-Use the normal implementation startup command:
+Use:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
-
-The implementation agent should then continue from the updated memory.
 
 ## What to update
 
-Update `requirements.md` or `requirements/requirements_<AREA>.md` when the product intent, behavior, workflows, constraints, or scope changes.
+Update `requirements.md` or `requirements/requirements_<AREA>.md` when product intent, behavior, workflows, constraints, or scope changes.
 
-Update `architecture.md` or `architecture/architecture_<SUBSYSTEM>.md` when the intended system shape, boundaries, dependencies, interfaces, or architectural constraints change.
+Update `architecture.md` or `architecture/architecture_<SUBSYSTEM>.md` when the intended target structure, durable contracts, dependencies, or architectural constraints change.
 
-Update `plan.md` when the roadmap, phase order, active phase, deferred work, or execution strategy changes.
+Update `plan.md` when the roadmap, phase order, active phase, deferred roadmap work, execution mode, or phase-plan status changes.
 
-Update `state.md` when the exact next step, current objective, active phase, blockers, or recommended AI level changes.
+Update `state.md` when current execution reality changes.
 
 ## What not to do
 
-Do not treat the chat history as durable memory.
+Do not treat chat history as durable memory.
 
 Do not ask the implementation agent to “just remember” a design pivot.
 
@@ -477,6 +588,8 @@ Do not bury product or architecture changes inside `plan.md` or `state.md`.
 Do not let code changes become the only record of a changed decision.
 
 The updated Bonsai documents are the durable memory.
+
+---
 
 # Core Project Files
 
@@ -497,9 +610,9 @@ It should remain readable as the top-level statement of product truth.
 
 It should not contain implementation detail.
 
-During implementation, any proposed or discovered change to product behavior or constraints must be classified and routed through explicit human approval rather than silently absorbed into code or planning documents.
+During implementation, any proposed or discovered change to product behavior or constraints must be classified and routed through explicit human approval rather than silently absorbed into code or execution memory.
 
-When a product area develops deep, isolated requirement complexity that would bloat this top-level document, preserve the summary here and move the detailed truth into:
+When a product area develops deep, isolated requirement complexity that would bloat this top-level document, preserve the summary here and move detailed truth into:
 
 ```text
 requirements/requirements_<AREA>.md
@@ -523,7 +636,7 @@ Use this when a product area has enough complexity that its:
 
 would clutter the top-level `requirements.md`.
 
-Requirement-area files should remain product-facing. They should split by capability, workflow, or product concern, not by implementation subsystem.
+Requirement-area files should split by capability, workflow, or product concern, not by implementation subsystem.
 
 Examples:
 
@@ -539,23 +652,28 @@ requirements/requirements_import_workflow.md
 
 **Human-owned target implementation truth.**
 
-Defines:
+Defines, when the intended architecture requires them:
 
 * target system structure
 * major subsystems
 * canonical domain model and data ownership
-* allowed flows and dependency boundaries
+* durable public contracts
+* allowed flows and dependency constraints
 * cross-cutting rules
 * architectural guardrails
-* rejected approaches, when they matter
+* rejected approaches
 
 It should be rebuild-grade.
 
 It should describe the system you ultimately want, not merely the accidental shape of the current implementation.
 
-During implementation, any proposed or discovered change to intended structure, boundaries, or architectural constraints must be classified and routed through explicit human approval rather than silently absorbed into the implementation.
+It also should not invent implementation structure merely because a template has a place for it.
 
-When a subsystem develops deep, isolated architectural complexity that would bloat this top-level document, preserve the summary here and move the detailed truth into:
+For example, if the approved design does not prescribe an interface, dependency layer, or internal module boundary, architecture should say so rather than manufacturing one.
+
+During implementation, any proposed or discovered change to intended structure or architectural constraints must be classified and routed through explicit human approval.
+
+When a subsystem develops deep, isolated architectural complexity that would bloat this top-level document, preserve the summary here and move detailed truth into:
 
 ```text
 architecture/architecture_<SUBSYSTEM>.md
@@ -567,16 +685,18 @@ architecture/architecture_<SUBSYSTEM>.md
 
 **Optional human-owned deep subsystem architecture.**
 
-Use this when a subsystem has enough complexity that its:
+Use this when a subsystem has enough approved complexity that its:
 
 * boundaries
-* interfaces
+* public contracts
 * data flow
 * dependencies
 * cross-cutting rules
 * guardrails
 
 would clutter the top-level `architecture.md`.
+
+Do not create interfaces or internal seams merely to populate the document.
 
 ---
 
@@ -589,70 +709,95 @@ Defines:
 * build strategy
 * phase summaries
 * which phase is active
-* whether a phase uses single-pass or two-pass execution
-* deferred work
+* phase execution mode
+* phase-plan presence
+* phase-plan approval status
+* deferred roadmap work
 * completed work
 
 It changes when roadmap-level execution truth changes.
+
+It should not become a session log.
 
 ---
 
 ## `state.md`
 
-**Agent-maintained current-session baton pass.**
+**Agent-maintained current resume state.**
 
 Defines:
 
 * current phase
-* active phase pass
-* active phase plan file
+* active phase plan
+* phase-plan approval state
+* current phase pass
+* execution mode
+* execution readiness
 * current objective
-* recent work
-* active blockers
+* current snapshot
+* resume-critical active files
+* active blockers or risks
 * exact next step
-* recommended AI effort level
-* compact approved dry-run execution baseline, only while applicable
+* success condition
+* compact approved dry-run baseline, only while one is active
 
-It should remain compact, volatile, and easy to read at every implementation-session startup.
+`state.md` is not a historical journal.
+
+When updating it, the agent should:
+
+* remove completed next steps
+* remove resolved blockers
+* remove obsolete active files
+* remove stale observations
+* remove superseded decisions
+* remove expired dry-run baselines
+* replace stale snapshot text rather than append history
+
+A useful rule is:
+
+> If removing a fact would not materially change what the next implementation session does, it probably does not belong in `state.md`.
 
 ---
 
 ## `icebox.md`
 
-**Optional agent-maintained out-of-scope observation storage.**
+**Optional human-triaged deferred observation storage.**
 
-Use this when the implementation agent notices work that is useful to preserve but should not be handled during the current exact next step.
+The icebox exists for out-of-scope observations that the human explicitly chooses to preserve for possible later consideration.
 
-Examples:
+Examples might include:
 
-* adjacent bugs
+* an adjacent bug
 * technical debt
-* missing tests
-* refactor opportunities
-* documentation gaps
-* follow-up questions worth revisiting later
+* a refactor opportunity
+* a documentation gap
+* a future enhancement
+* a follow-up design question
 
-The agent should record these observations concisely and continue the assigned work.
+The implementation agent should **not automatically record these observations**.
 
-`icebox.md` is **not**:
+Instead:
+
+1. the agent notices potentially useful out-of-scope work
+2. it continues the authorized work when safe
+3. at the next natural gate, it may report:
+
+   ```text
+   Out-of-scope observations available: 3
+   ```
+
+4. the human may choose to review them
+5. only observations the human explicitly chooses to preserve or defer are written to `icebox.md`
+
+`icebox.md` is not:
 
 * an approved backlog
 * an execution roadmap
 * a substitute for `plan.md`
-* a place to silently expand project scope
+* a session history
+* a dumping ground for every adjacent idea an agent notices
 
-A human may later review `icebox.md` and promote selected items into:
-
-```text
-requirements.md
-requirements/requirements_<AREA>.md
-architecture.md
-architecture/architecture_<SUBSYSTEM>.md
-plan.md
-plan/plan_phase_<N>.md
-```
-
-when appropriate.
+A human may later promote a preserved item into authoritative project memory or active execution work.
 
 ---
 
@@ -662,12 +807,23 @@ when appropriate.
 
 Use this when a phase:
 
-* is complex enough to need ordered sequencing
+* needs detailed ordered sequencing that would bloat `plan.md`
 * uses contract-first two-pass execution
-* has multiple validation gates
-* would bloat `plan.md`
+* has multiple meaningful human review or validation gates
+* has explicit approved constraints that must remain visible during execution
 
-Completed phase plans may later be compressed or archived once their details are no longer execution-relevant.
+Do not create one merely because the implementation touches several modules or contains many ordinary coding steps.
+
+A phase plan has an explicit planning status:
+
+```text
+Draft
+Ready for Review
+Approved
+Superseded
+```
+
+`Ready for Review` means planning is complete enough for human review, not that implementation may begin.
 
 ---
 
@@ -683,26 +839,27 @@ They are not project memory. They are triggered agent behaviors used by `impleme
 
 ## `.bonsai/skills/phase_execution.md`
 
-Loaded when the current work involves:
+Loaded when current work involves:
 
 * phase execution-mode resolution
-* phase plan creation or revision
+* phase-plan creation or correction
 * phase approval gates
 * Pass A contract work
-* Pass B implementation authorization
 * contract review gates
 
-This file contains the detailed phase and contract-first execution procedure.
+This file contains detailed phase and contract-first execution procedure.
+
+It also ensures Bonsai does not create abstractions or module boundaries solely to satisfy its own workflow.
 
 ---
 
 ## `.bonsai/skills/dry_run.md`
 
-Loaded only when the human requests a dry run.
+Loaded when the human requests a dry run or accepts one that Bonsai suggested because of unusual execution risk or ambiguity.
 
-A dry run is read-only. It previews the intended execution before files are modified.
+A dry run is read-only.
 
-It identifies:
+It previews:
 
 * approved basis
 * expected touch points
@@ -711,28 +868,39 @@ It identifies:
 * likely scope concerns
 * anticipated final-truth impact
 
+Dry runs are available when useful. They are not a routine mandatory phase of Bonsai execution.
+
 ---
 
 ## `.bonsai/skills/final_truth_update.md`
 
-Loaded when proposed or completed work requires final-truth clarification or revision.
+Loaded when proposed or completed work requires human-owned final-truth clarification or revision.
 
-It centralizes the handling of:
+It centralizes handling of:
 
 * `None`
 * `Clarification`
 * `Revision`
 
-This skill prevents implementation, contracts, plans, or completed work from silently redefining requirements or architecture.
+This skill prevents implementation or execution memory from silently redefining requirements or architecture.
 
----
 ---
 
 ## `.bonsai/skills/handoff.md`
 
-Loaded when approved work is being closed, a session is ending, or a clean-session handoff is needed.
+Loaded when approved work is being closed, a session is ending, or execution state needs to be handed off cleanly.
 
-It guides completion reconciliation, operational memory updates, final-truth impact comparison, dry-run baseline comparison, and next-step recording.
+It guides:
+
+* completion reconciliation
+* execution-memory cleanup
+* final-truth impact comparison
+* dry-run baseline comparison
+* next-step recording
+* optional out-of-scope observation review
+* optional fresh-session guidance
+
+A handoff is not a session history.
 
 ---
 
@@ -741,21 +909,21 @@ It guides completion reconciliation, operational memory updates, final-truth imp
 Open your coding AI and begin with:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
 Example:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: audit-logging.
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: audit-logging
 ```
 
-The agent should then read:
+The agent should read required startup files in the order specified by `implementation_prompt.md`.
 
-1. `.bonsai/developer_context.md`, if it exists
+At a high level:
 
-2. `.bonsai/maps/code_map.md`, if it exists and is relevant
-
+1. `.bonsai/maps/code_map.md`, when present
+2. `.bonsai/developer_context.md`, when present
 3. project core:
 
     * `requirements.md`
@@ -763,34 +931,34 @@ The agent should then read:
     * `plan.md`
     * `state.md`
 
-4. active phase plan, if named in `state.md`
+4. active phase plan, when applicable
+5. deeper requirement or architecture files only when relevant
+6. triggered skills only when required
 
-5. requirement-area files only when relevant to the exact next step
+`icebox.md` is not a routine startup read. It is read only when the current step explicitly involves a preserved observation or human-requested icebox triage.
 
-6. subsystem architecture files only when relevant to the exact next step
-
-7. `.bonsai/skills/phase_execution.md`, when the phase mode is unresolved, a phase plan needs work, Pass A is active, or a phase-plan or contract gate is required
-
-8. `icebox.md`, only when present and relevant to the exact next step or recent project context
-
-It should respond with a compact startup summary:
+The agent should respond with a compact startup summary:
 
 * active project
 * current phase
 * current phase pass
 * phase execution mode
+* phase-plan status, when applicable
+* execution readiness
 * exact next step
 * final-truth impact: `None`, `Clarification`, or `Revision`
 * affected final-truth documents, when impact is not `None`
 * blockers
-* recommended AI level
+* loaded skills
+* mode recommendation and rationale, when execution mode remains unresolved
 
-Then it should stop and present the startup choices:
+Then it should stop and present:
 
 1. Proceed with the identified next step.
-2. Show a dry run first.
-3. Correct the identified next step.
-4. Stop here.
+2. Correct or discuss the identified next step.
+3. Stop here.
+
+If project-memory files disagree about phase status, plan approval, readiness, or the exact next step, the agent should report that inconsistency rather than silently choosing an interpretation.
 
 ---
 
@@ -799,105 +967,57 @@ Then it should stop and present the startup choices:
 Bonsai uses explicit human gates rather than vague prompts such as “awaiting approval.”
 
 * **Approve** applies to a reviewed artifact or contract.
-* **Proceed** authorizes the stated next action.
-* **Dry run** previews intended execution before files are modified.
+* **Proceed** authorizes a stated execution action.
+* **Dry run** is an optional read-only preview.
 
 The implementation agent should prefer supported structured choices and otherwise use equivalent numbered choices.
 
-Dry runs are optional. When requested at an execution authorization gate, the agent reads:
+## Dry runs
+
+Dry runs remain available but are intentionally de-emphasized.
+
+The agent should not place a dry-run choice in every routine menu.
+
+The human can request one at any applicable execution gate.
+
+Bonsai may proactively suggest a dry run only when a preview would materially reduce unusual execution risk or ambiguity.
+
+When used, the agent reads:
 
 ```text
 .bonsai/skills/dry_run.md
 ```
 
-A dry run is intentionally compact and read-only. It identifies the approved basis, expected touch points, intended result, planned checks, likely scope concerns, and anticipated final-truth impact.
+A dry run identifies:
 
-If approved, only a compact execution baseline is preserved in `state.md` until that work completes or is redirected.
+* approved basis
+* expected touch points
+* intended result
+* planned checks
+* scope concerns
+* anticipated final-truth impact
 
-At execution gates and completion, final-truth impact is classified as:
+If approved, only a compact execution baseline is preserved in `state.md` until the work completes, is abandoned, or is redirected.
 
-| Impact          | Meaning                                                                          | Handling                                                                                                           |
-| --------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `None`          | Existing approved requirements and architecture already cover the work.          | Proceed under the normal gate.                                                                                     |
-| `Clarification` | Intended behavior is unchanged, but final truth should be stated more precisely. | Work may proceed only when the missing precision is not needed for safe approval or execution; propose the update. |
-| `Revision`      | Intended behavior, constraints, architecture, or system boundaries change.       | Stop before substantive implementation until affected final-truth documents are updated and approved.              |
+Then it is removed.
 
-If continuing a step would require a material contract change, expanded subsystem scope, a material change to the approved execution basis, acceptance of failed required checks, or a new human design decision, the agent must stop before making that change.
+## Final-truth impact
 
-For a `Revision`, it uses the final-truth reconciliation choices rather than silently continuing under an implementation-only approval.
+At execution gates and completion, impact on human-owned final truth is classified as:
 
----
+| Impact | Meaning | Handling |
+| --- | --- | --- |
+| `None` | Existing approved human-owned truth already covers the work. | Proceed under the normal gate. |
+| `Clarification` | Intended behavior and architecture are unchanged, but final truth should be stated more precisely. | Propose the affected human-owned document update. |
+| `Revision` | Intended behavior, constraints, architecture, or system boundaries change. | Stop before substantive implementation until affected final-truth documents are updated and approved. |
 
-# Recommended AI Level at Session Startup
-
-For the initial implementation startup, use a capable general-purpose level such as:
-
-* **medium**
-* **thinking**
-
-rather than immediately spending the maximum available AI level.
-
-That startup step is mainly a bounded orientation task:
-
-1. read the Bonsai memory
-2. identify the active project state
-3. surface the exact next step
-4. recommend the appropriate AI level for executing that step
-
-After that, follow the recommendation:
-
-* use stronger reasoning for architecture, API contracts, difficult debugging, or uncertain tradeoffs
-* use lighter or cheaper levels for narrow, mechanical, or well-specified work
-* reserve maximum reasoning for work that actually deserves it
-
----
-
-# Fresh Sessions Are the Default
-
-Bonsai is designed around **frequent clean sessions**.
-
-A session should end when:
-
-* the exact next step changes meaningfully
-* the current objective completes
-* the agent has accumulated too much local noise
-* a review gate is reached
-* a major decision changes the direction of work
-
-At the completion of an exact next step, the agent reads:
-
-```text
-.bonsai/skills/handoff.md
-```
-
-It updates `state.md` and any other agent-maintained files whose truth changed, then reports:
-
-* completed step
-* material changes
-* checks and results
-* relevant Bonsai artifact updates
-* approved versus actual final-truth impact
-* final-truth updates proposed or completed, or `None`
-* deviations, or `None`
-* recorded exact next step
-
-When work followed an approved dry run, the summary also compares the actual result and actual final-truth impact against the approved execution baseline.
-
-The agent then recommends terminating the current session and starting a clean session for the recorded next step.
-
-When the agent offers a terminate-session choice, it should also provide a copyable startup prompt for the next session. This avoids making the human reconstruct the next prompt from the summary.
-
-When the next step does not require a named gate, the human may instead choose to continue in the current session or request a dry run for that next step.
-
-The chat is temporary working space.
-
-The repository is durable project memory.
+If continuing a step requires a material contract change, expanded approved scope, acceptance of failed required checks, or a new human design decision, the agent stops before making that change.
 
 ---
 
 # Contract-First Two-Pass Work
 
-For phases that introduce an important API, subsystem boundary, or abstraction, Bonsai supports a **Two-Pass Contract-First** workflow.
+Bonsai supports a **Two-Pass Contract-First** workflow when a phase establishes or materially changes a contract that independently deserves human review before implementation.
 
 The phase-planning and contract-gate skill lives in:
 
@@ -905,37 +1025,89 @@ The phase-planning and contract-gate skill lives in:
 .bonsai/skills/phase_execution.md
 ```
 
-It is loaded only when phase planning, execution-mode resolution, or a contract-first pass requires it.
+It is loaded only when phase planning, execution-mode resolution, or contract-first work requires it.
+
+## When contract-first is appropriate
+
+Examples include:
+
+* externally consumed APIs
+* schemas
+* persistent formats
+* protocols or message formats
+* extension or plugin contracts
+* durable integration surfaces
+* other high-leverage contracts that downstream implementation or external consumers will rely on
+
+Contract-first is **not** automatically required because a phase:
+
+* is large
+* touches multiple modules
+* creates new classes or packages
+* has internal complexity
+* introduces helper abstractions
+* needs tests
+* could theoretically use interfaces
+
+A Bonsai contract does not imply a Java interface or any other particular implementation mechanism.
+
+---
 
 ## Pass A: Contract
 
-The coding agent drafts:
+The coding agent produces the reviewable contract or durable design surface required by the approved phase.
 
-* the high-level API shape
-* behavioral tests that show intended use
-* minimal scaffolding needed to make the contract reviewable
+Depending on the project, this might include:
 
-Then it stops at the contract gate.
+* API signatures
+* concrete class shape
+* schemas
+* message examples
+* protocol definitions
+* usage examples
+* tests that materially clarify intended behavior
+* another project-appropriate review artifact
+
+Pass A should preserve architecture constraints that already exist in approved project truth.
+
+It should not invent:
+
+* interfaces
+* builders
+* adapters
+* dependency-injection layers
+* module seams
+* abstraction layers
+
+merely to satisfy a Bonsai contract gate.
+
+Then it stops at the contract review gate.
 
 ---
 
 ## Human review
 
-The human reviews:
+The human reviews the contract that actually matters.
 
-* Is this the right abstraction?
-* Is the API shaped correctly?
-* Do the tests express the right behavior?
-* Should implementation proceed directly or after a dry run?
+Typical questions include:
 
-The contract gate offers:
+* Is this the right externally meaningful shape?
+* Does it express the intended behavior?
+* Does it conform to approved architecture?
+* Is implementation ready to proceed?
 
-1. Approve the contract and proceed with implementation.
-2. Approve the contract and show an implementation dry run first.
-3. Request revisions to the contract.
+The contract gate normally offers:
+
+1. Approve the contract.
+2. Request revisions to the contract.
+3. Discuss concerns before deciding.
 4. Return to the phase plan.
 
-If the proposed contract has `Revision` final-truth impact, the agent does not authorize Pass B from the contract gate. It first routes the affected requirements or architecture updates for explicit human approval.
+If approved, Bonsai records the Pass B next step and marks execution readiness appropriately.
+
+A dry run may still be requested, but it is not automatically inserted into the contract menu.
+
+If the proposed contract has `Revision` final-truth impact, the agent first routes affected human-owned final truth for explicit approval.
 
 ---
 
@@ -943,7 +1115,16 @@ If the proposed contract has `Revision` final-truth impact, the agent does not a
 
 Only after contract approval and any required final-truth approval does the agent build the underlying implementation.
 
-This keeps the human involved before the wrong abstraction becomes a large amount of working code.
+Implementation follows:
+
+* approved project truth
+* approved contract
+* project conventions
+* developer context
+* relevant source guidance
+* applicable external skills
+
+Bonsai itself does not dictate the internal implementation style.
 
 ---
 
@@ -960,26 +1141,23 @@ architecture.md
 architecture/architecture_<SUBSYSTEM>.md
 ```
 
-These preserve product and architectural final truth.
+The coding agent classifies impact on these documents at relevant authorization gates and completion:
 
-The coding agent must classify final-truth impact at authorization gates and completion:
+* `None`
+* `Clarification`
+* `Revision`
 
-* `None`: no final-truth update is required.
-* `Clarification`: propose the affected document update when existing truth needs precision.
-* `Revision`: stop substantive implementation until the affected documents are explicitly updated and approved.
-
-The agent identifies and proposes these changes. The human owns their approval.
+The human owns their approval.
 
 ---
 
-## Agent-maintained files
+## Agent-maintained execution memory
 
-The coding agent should actively maintain:
+The coding agent actively maintains:
 
 ```text
 plan.md
 state.md
-icebox.md
 plan/plan_phase_<N>.md
 ```
 
@@ -989,40 +1167,157 @@ when their truth changes.
 
 * phase status changes
 * roadmap order changes
-* new deferrals appear
+* new roadmap deferrals appear
 * a phase completes
-* a separate detailed phase plan becomes necessary
+* execution mode changes
+* a detailed phase plan becomes necessary
+* phase-plan approval status changes
 
 ### Update `state.md` when
 
 * exact next step changes
 * current objective changes
 * blockers change
-* recommended AI level changes
+* execution readiness changes
 * active pass changes
 * phase transition occurs
-* an approved dry-run baseline becomes active, completes, or is abandoned
+* active phase plan changes
+* phase-plan approval state changes
+* an approved dry-run baseline becomes active, completes, is abandoned, or is redirected
 
-### Update `icebox.md` when
+Every state update should also remove obsolete content.
 
-* an out-of-scope bug is discovered
-* technical debt is noticed
-* a useful refactor opportunity appears
-* a missing test or documentation gap should be preserved
-* a follow-up issue may matter later but should not interrupt the current step
-
-Keep entries compact, specific, and easy for a human to triage.
-
-Do not treat `icebox.md` as approved scope.
-
-Do not execute icebox items unless the human explicitly moves them into the active plan or tells the agent to address them.
+Do not append historical entries merely because they once mattered.
 
 ### Update `plan/plan_phase_<N>.md` when
 
 * active sequencing changes
+* plan approval status changes
 * contract/implementation pass changes
 * validation plan changes
-* phase-level open questions change
+* phase-level execution questions change
+
+---
+
+## Human-triaged `icebox.md`
+
+`icebox.md` is different from normal agent-maintained execution memory.
+
+The agent does not automatically append to it.
+
+Update `icebox.md` only when the human explicitly chooses to preserve or defer an out-of-scope observation.
+
+Do not treat `icebox.md` as approved scope.
+
+Do not execute icebox items unless the human explicitly promotes them into active work or tells the agent to address them.
+
+---
+
+# Out-of-Scope Observations
+
+During implementation, an agent will often notice things outside the exact next step.
+
+Examples:
+
+* adjacent bugs
+* technical debt
+* questionable code
+* refactor opportunities
+* missing documentation
+* missing tests
+* possible future enhancements
+
+Bonsai should prevent those observations from silently expanding the current task.
+
+The default behavior is:
+
+1. notice the issue
+2. do not fix it
+3. continue the assigned work when safe
+4. do not automatically persist the observation
+5. at a natural gate, indicate that observations are available if they appear worth human attention
+
+For example:
+
+```text
+Out-of-scope observations available: 2
+```
+
+The human can then choose whether to spend another interaction reviewing them.
+
+Only observations the human intentionally wants to retain belong in `icebox.md`.
+
+This keeps both project memory and token usage focused on information that has demonstrated value.
+
+---
+
+# Session Boundaries
+
+Bonsai works well with clean sessions, but it does not control the chat or agent host.
+
+Bonsai cannot:
+
+* terminate a session
+* clear a session
+* reset a session
+* create a new session
+
+It can only stop its current workflow at an appropriate boundary and tell the human how to continue.
+
+A clean session is often useful when:
+
+* a substantial planning gate completes
+* a contract is approved
+* a major objective completes
+* accumulated conversation context has become noisy
+* the next step begins a substantially different pass
+
+But starting a new session remains a human action.
+
+## Canonical fresh-session prompt
+
+When a clean session would be useful, Bonsai may provide:
+
+```text
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
+```
+
+That prompt is intentionally only a pointer.
+
+It should not contain:
+
+* previous-session summaries
+* phase names
+* pass names
+* approval status
+* exact next step
+* dry-run state
+* stop conditions
+* required skills
+
+Those details belong in `state.md`.
+
+The new session discovers them through the normal startup process.
+
+## Same-session continuation
+
+A human may also deliberately continue in the current session.
+
+At a normal handoff, choices may look like:
+
+1. Proceed to the recorded next step in this session.
+2. Discuss or correct the result or recorded next step.
+3. Stop here.
+
+When a clean session would be useful, Bonsai may add after those choices:
+
+```text
+You can also start a fresh session yourself using:
+
+Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
+```
+
+Bonsai should not describe this as terminating or resetting the current session.
 
 ---
 
@@ -1034,7 +1329,7 @@ Implementation sessions should use:
 .bonsai/maps/code_map.md
 ```
 
-for top-level repository orientation when it exists and is relevant.
+for top-level repository orientation when it exists.
 
 When the exact next step touches a mapped subsystem, the agent may load:
 
@@ -1081,14 +1376,19 @@ When map updates are needed, the agent should follow the mapping-system instruct
 
 Bonsai project memory should describe the **target system**, not every historical detour taken while building it.
 
-Maintaining that target truth is an implementation responsibility as well as a design-session goal. As implementation exposes gaps or approved pivots, final-truth reconciliation keeps requirements and architecture aligned with the intended rebuild target.
+Maintaining that target truth is an implementation responsibility as well as a design-session goal.
+
+As implementation exposes gaps or approved pivots, final-truth reconciliation keeps human-owned requirements and architecture aligned with the intended rebuild target.
+
+Execution memory should likewise represent the current execution reality rather than preserving a diary of how the project arrived there.
 
 That means a mature Bonsai project can eventually support a clean rebuild:
 
-* preserve the final requirements
-* preserve the final architecture
-* preserve the durable roadmap lessons worth keeping
-* discard implementation scars from early pivots
+* preserve final requirements
+* preserve final architecture
+* preserve useful roadmap structure
+* preserve only current execution state
+* discard implementation scars, obsolete pivots, and stale session history
 
 This is especially valuable for prototypes that became real systems through repeated experimentation.
 
@@ -1104,17 +1404,19 @@ A typical Bonsai project may look like this:
 4. Save it under `.bonsai/projects/<project>/`
 5. Optionally create `.bonsai/developer_context.md`
 6. Coding-agent startup
-7. Agent summarizes state and presents the startup gate
-8. Human proceeds, requests a dry run, corrects the next step, or stops
-9. Agent executes one authorized bounded step
-10. Agent stops before any material deviation or unapproved final-truth revision and requests direction
-11. Agent records useful out-of-scope discoveries in `icebox.md`, when needed
-12. Agent loads `.bonsai/skills/handoff.md`, reconciles the result, updates operational memory, reports completion, and provides a copyable startup prompt when recommending a clean session
-13. Agent recommends a fresh session for the recorded next step
-14. Continue in a clean session by default, or deliberately continue in-session
-15. Load `.bonsai/skills/phase_execution.md` and pause at phase-plan and contract review gates when appropriate
-16. Explicitly approve updates to human-owned requirements or architecture when implementation reveals a clarification or revision
-17. Keep roadmap, state, dry-run baselines, and icebox compact as the project evolves
+7. Agent summarizes current state, execution readiness, and exact next step
+8. Human proceeds, corrects/discusses the step, or stops
+9. Human requests a dry run only when useful
+10. Agent executes one authorized bounded step
+11. Agent stops before any material deviation or unapproved final-truth revision
+12. Agent may indicate that meaningful out-of-scope observations are available for review
+13. Human chooses whether any observation is worth preserving in `icebox.md`
+14. Agent loads `.bonsai/skills/handoff.md`, reconciles the completed step, and cleans execution memory
+15. Agent records the next exact step and execution readiness
+16. Human either continues deliberately in the same session or starts a fresh one
+17. Load `.bonsai/skills/phase_execution.md` and pause at phase-plan or contract review gates only when they are genuinely required
+18. Explicitly approve updates to human-owned requirements or architecture when implementation reveals a clarification or revision
+19. Keep roadmap, state, phase plans, dry-run baselines, and icebox content compact as the project evolves
 
 ---
 
@@ -1123,11 +1425,17 @@ A typical Bonsai project may look like this:
 Use Bonsai to keep five things cleanly separated:
 
 1. **What the product should be**
-2. **How the system should be shaped**
+2. **What target architecture has actually been approved**
 3. **What the AI should do next**
-4. **What the AI noticed but should not act on yet**
+4. **What out-of-scope ideas the human deliberately chose to preserve**
 5. **What the AI should know about the developer or local environment**
 
-Requirements and architecture establish final truth. Implementation gates and completion keep that truth honest when the build reveals a clarification or an approved revision.
+Human-owned requirements and architecture establish final truth.
 
-That separation is what makes frequent fresh-session AI development practical.
+Agent-maintained plan and state describe current execution.
+
+The icebox holds only deliberately preserved deferred observations.
+
+Developer context and external skills control developer-specific style and working preferences without turning Bonsai itself into an opinionated coding methodology.
+
+That separation is what makes fresh-session AI development practical while keeping the human in control of product intent, architecture, and scope.

@@ -8,6 +8,11 @@ Technical Writer and Systems Architect.
 Your task is to synthesize our conversation into a clean, durable Bonsai project memory system
 optimized for future implementation by a local IDE-based AI agent.
 
+Bonsai governs project-memory and execution workflow. It must preserve the user's approved design
+without imposing unrelated coding style, testing style, abstraction preferences, framework patterns,
+or other software-engineering conventions that belong to project guidance, developer context, or
+external skills.
+
 ---
 
 ## Output Protocol
@@ -29,16 +34,26 @@ Generate optional documents ONLY if our design explicitly demands them:
   phase-level plan will materially improve the first implementation session. Otherwise, leave
   detailed phase planning to the implementation workflow when the phase becomes active.)*
 
-    * **Two-Pass Contract-First Semantics:** When a generated phase plan uses two-pass
-      contract-first execution, Pass A should normally produce both:
+    * **Two-Pass Contract-First Semantics:** Use two-pass contract-first execution only when the phase
+      establishes or changes a contract or design surface that independently merits human approval
+      before implementation.
 
-        * the reviewable API / structural contract,
-        * the module seams or subsystem boundaries the phase will rely on, when the phase establishes
-          or changes implementation structure, and
-        * tests or usage examples that make the intended behavior concrete for human review.
+      Pass A should normally produce:
 
-      Pass A should end at a human review gate. Pass B should implement against the approved
-      contract, module seams, and tests.
+        * the reviewable contract, API shape, schema, protocol surface, extension contract, persistent
+          format, or other approved design surface being established, and
+        * tests, usage examples, schemas, signatures, examples, or other review artifacts only when
+          they materially clarify the intended contract and are appropriate for the project.
+
+      Pass A does not require interfaces, builders, adapters, abstraction layers, new module seams,
+      or other implementation indirection merely because Bonsai uses the word `contract`.
+
+      If approved architecture already defines module or dependency boundaries relevant to the
+      contract, preserve and make those boundaries reviewable. Do not invent additional boundaries
+      solely to satisfy the gate.
+
+      Pass A ends at a human review gate. Pass B implements against the approved contract and
+      approved project architecture.
 
 * `architecture/architecture_<SUBSYSTEM>.md`
   *(If a subsystem has deep, isolated complexity that should not bloat the top-level architecture.)*
@@ -60,16 +75,21 @@ Ask rather than guess when needed for:
 
 * Primary language or runtime version
 * Build tool / package manager
-* Test framework
-* Repository or module layout, when it affects the plan
+* Test framework, when it materially affects the architecture or first implementation step
+* Repository or module layout, when it materially affects the architecture or first implementation step
 * Execution environment, when it constrains implementation
-* Required module boundaries or dependency direction, when they materially shape the architecture or
-  first implementation phase
+* Required module boundaries or dependency direction, when they are part of the intended architecture
+
+Do not ask about development-style choices merely because they could influence implementation.
+Coding conventions, test philosophy, abstraction preferences, local SDK paths, recurring AI
+preferences, and similar developer-specific concerns belong in project guidance,
+`.bonsai/developer_context.md`, or external skills unless they materially shape the approved product
+or architecture.
 
 Do not hide missing foundational decisions behind vague assumptions such as
 “standard tooling,” “conventional test framework,” “normal project layout,” or “clean modular design.”
 
-If a missing decision can reasonably shape architecture, phase planning, or the
+If a missing decision can reasonably shape architecture, roadmap, execution mode, or the
 first implementation step, ask first.
 
 Do not generate project documents while required foundational clarifications remain unanswered,
@@ -87,25 +107,25 @@ If the user explicitly asks you to proceed without resolving a foundational unce
 
 ## Module Boundary Clarification
 
-When the project is expected to contain more than one meaningful implementation concern, ask the
-user to define or approve the major module shape before synthesis if it is not already clear.
+Clarify module boundaries only when they materially affect target architecture, a durable public
+contract, dependency direction, or the first implementation phase.
 
-Clarify:
+When module shape is already part of the intended design, capture:
 
-* **Major modules:** The human-digestible parts of the system, such as domain, protocol, runtime,
-  persistence, adapters, UI, CLI, integration, or test support.
-* **Public seams:** APIs, interfaces, schemas, contracts, entry points, extension points, or message
-  formats that other modules, users, or future phases will depend on.
-* **Internal seams:** Boundaries that should remain understandable to humans but are not public API.
-* **Dependency direction:** Which modules may depend on which other modules.
-* **Forbidden coupling:** Dependencies, shortcuts, or mixed responsibilities the implementation
-  should avoid.
+* **Major modules:** Human-digestible implementation areas the architecture is intended to preserve.
+* **Public seams:** Externally consumed APIs, schemas, protocols, extension points, entry points, or
+  other durable contracts, when any.
+* **Dependency direction:** Explicit dependency constraints that are part of the intended design.
+* **Forbidden coupling:** Only coupling explicitly rejected by the approved design.
 
-If the user does not know the module shape yet, propose a minimal candidate module map and ask for
-approval rather than silently inventing one.
+Do not require a project to define public interfaces, internal seams, dependency layers, adapters,
+builders, or abstraction boundaries merely because it contains multiple implementation concerns.
 
-If the module shape is intentionally deferred, preserve that under `Foundational Open Questions` or
-make module-boundary discovery part of the first phase.
+If the user does not know a module shape that materially affects architecture, propose the smallest
+candidate needed to resolve the architectural question and ask for approval.
+
+If module shape is intentionally deferred, preserve that under `Foundational Open Questions` or make
+the necessary discovery part of the first phase.
 
 ---
 
@@ -119,10 +139,12 @@ make module-boundary discovery part of the first phase.
 * **Foundational Gaps:** Use `Foundational Open Questions` only for unresolved decisions that can
   materially shape architecture, roadmap, execution mode, module boundaries, dependency direction, or
   the first implementation step. Use ordinary `Open Questions` for non-blocking uncertainty.
-* **Human-Digestible Modularity:** Preserve the intended implementation shape. When the discussion
-  establishes modules, subsystems, layers, adapters, protocol surfaces, domain boundaries, or
-  dependency direction, capture them explicitly in `architecture.md` rather than leaving them as
-  informal implementation preference.
+* **Human-Digestible Architecture:** Preserve module, subsystem, protocol, persistence, domain,
+  adapter, UI, or dependency boundaries when they are part of the approved intended design.
+  Do not manufacture additional architecture to make the project appear more modular.
+* **Workflow Neutrality:** Bonsai must not prescribe interfaces, builders, dependency-injection
+  patterns, class structure, testing philosophy, mocking strategy, or other coding style unless those
+  choices are part of approved project truth.
 * **Format:** Adhere strictly to the dense, pipe-delimited `[Meta]` templates provided below.
   Do not add conversational filler outside the code blocks.
 * **Project Memory Quality:** Write the generated documents as durable project memory, not as a
@@ -182,9 +204,12 @@ Use them as follows:
         * active phase,
         * phase status,
         * phase execution mode,
-        * whether an active phase plan file exists.
+        * whether an active phase plan file exists,
+        * phase-plan approval state when a phase plan exists.
+
     * If a phase plan is generated, `state.md` must reference it.
     * If no phase plan is generated, `state.md` must say `None`.
+    * `state.md` must make execution readiness explicit.
 
 6. **Use question sections rather than weakening the document.**
 
@@ -195,9 +220,10 @@ Use them as follows:
 7. **Respect ownership boundaries.**
 
     * Requirements and architecture documents are human-owned durable truth.
-    * Plan and state documents are agent-maintained execution memory.
+    * Plan, phase plans, and state documents are agent-maintained execution memory.
     * Developer-local preferences, SDK paths, machine-specific setup, recurring AI session preferences,
-      and local build/runtime quirks belong in `.bonsai/developer_context.md`, not in project memory.
+      coding style, test style, and local build/runtime quirks belong in
+      `.bonsai/developer_context.md`, project guidance, or external skills rather than project memory.
     * Do not generate `.bonsai/developer_context.md` unless the user explicitly asks for developer-local
       context.
     * Do not let implementation conveniences rewrite product intent or target architecture.
@@ -211,28 +237,36 @@ In `plan.md`, define:
 * The initial roadmap
 * The first active phase
 * The execution mode of the first active phase, when it can be responsibly determined from the design discussion
+* The active phase-plan approval state when a separate phase plan exists
 
 Use:
 
-* **Single-pass execution**, when the first phase:
+* **Single-pass execution**, as the normal mode when the phase can be implemented and reviewed without
+  first approving a separate durable contract.
 
-    * implements already-approved behavior,
-    * is bounded and localized,
-    * has a clear implementation direction,
-    * does not materially shape downstream design,
-    * does not establish or reshape important module boundaries, and
-    * can be safely reviewed after code and tests are produced.
+* **Two-pass contract-first execution**, when the phase establishes or materially changes a contract
+  that independently merits human approval before implementation, such as:
 
-* **Two-pass contract-first execution**, when the first phase:
+    * an externally consumed API,
+    * a schema or persistent format,
+    * a protocol or message contract,
+    * an extension/plugin contract,
+    * an integration surface,
+    * another durable design surface that downstream code or external consumers will rely on.
 
-    * introduces or materially reshapes a public API,
-    * defines or changes a schema, persistent format, protocol, extension contract, or integration surface,
-    * establishes an important abstraction or subsystem boundary,
-    * establishes or changes human-digestible module boundaries,
-    * changes dependency direction or cross-module seams,
-    * changes rebuild-relevant structure that later phases will rely on,
-    * creates a high-leverage design surface where human review before full implementation is valuable, or
-    * is otherwise likely to become costly to reverse after implementation begins.
+Do not select two-pass contract-first execution merely because the phase:
+
+* is large or complex,
+* introduces new classes or packages,
+* contains multiple implementation concerns,
+* creates internal helper abstractions,
+* would benefit from ordinary code review,
+* touches more than one module,
+* needs tests.
+
+If a durable contract that governs the phase has already been explicitly approved outside the current Bonsai
+pass, do not create a redundant contract gate merely because implementation depends on that contract. Use
+single-pass execution unless the phase is establishing or materially changing another review-worthy durable contract.
 
 If the first phase's execution mode cannot be responsibly determined from the design discussion,
 set it to `To determine at activation` rather than guessing. In that case, ensure `state.md`
@@ -243,14 +277,22 @@ makes execution-mode resolution part of the implementation startup path before s
 ## Phase-Plan Restraint
 
 Do not generate `plan/plan_phase_<N>.md` merely because a phase is active,
-complex in the abstract, or two-pass.
+complex in the abstract, or uses multiple files.
 
 Generate it only when our design discussion already contains enough execution-level sequencing,
-review gates, module-scope decisions, boundary constraints, or validation detail to justify preserving
+review gates, scope constraints, contract detail, or validation detail to justify preserving
 a phase-level plan before implementation begins.
 
-Otherwise, leave the phase plan absent so the implementation workflow can create it through the phase
-execution skill closer to execution, when repository reality is available.
+A two-pass phase normally requires a phase plan because its contract review gate must be explicit.
+
+Otherwise, leave the phase plan absent so the implementation workflow can create one closer to
+execution, when repository reality is available.
+
+When a phase plan is generated during synthesis:
+
+* Set its `Plan Status` to `Ready for Review`, not `Approved`.
+* Set `state.md` execution readiness to `Awaiting human review`.
+* Make review of that phase plan the exact next step.
 
 ---
 
@@ -260,31 +302,50 @@ In `state.md`, initialize:
 
 * The current phase
 * The active phase plan file, if one exists
+* The phase-plan approval state, if one exists
 * The current phase pass
 * The phase execution mode, or `To determine at activation` when that is the honest result of synthesis
-* The exact first implementation step, expressed at the correct execution unit:
-
-    * use the full current pass through its next review gate for two-pass phases,
-    * use the first bounded implementation step for single-pass phases,
-    * use phase-mode resolution and any required phase-plan drafting when the mode remains unresolved
+* Explicit execution readiness
+* The exact first implementation step, expressed at the correct execution unit
 * The success condition for that step
-* The recommended AI effort level
+
+Use these execution-readiness values:
+
+* `Design required` - product or architecture decisions must be resolved first.
+* `Phase planning required` - durable design is sufficient, but execution planning must occur first.
+* `Awaiting human review` - a plan, contract, or other required artifact is ready for human review.
+* `Ready to execute` - the exact next implementation step has an approved basis and no planning gate remains.
+* `Blocked` - execution cannot safely continue until a stated blocker is resolved.
+* `Complete` - no further implementation step is currently required.
+
+For a two-pass phase, the first executable Pass A step should cover the approved contract work
+through its next review gate unless the design explicitly requires a smaller unit.
+
+For a single-pass phase, set `Current Phase Pass: Single-pass Implementation` and use the first bounded
+implementation step. Reserve `Pass A (Contract)`, `Contract Review`, and `Pass B (Implementation)` for
+actual two-pass contract-first phases. A single-pass phase must never be represented as Pass B.
+
+When execution mode remains unresolved, use mode resolution and any required phase-plan drafting as
+the exact next step.
 
 ---
 
 ## Two-Pass State Initialization
 
 When the first active phase uses two-pass contract-first execution, initialize `state.md`
-so that the exact first implementation step runs the full current pass through its next explicit
-human review gate, unless our design discussion explicitly requires a smaller stopping point.
+so that the exact first implementation step runs the current pass through its next explicit human
+review gate, unless our design discussion explicitly requires a smaller stopping point.
 
 For an initial Pass A, this usually means:
 
-* define the reviewable API / contract shape,
-* define the module seams, subsystem boundaries, or dependency rules the phase will rely on, when
-  relevant,
-* create behavior-focused tests that demonstrate intended usage and edge cases,
+* define the reviewable contract or durable design surface,
+* preserve relevant approved architecture boundaries,
+* create tests, usage examples, schema examples, signatures, or other review artifacts only when they
+  materially clarify that contract and fit project conventions,
 * stop for human review before Pass B implementation.
+
+Pass A does not require adding interfaces or other implementation indirection unless the approved
+design itself requires them.
 
 ---
 
@@ -411,55 +472,55 @@ This product area is complete when: [List completion conditions]
 
 ## Architectural Goal & Overview
 
-**Goal:** <Optimization target, e.g., modularity, speed, isolation>  
+**Goal:** <Primary architectural optimization target>  
 **System Overview:** <Short 4-8 line description of major moving parts>  
-**Principles:** [List core architectural principles]
+**Principles:** [List approved architectural principles]
 
 ## Major Subsystems
 
 *If a subsystem has deep complexity, create `architecture/architecture_<SUBSYSTEM>.md` and link
 it here.*
 
-* **<Subsystem Name>:** <Purpose> | **Owns:** [Responsibilities] | **Must Not Own:** [Boundaries] |
-  **Dependencies:** [List] | **Details:** <Link to subsystem file or `None`>
-* **<Subsystem Name>:** <Purpose> | **Owns:** [Responsibilities] | **Must Not Own:** [Boundaries] |
-  **Dependencies:** [List] | **Details:** <Link to subsystem file or `None`>
+* **<Subsystem Name>:** <Purpose> | **Owns:** [Responsibilities] | **Must Not Own:** [Approved boundaries or `None`] |
+  **Dependencies:** [Approved dependencies or `None`] | **Details:** <Link to subsystem file or `None`>
+* **<Subsystem Name>:** <Purpose> | **Owns:** [Responsibilities] | **Must Not Own:** [Approved boundaries or `None`] |
+  **Dependencies:** [Approved dependencies or `None`] | **Details:** <Link to subsystem file or `None`>
 
 ## Module Boundaries & Dependency Shape
 
-* **Human-Digestible Modules:** [List major modules/layers/packages the implementation should preserve]
-* **Module Ownership:** [Module]: <Responsibilities owned by this module> | [Module]: <Responsibilities owned by this module>
-* **Public Seams:** [Seam/Interface]: <Purpose, consumers, and stability expectation> | [Seam/Interface]: <Purpose, consumers, and stability expectation>
-* **Dependency Direction:** **Allowed:** [Directions] | **Forbidden:** [Directions]
-* **Boundary Rules:** [Rules that keep protocol, domain, runtime, adapters, persistence, UI, or infrastructure concerns separated]
-* **Review Anchors:** [Files, interfaces, tests, examples, or module entry points that should make the generated implementation easy for a human to inspect]
+* **Human-Digestible Modules:** [Approved major modules/layers/packages, or `Not prescribed`]
+* **Module Ownership:** [Approved ownership rules, or `Not prescribed`]
+* **Public Seams:** [Externally or durably consumed seams and contracts, or `None`]
+* **Dependency Direction:** **Allowed:** [Approved directions or `Not prescribed`] | **Forbidden:** [Explicitly forbidden directions or `None`]
+* **Boundary Rules:** [Approved architectural boundaries only, or `None`]
+* **Review Anchors:** [Files, schemas, examples, interfaces, entry points, or other artifacts that make important approved design surfaces inspectable, or `None`]
 
 ## Canonical Domain Model & Data
 
-* **<Concept>:** <Purpose> | **Owned by:** <Subsystem> | **Properties:** [List] |
+* **<Concept>:** <Purpose> | **Owned by:** <Subsystem or `Not prescribed`> | **Properties:** [List] |
   **Lifecycle:** [Rules]
-* **State & Persistence:** [List data categories, where they live, persistence rules, and ownership boundaries]
+* **State & Persistence:** [List data categories, persistence rules, and ownership boundaries]
 
 ## Flow & Dependencies
 
 * **Allowed / Key Flows:** <Trigger> -> <Path 1, 2, 3> -> <Output> (Failure handling: [Rules])
-* **Dependency Rules:** **Allowed:** [Directions] | **Forbidden:** [Directions]
+* **Dependency Rules:** **Allowed:** [Approved directions or `Not prescribed`] | **Forbidden:** [Explicitly forbidden directions or `None`]
 
 ## Cross-Cutting Constraints
 
-* **Extension Model:** [Extension points and rules]
+* **Extension Model:** [Approved extension points and rules, or `None`]
 * **Error / Recovery:** [Failure domains and recovery rules]
-* **Concurrency:** [Execution model and threading rules]
+* **Concurrency:** [Execution model and threading rules, if prescribed]
 * **Security / Integrity:** [Boundaries and trust domains]
-* **Observability:** [Logging, metrics, and diagnostics expectations]
+* **Observability:** [Logging, metrics, and diagnostics expectations, if prescribed]
 * **Assumptions:** [Build / Runtime assumptions]
 
 ## Guardrails & Rejections
 
-* **Implementation Guardrails:** [Strict technical boundaries to prevent regression]
-* **Modularity Guardrails:** [Rules preventing collapsed responsibilities, convenience dependencies, oversized classes, leaky adapters, or cross-module shortcuts]
+* **Implementation Guardrails:** [Strict approved technical constraints, or `None`]
+* **Architecture Guardrails:** [Rules required to preserve approved architecture, or `None`]
 * **Explicitly Rejected:** [Approach] - [Why rejected]
-* **Foundational Open Questions:** [Unresolved architecture-shaping questions that materially affect the target design, module boundaries, dependency direction, or first implementation phase, if any]
+* **Foundational Open Questions:** [Unresolved architecture-shaping questions that materially affect the target design or first implementation phase, if any]
 * **Open Questions:** [Active architecture questions, prioritized by importance]
 ```
 
@@ -481,12 +542,15 @@ it here.*
 ## Boundaries
 
 * **Owns:** [List specific responsibilities]
-* **Must Not Own:** [List explicit boundary exclusions]
+* **Must Not Own:** [Explicit approved exclusions, or `None`]
 
 ## Interfaces & Domain
 
-* **Interface: <Name>:** <Purpose> | **Consumers:** [List] | **Rules:** [List]
+* **Public Contract: <Name>:** <Purpose> | **Consumers:** [List] | **Rules:** [List]
 * **Domain: <Concept>:** <Purpose> | **Properties:** [List] | **Lifecycle:** [Rules]
+
+If no durable public contract is part of this subsystem's approved architecture, state
+`Public Contracts: None`. Do not invent interfaces merely to populate this section.
 
 ## Data Flow & Persistence
 
@@ -496,23 +560,25 @@ it here.*
 
 ## Dependencies
 
-* **Allowed Depends On:** [Dependency] - <Why>
-* **Forbidden Depends On:** [Forbidden Dependency] - <Why>
+* **Allowed Depends On:** [Approved dependency] - <Why>
+* **Forbidden Depends On:** [Explicitly forbidden dependency] - <Why>
+
+If dependency direction is not architecturally prescribed, state that rather than inventing a rule.
 
 ## Cross-Cutting Rules
 
 * **Lifecycle:** [Startup/Runtime/Shutdown behavior]
-* **Concurrency:** [Threading, locking, and execution rules]
+* **Concurrency:** [Threading, locking, and execution rules, if prescribed]
 * **Error/Recovery:** [Subsystem-specific fault tolerance]
-* **Extension/Config:** [Extension points and configuration model]
+* **Extension/Config:** [Approved extension points and configuration model, or `None`]
 * **Security/Integrity:** [Trust boundaries and validation]
-* **Observability:** [Logging, metrics, and diagnostics expectations]
+* **Observability:** [Logging, metrics, and diagnostics expectations, if prescribed]
 * **Assumptions:** [Build or runtime assumptions]
 
 ## Guardrails
 
-* **Implementation Guardrails:** [List strict rules preventing regression]
-* **Modularity Guardrails:** [Rules preserving subsystem responsibility, public seams, dependency direction, and human-digestible structure]
+* **Implementation Guardrails:** [Approved strict rules preventing architectural regression, or `None`]
+* **Architecture Guardrails:** [Rules preserving explicitly approved subsystem responsibility and contracts, or `None`]
 * **Rejected Approaches:** [Approach] - [Why rejected]
 * **Open Questions:** [Active design questions, prioritized by importance]
 * **Fitness Criteria:** [Condition] | [Condition]
@@ -530,19 +596,22 @@ it here.*
 
 ## Strategy
 
-**Build Strategy:** <Short statement of execution strategy, sequencing logic, and how phases reduce
-risk>
+**Build Strategy:** <Short statement of execution strategy, sequencing logic, and how phases reduce risk>
 
 ## Roadmap
 
 ### Phase Summaries
 
-1. **<Phase 1 Name>:** <Objective> | **Mode:** <To determine at activation / Single-pass / Two-pass contract-first> |
+1. **<Phase 1 Name>:** <Objective> |
+   **Mode:** <To determine at activation / Single-pass / Two-pass contract-first> |
    **Status:** <Pending / Active / Awaiting Review / Blocked / Complete> |
-   **Plan:** <`plan/plan_phase_<N>.md` or `None`>
-2. **<Phase 2 Name>:** <Objective> | **Mode:** <To determine at activation / Single-pass / Two-pass contract-first> |
+   **Plan:** <`plan/plan_phase_<N>.md` or `None`> |
+   **Plan Status:** <None / Draft / Ready for Review / Approved / Superseded>
+2. **<Phase 2 Name>:** <Objective> |
+   **Mode:** <To determine at activation / Single-pass / Two-pass contract-first> |
    **Status:** <Pending / Active / Awaiting Review / Blocked / Complete> |
-   **Plan:** <`plan/plan_phase_<N>.md` or `None`>
+   **Plan:** <`plan/plan_phase_<N>.md` or `None`> |
+   **Plan Status:** <None / Draft / Ready for Review / Approved / Superseded>
 
 ## Active Phase Detail
 
@@ -550,34 +619,38 @@ risk>
 write: "See active phase plan file.")*
 
 * **Goal:** <Concrete phase outcome>
-* **Module Scope:** [Modules/subsystems this phase may touch, if known]
-* **Boundary Constraints:** [Modules/subsystems this phase must not touch, dependency directions it must preserve, or `None`]
+* **Execution Readiness:** <Design required / Phase planning required / Awaiting human review / Ready to execute / Blocked / Complete>
+* **Scope:** [Implementation areas this phase may touch, if known]
+* **Approved Constraints:** [Relevant architectural or dependency constraints, or `None`]
 * **Ordered Steps:**
     1. <Step>
     2. <Step>
-* **Validation:** [List phase-level tests, checks, or review gates]
+* **Validation:** [List phase-level checks or review gates]
 * **Done When:** [List completion conditions]
 
 ## Deferred & Completed
 
-* **Deferred:** [List intentionally postponed items]
+* **Deferred:** [List intentionally postponed roadmap items]
 * **Completed:** [Phase Name] -> Unlocked: [What it enabled]
 
 ## Maintenance Rules
 
 * Keep this file focused on the durable execution roadmap, not current-session handoff details.
-* Current session status, exact next action, blockers, current pass state, and recommended AI level belong in `state.md`.
-* Keep phase status, execution mode, and active phase plan references consistent with `state.md`.
+* Current session status, exact next action, blockers, current pass state, and active dry-run baseline belong in `state.md`.
+* Keep phase status, execution mode, phase-plan references, and phase-plan approval state consistent with `state.md`.
 * When `state.md` records a phase-level or pass-level transition, verify whether this roadmap also requires a corresponding update.
-* Add a separate `plan/plan_phase_<N>.md` when a phase requires deep sequencing, two-pass execution,
-  multiple meaningful review or validation gates, explicit module-scope control, boundary review, or
-  enough detail that it would bloat this file.
-* When a `plan/plan_phase_<N>.md` file exists, treat it as the authoritative detailed plan for that phase.
+* Add a separate `plan/plan_phase_<N>.md` when a phase requires detailed sequencing, a durable contract review gate,
+  multiple meaningful review or validation gates, or enough execution detail that it would bloat this file.
+* Do not create a phase plan merely to document ordinary implementation decomposition.
+* When a `plan/plan_phase_<N>.md` file exists, treat it as the authoritative detailed execution plan for that phase.
   Do not partially duplicate phase-level sequencing here.
 * If an active phase plan file exists but is incomplete, stale, or inconsistent with current approved
   project direction, update that phase plan rather than expanding `Active Phase Detail`.
-* Use `Mode: To determine at activation` when the execution mode should be resolved closer to implementation
+* Use `Mode: To determine at activation` when execution mode should be resolved closer to implementation
   rather than guessed prematurely.
+* A phase plan marked `Draft` or `Ready for Review` is not implementation authorization.
+* A phase plan marked `Approved` has completed its planning gate. If no other blocker or contract gate remains,
+  `state.md` should make the next executable step explicit and mark execution readiness accordingly.
 * Compress completed phase detail aggressively once it no longer helps execution.
 ```
 
@@ -590,7 +663,8 @@ write: "See active phase plan file.")*
 
 **[Meta: Agent-maintained | Active Phase Detail | Compress when done]**  
 **Project:** <Project name> | **Parent:** `../plan.md`  
-**Status:** <Not started | Active | Awaiting Review | Blocked | Complete>  
+**Phase Status:** <Not started | Active | Awaiting Review | Blocked | Complete>  
+**Plan Status:** <Draft | Ready for Review | Approved | Superseded>  
 **Mode:** <Single-pass | Two-pass contract-first>
 
 ## Objective & Scope
@@ -601,42 +675,51 @@ write: "See active phase plan file.")*
 **Out of Scope / Do Not Do Yet:** [List items]  
 **Expected Deliverables:** [List deliverables]
 
-## Module Scope & Boundaries
+## Execution Constraints
 
-* **Modules In Scope:** [Modules/subsystems/packages/layers this phase may create or modify]
-* **Modules Out of Scope:** [Modules/subsystems/packages/layers this phase must not modify]
-* **Boundary Rules:** [Dependency direction, ownership rules, adapter/domain/runtime/protocol separation rules, or `None`]
-* **Public Seams / Contracts:** [Interfaces, schemas, entry points, extension points, tests, examples, or review artifacts that should make the boundary human-reviewable]
-* **Human Review Focus:** [What the reviewer should inspect to confirm the implementation shape remains understandable]
+* **Implementation Scope:** [Known modules/subsystems/packages/layers this phase may create or modify, or `Not prescribed`]
+* **Approved Boundaries:** [Relevant architecture boundaries or `None`]
+* **Public Contracts:** [APIs, schemas, protocols, persistent formats, extension points, or other durable contracts this phase establishes or changes, or `None`]
+* **Human Review Focus:** [What the reviewer must inspect before the next gate, or `None`]
+
+Do not invent internal seams, interfaces, abstraction layers, dependency rules, or module boundaries merely
+to populate this section.
 
 ## Ordered Work
 
-*(Note: If Single-Pass, delete Pass A and use only Pass B / Implementation steps.)*
+*(If Single-Pass, delete Pass A and rename the implementation section to `### Implementation`. Do not use a Pass B label for single-pass work.)*
 
 ### Pass A: Contract (Review Gate)
+
+Use Pass A only when this phase establishes or materially changes a contract that independently merits
+human approval before implementation.
 
 * **Step A1 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
 * **Step A2 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
 
-Pass A should normally produce:
+Pass A should produce:
 
-* the reviewable API, structural contract, or design surface being established,
-* the module seams, subsystem boundaries, or dependency rules this phase will rely on, when relevant, and
-* behavior-focused tests, usage examples, or equivalent review artifacts that make the intended
-  behavior concrete before full implementation.
+* the reviewable contract, API shape, schema, protocol surface, extension contract, persistent format,
+  or other durable design surface being established,
+* relevant approved architecture constraints needed to interpret that contract, and
+* tests, examples, signatures, schemas, or other review artifacts only when they materially clarify
+  intended behavior and fit project conventions.
 
-**Stop here for Human Review of the contract, module boundaries, and review artifacts before Pass B.**
+A Bonsai contract gate does not itself require Java interfaces, builders, adapters, dependency
+injection, abstraction layers, or similar indirection.
 
-### Pass B: Implementation (Or Single-Pass)
+**Stop here for Human Review before Pass B.**
 
-* **Step B1 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
-* **Step B2 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
+### Pass B: Implementation
+
+* **Step 1 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
+* **Step 2 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
 
 ## Validation & Done Criteria
 
-* **Validation Strategy:** [List specific tests, manual checks, and verifications]
-* **Module Boundary Validation:** [How to confirm responsibilities, dependency direction, public seams, and human-digestible structure were preserved]
-* **Definition of Done:** [List completion conditions. For two-pass, include "Faithful to approved contract and module boundaries"]
+* **Validation Strategy:** [Project-appropriate tests, builds, manual checks, examples, or other verification]
+* **Architecture Validation:** [Checks required to confirm approved architecture or contracts were preserved, or `None`]
+* **Definition of Done:** [List completion conditions. For two-pass, include faithful implementation of the approved contract]
 
 ## Context & Wrap-up
 
@@ -651,20 +734,27 @@ Pass A should normally produce:
 * Treat this file as the authoritative detailed execution plan for this phase.
 * Keep `plan.md` at roadmap level. Do not duplicate phase-level sequencing there.
 * Keep `state.md` aligned with this file for:
+    * phase-plan approval state,
     * current pass,
     * exact next step,
     * review-gate status,
     * blockers,
     * phase completion state.
-* Preserve the approved module scope and boundary rules during execution.
-* Do not collapse responsibilities into convenience classes, add cross-module shortcuts, or introduce new dependencies outside the approved boundary shape without human approval.
-* If required behavior does not fit the approved module structure, stop and require phase-plan correction, architecture clarification, architecture revision, or icebox capture before continuing.
-* When a pass boundary, review gate, blocker state, or phase status changes, verify whether
-  `state.md` and `plan.md` require corresponding updates.
-* If this phase plan becomes incomplete, stale, or inconsistent with current approved project
-  direction, correct it before substantive phase execution continues.
-* Compress completed phase detail when it no longer helps execution, while preserving enough
-  summary to explain the outcome and what it unlocked.
+* Preserve approved project architecture and contracts during execution.
+* Do not introduce interfaces, abstraction layers, adapters, builders, dependency constraints, or other
+  structures merely to satisfy Bonsai workflow.
+* Implementation style and test style follow project conventions, approved project memory,
+  developer context, and applicable external skills.
+* If required behavior conflicts with approved architecture or an approved contract, stop and require
+  phase-plan correction, final-truth clarification, or final-truth revision before continuing.
+* When a pass boundary, review gate, blocker state, phase status, or plan approval state changes,
+  verify whether `state.md` and `plan.md` require corresponding updates.
+* If this phase plan becomes incomplete, stale, or inconsistent with current approved project direction,
+  correct it before substantive phase execution continues.
+* Set `Plan Status: Ready for Review` when drafting is complete and human approval is required.
+* Set `Plan Status: Approved` only after explicit human approval.
+* Compress completed phase detail when it no longer helps execution, while preserving enough summary
+  to explain the outcome and what it unlocked.
 ```
 
 ---
@@ -681,27 +771,44 @@ Pass A should normally produce:
 
 **Current Phase:** <Phase Name>  
 **Active Phase Plan File:** <`plan/plan_phase_<N>.md` or `None`>  
-**Current Phase Pass:** <Not applicable | Phase Planning | Phase Plan Review | Pass A (Contract) | Contract Review | Pass B (Implementation) | Awaiting Review>  
+**Phase Plan Status:** <None / Draft / Ready for Review / Approved / Superseded>  
+**Current Phase Pass:** <Not applicable | Phase Planning | Phase Plan Review | Single-pass Implementation | Pass A (Contract) | Contract Review | Pass B (Implementation) | Awaiting Review>  
 **Phase Execution Mode:** <Single-pass | Two-pass contract-first | To determine at activation>  
+**Execution Readiness:** <Design required | Phase planning required | Awaiting human review | Ready to execute | Blocked | Complete>  
 **Current Objective:** <Single concrete objective>
 
-* **Snapshot / Recent Work:** <2-3 lines on the current reality and the most recent meaningful work completed>
-* **Active Files:** [List 3-7 resume-critical files only; not a list of every recently touched file]
-* **Blockers / Risks:** [List active blockers, uncertainties, or review dependencies]
+* **Current Snapshot:** <1-2 lines describing only the present implementation reality needed to resume correctly>
+* **Active Files:** [List 3-7 resume-critical files only; not every recently touched file]
+* **Blockers / Risks:** [Active blockers, uncertainties, or review dependencies only]
 
 **Exact Next Step:** <Action>  
-**Success Condition:** <What must be true when the next step is complete>  
-**Recommended AI Level:** <Fast / Medium / Thinking / Max> - <Reason>
+**Success Condition:** <What must be true when the next step is complete>
+
+### Approved Dry-Run Baseline
+
+<`None`, or a compact active baseline containing only the approved basis, intended result, expected touch points, anticipated final-truth impact, and planned checks. Remove it when the work completes, is abandoned, or is redirected.>
 
 ## Maintenance Rules
 
-* Overwrite stale state instead of accumulating history.
+* `state.md` describes current resume state, not session history.
+* Keep only information needed for the next agent to resume the project correctly.
+* Before every update, remove information that no longer affects resumption.
+* Replace stale facts with current truth rather than appending newer versions.
+* Remove completed next steps, resolved blockers, obsolete observations, superseded decisions,
+  expired dry-run baselines, transient commentary, and files no longer relevant to immediate resumption.
+* A fact should remain only if removing it could materially change what the next implementation session does.
 * Keep this file short enough to read at every implementation-session startup.
+* Use `Current Snapshot` for present reality only. Do not turn it into a recent-work log.
 * Use `Active Files` only for files the next implementation session is likely to resume in immediately.
 * Do not use `Active Files` as a touched-files list, change log, or broad working-set inventory.
 * Do not duplicate roadmap summaries from `plan.md`.
 * Do not duplicate detailed phase sequencing from `plan/plan_phase_<N>.md`.
-* Keep phase execution mode consistent with `plan.md` and any active `plan/plan_phase_<N>.md`.
-* When recording a phase-level or pass-level transition, verify whether `plan.md` or the active phase plan also requires a corresponding update.
-* Update after each meaningful execution step, review gate, blocker change, phase transition, pass transition, active phase plan change, or execution mode change.
+* Keep phase execution mode, phase-plan approval state, and execution readiness consistent with
+  `plan.md` and any active phase plan.
+* A phase plan in `Draft` or `Ready for Review` state cannot correspond to `Execution Readiness: Ready to execute`
+  unless the exact next executable work is independent of that plan.
+* When recording a phase-level or pass-level transition, verify whether `plan.md` or the active phase plan
+  also requires a corresponding update.
+* Update after each meaningful execution step, review gate, blocker change, phase transition, pass transition,
+  active phase plan change, execution mode change, or execution-readiness change.
 ```

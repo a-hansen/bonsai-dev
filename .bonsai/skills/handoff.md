@@ -2,9 +2,13 @@
 
 ## Purpose
 
-Close an approved exact next step, reconcile the result against its approved basis, update required Bonsai maintenance artifacts, and hand off the next step cleanly.
+Close an approved exact next step, reconcile the result against its approved basis, update required Bonsai
+execution-memory artifacts, and record the next step cleanly.
 
-A handoff is not only a completion summary. It is the point where Bonsai preserves what changed, records the next exact step, and gives the user a clean way to continue in either the current session or a fresh session.
+A handoff is not a historical session summary. It preserves only what the next implementation session needs
+and reports enough completed-work detail for the human to verify the result.
+
+Bonsai cannot clear, terminate, reset, or create the human's session.
 
 ## Required Inputs
 
@@ -15,8 +19,8 @@ Before producing a handoff, inspect the relevant approved basis for the work:
 * Approved final-truth impact, when one exists.
 * Current `state.md`.
 * Active `plan/plan_phase_<N>.md`, when applicable.
-* `icebox.md`, when present.
-* Any project memory documents affected by the completed work.
+* Human-owned final-truth documents affected by the completed work.
+* `icebox.md` only when the completed step explicitly involved a previously preserved observation.
 
 ## Handoff Procedure
 
@@ -24,47 +28,102 @@ After completing the exact next step:
 
 1. Verify the completed work against the approved basis.
 
-2. Classify the actual final-truth impact:
+2. Classify actual impact on human-owned final truth:
 
-    * `None`: Approved final truth already covers the completed work.
-    * `Clarification`: Intended behavior is unchanged, but a final-truth document should be stated more precisely.
+    * `None`: Approved human-owned final truth already covers the completed work.
+    * `Clarification`: Intended behavior is unchanged, but human-owned final truth should be stated more precisely.
     * `Revision`: Completed or required work changes intended behavior, constraints, architecture, or system boundaries.
 
 3. Resolve final-truth handling:
 
     * If actual impact is `None`, report `None`.
-    * If actual impact is `Clarification`, propose the affected document update unless it was completed under explicit human instruction.
-    * If actual impact is `Revision`, do not treat revised work as complete until the affected final-truth documents are updated and approved.
+    * If actual impact is `Clarification`, propose the affected human-owned document update unless it was completed
+      under explicit human instruction.
+    * If actual impact is `Revision`, do not treat revised work as complete until affected human-owned final-truth
+      documents are updated and approved.
 
-4. Update required Bonsai maintenance artifacts according to `implementation_prompt.md`, including as applicable:
+4. Update required Bonsai execution-memory artifacts according to `implementation_prompt.md`, including as applicable:
 
     * `plan.md`
     * `state.md`
-    * Active `plan/plan_phase_<N>.md`
-    * `icebox.md`
-    * Shared maps
+    * active `plan/plan_phase_<N>.md`
+    * shared maps
 
-5. If work followed an approved dry run, compare actual results, checks, touch points, and final-truth impact against the approved execution baseline. Remove or replace stale active baseline content in `state.md` after completion or redirection.
+5. If work followed an approved dry run, compare actual results, checks, touch points, and final-truth impact
+   against the approved execution baseline. Remove the active baseline from `state.md` after completion,
+   abandonment, or redirection.
 
-6. Record the exact next step in `state.md`.
+6. Recompute and record the exact next step and execution readiness in `state.md` from the reconciled current truth.
 
-7. Recommend a clean session unless there is a specific reason to continue in the current session.
+7. Clean `state.md` before handoff:
 
-8. If presenting a terminate-session option, include a ready-to-copy prompt for starting the next session.
+    * remove the completed next step,
+    * remove resolved blockers,
+    * remove obsolete active files,
+    * remove stale commentary,
+    * replace old snapshot text with current reality,
+    * remove expired dry-run baseline content,
+    * retain only resume-critical information.
 
-## Icebox Placement
+8. If meaningful out-of-scope observations were noticed but not human-triaged, do not automatically preserve
+   them. Report only that observations are available for review and give the count.
 
-Out-of-scope observations must be recorded in `icebox.md`, not as durable Icebox sections inside `plan.md`, `state.md`, active phase plans, handoff summaries, or other project-memory documents.
+9. Present the completion summary and handoff gate. Do not begin the next step unless the human explicitly chooses
+   to continue in the current session.
 
-A phase plan may mention that icebox items were captured during the phase, but the durable entries must live in `icebox.md`.
+## Out-of-Scope Observation Handling
 
-At handoff, if an active phase plan contains a durable `Icebox` section, migrate those entries to `icebox.md` and replace the phase-plan section with a brief note such as:
+Do not automatically write out-of-scope observations to `icebox.md`.
 
-```text
-Out-of-scope observations captured during this phase were moved to `../icebox.md`.
-```
+At handoff:
 
-Do not treat migrated icebox entries as approved backlog, requirements, architecture, roadmap, or authorized next work.
+* If no meaningful out-of-scope observations exist, say nothing about them.
+* If meaningful observations exist and have not been reviewed, report:
+  `Out-of-scope observations available: <N>.`
+* If the human asks to review them, present them concisely and concretely.
+* After presenting an observation, ask:
+
+  `Should this observation be preserved for later triage?`
+
+  1. Leave it unpreserved for now.
+  2. Preserve it in `icebox.md`.
+  3. Discuss before deciding.
+  4. Other.
+
+* If the human explicitly chooses to preserve or defer an observation, write it to `icebox.md`.
+* If the human rejects or leaves an unpersisted observation unpreserved, let it disappear rather than creating
+  historical baggage.
+* Do not put durable observation lists in `state.md`, `plan.md`, phase plans, or handoff summaries.
+
+Existing human-triaged `icebox.md` entries remain non-authoritative and are not automatically promoted into
+future work.
+
+Observation review is subordinate to the handoff gate that invoked it. If the human chooses another action
+while reviewing an observation, such as immediate correction, clarification, or triage, complete that authorized
+subordinate workflow and then apply the Gate Return rule below.
+
+## Gate Return Rule
+
+A handoff remains the active parent gate when it invokes a subordinate workflow such as:
+
+* observation review,
+* immediate correction of an observation,
+* final-truth clarification,
+* final-truth revision,
+* triage, or
+* discussion that results in an authorized workflow change.
+
+After the subordinate workflow completes:
+
+1. Reconcile `state.md`, `plan.md`, and any active phase plan whose current truth changed.
+2. Recompute the exact next step and execution readiness from the reconciled project memory.
+3. Refresh any completion-summary facts that changed.
+4. Return to the invoking handoff gate with concrete current choices.
+5. If the subordinate workflow materially changed execution or created a new required gate, present that new gate
+   instead of the prior handoff menu.
+
+Do not silently stop after completing a subordinate action. In particular, fixing an out-of-scope observation
+immediately does not end the handoff that surfaced it.
 
 ## Completion Summary
 
@@ -73,80 +132,103 @@ Output a compact completion summary containing:
 * Completed step.
 * Material changes.
 * Checks/results.
-* Relevant Bonsai artifact updates.
+* Relevant Bonsai execution-memory updates.
 * Approved versus actual final-truth impact.
 * Final-truth updates proposed or completed, or `None`.
 * Dry-run baseline comparison, when applicable.
 * Deviations or `None`.
-* Icebox update, when `icebox.md` changed, including the kind of observation preserved without implying approval.
-* Recorded exact next step.
+* Icebox update only when the human had previously authorized preservation.
+
+Then present these as standalone fields, never embedded inside another paragraph or summary item:
+
+```text
+Next step:
+<actual next step>
+
+Execution readiness:
+<status>
+```
+
+The next-step text must state the concrete action. Do not describe it indirectly as the "recorded next step."
 
 Do not claim completion without reporting the checks actually performed and their results.
 
 ### Changed Files Reporting
 
-At completion, report files added or modified as part of the completed step. Do not enumerate unrelated pre-existing working-tree changes unless they affected execution or require human attention.
+At completion, report files added or modified as part of the completed step. Do not enumerate unrelated
+pre-existing working-tree changes unless they affected execution or require human attention.
 
-## Clean Session Prompt
+## Handoff Menu
 
-When the handoff offers a clean-session option, provide this exact copyable prompt format:
+After the completion summary, present:
+
+`What would you like to do next?`
+
+Use concrete action text derived from the current `Next step` field.
+
+When out-of-scope observations are available:
+
+1. Continue with `<concise actual next step>` in the current session.
+2. Review or change the next step.
+3. Review the `<N>` out-of-scope observation(s).
+4. Do not continue right now.
+
+When no out-of-scope observations are available:
+
+1. Continue with `<concise actual next step>` in the current session.
+2. Review or change the next step.
+3. Do not continue right now.
+
+If there is no executable next step because execution readiness is `Complete`, `Blocked`, `Design required`,
+`Phase planning required`, or `Awaiting human review`, replace the continue choice with the concrete applicable
+gate or omit it. Never imply that execution can continue when the recorded readiness says otherwise.
+
+If the current next step requires a named gate, present that named gate instead of a normal immediate-continue menu.
+
+Do not routinely include a dry-run option. The human can request one at an applicable execution gate, and Bonsai
+may suggest one only when unusual execution risk or ambiguity makes it materially useful.
+
+## Fresh Session Prompt
+
+When a substantial gate or completed step makes a clean session useful, place the fresh-session guidance after
+the current-session choices as a separate human action:
 
 ```text
+You can also start a fresh session yourself using:
+
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
 Replace `<project>` with the active Bonsai project key or project memory directory name.
 
-Do not add project path, recorded exact next step, approval status, dry-run status, workflow name, phase name, pass name, gate instructions, required skills, stop conditions, previous-session summary, or next-session instructions to the copyable prompt.
+Do not add project path, exact next step, approval status, dry-run status, workflow name, phase name, pass name,
+gate instructions, required skills, stop conditions, previous-session summary, or next-session instructions to
+the copyable prompt.
 
-Those details must be recorded in `state.md` before handoff. The next session must discover them through the normal `implementation_prompt.md` startup/read-only pass.
+Those details must be recorded in `state.md` before handoff. The new session discovers them through the normal
+startup/read-only pass.
 
-The clean-session prompt is only a pointer into Bonsai. It is not a handoff summary.
+The clean-session prompt is only a pointer into Bonsai. It is not a handoff packet, and Bonsai does not claim to
+start the session itself.
 
 ### Canonical Prompt Self-Check
 
-Before presenting a clean-session prompt, verify that the prompt contains only:
+Before presenting a fresh-session prompt, verify that the copyable prompt contains only:
 
 ```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
-The clean-session prompt must not contain:
-
-* The exact next step.
-* Phase name or phase number.
-* Pass name.
-* Approval status.
-* Dry-run status.
-* Stop condition.
-* Required skills.
-* Project path.
-* Summary of previous work.
-* Instructions copied from `state.md`.
-
-If any of that information seems useful for the next session, update `state.md` instead.
-
-The clean-session prompt is a pointer, not a handoff packet.
-
-## Handoff Choices
-
-Unless the recorded next step requires a named gate, present:
-
-1. Terminate this session and continue in a clean session using the canonical startup prompt.
-2. Proceed to the recorded next step in this session.
-3. Show a dry run for the recorded next step in this session.
-4. Discuss or correct the result or next step.
-
-If option 1 is presented, include the clean-session prompt before or immediately after the choices.
-
-When presenting option 1, show only the canonical startup prompt. Do not append explanatory context inside the copyable prompt block.
-
-Any explanatory context must appear in the completion summary or handoff summary outside the copyable prompt.
-
-If the recorded next step requires a named gate, present that gate instead of immediate proceed choices.
+If additional information seems important for the next session, update `state.md` instead.
 
 ## Stop Conditions
 
-Stop after presenting the completion summary, handoff choices, and clean-session prompt when applicable.
+Stop after presenting the completion summary and applicable handoff or named gate.
 
-Do not continue into the next step unless the user explicitly chooses to proceed in the current session.
+Do not continue into the next step unless the human explicitly chooses to proceed in the current session.
+
+When a subordinate workflow is invoked from the handoff, stop at that subordinate workflow's required human gate
+when necessary. After the subordinate workflow completes, return to the invoking handoff gate unless a different
+required gate has replaced it.
+
+Do not describe the stop as terminating, clearing, resetting, or starting a session.
