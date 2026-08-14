@@ -75,7 +75,9 @@ execution unless it is establishing or materially changing another review-worthy
 
 A Bonsai contract gate must not force Java interfaces, builders, adapters, dependency-injection layers,
 abstract base types, module seams, or other implementation indirection. Those structures exist only when
-approved project truth or the implementation itself genuinely requires them.
+approved project truth or the implementation itself genuinely requires them. Source-level contract artifacts
+do not imply abstraction: concrete classes with intentionally unimplemented behavior are valid Pass A
+artifacts when they express the intended contract directly.
 
 ## Visible Mode Recommendation
 
@@ -169,6 +171,10 @@ work merely to fill a template. Use `None` or `Not prescribed` where the approve
 If a required approved boundary or durable contract is unresolved, preserve the question in the phase plan and
 route it through the appropriate gate before implementation.
 
+For a code contract, plan Pass A around the native source-level API or structural skeletons and the tests or
+usage examples needed to review them. Do not default to a prose contract document merely because the phase is
+contract-first.
+
 ## Phase Plan Approval Gate
 
 After creating or materially correcting a phase plan, STOP before substantive implementation.
@@ -209,15 +215,28 @@ Use this gate only when Pass A is active for an actual two-pass contract-first p
 
 Pass A should:
 
-1. Produce the reviewable durable contract or design surface being established or changed.
+1. Produce the reviewable durable contract or design surface being established or changed, preferring the
+   native artifact form developers will ultimately consume when practical.
 2. Preserve approved architecture constraints needed to interpret that contract.
 3. Produce tests, usage examples, signatures, schemas, message examples, or other review artifacts only when
    they materially clarify the intended contract and fit the project.
 4. Classify final-truth impact and identify affected final-truth documents, when any.
 5. STOP before Pass B.
 
+For code contracts:
+
+* Prefer minimal source-level API or structural skeletons plus behavior-focused tests or usage examples over a
+  standalone prose contract document.
+* Pass A may establish package placement, names, types, signatures, visibility, failure surface, and structural
+  relationships needed to make the contract directly reviewable.
+* Leave substantive behavior unimplemented until Pass B. Concrete classes with intentionally unimplemented
+  method bodies are valid contract artifacts.
+* Use prose as the primary contract artifact only when important semantics cannot be expressed clearly in the
+  native source and review artifacts. Supplemental prose is allowed when it materially improves review.
+
 Pass A does not require implementation interfaces, builders, adapters, module seams, abstraction layers, or
-other indirection unless approved project truth or the contract itself requires them.
+other indirection unless approved project truth or the contract itself requires them. Do not introduce an
+interface merely to make a contract look more abstract or formal.
 
 Do not begin Pass B until the contract is approved and any required final-truth update is approved and applied.
 

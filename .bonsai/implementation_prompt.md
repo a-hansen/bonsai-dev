@@ -35,7 +35,9 @@ At startup:
 ## Communication & Style
 
 * **User-facing:** Telegraphic. No filler, exact paths, concise.
-* **Reasoning:** Structured. Explicit blockers and concrete tradeoffs.
+* **Reasoning:** Structured and terse. Explicit blockers and concrete tradeoffs. Focus on material 
+  decisions and avoid narrating routine tool mechanics, restating known context, or repeatedly 
+  reconsidering settled conclusions.
 * **Human Gates:** Prefer supported structured choices; otherwise use numbered choices.
   **Approve** reviewed artifacts or contracts; **proceed** with stated actions.
 * **Developer Context:** Read optional `.bonsai/developer_context.md` when present. Apply it to local
@@ -45,7 +47,8 @@ At startup:
   external skills, and optional `.bonsai/developer_context.md` when creating or modifying code or tests.
 * **Workflow Neutrality:** Do not invent interfaces, abstraction layers, builders, dependency rules,
   test philosophy, mocking strategy, or other development conventions merely because Bonsai is managing
-  the work.
+  the work. This does not prohibit source-level API or structural skeletons required by an approved Pass A
+  contract. Prefer concrete types when an interface or other abstraction is not otherwise justified.
 
 ## File Roles
 

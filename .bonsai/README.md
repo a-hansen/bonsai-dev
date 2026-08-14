@@ -858,7 +858,8 @@ Loaded when current work involves:
 
 This file contains detailed phase and contract-first execution procedure.
 
-It also ensures Bonsai does not create abstractions or module boundaries solely to satisfy its own workflow.
+It also ensures Bonsai does not create abstractions or module boundaries solely to satisfy its own workflow,
+while allowing native source-level API or structural skeletons to serve directly as code-contract review artifacts.
 
 ---
 
@@ -1079,17 +1080,27 @@ A Bonsai contract does not imply a Java interface or any other particular implem
 ## Pass A: Contract
 
 The coding agent produces the reviewable contract or durable design surface required by the approved phase.
+Whenever practical, the contract should be reviewed in the native artifact form developers will ultimately
+consume rather than translated into a separate prose specification.
 
 Depending on the project, this might include:
 
+* source-level API or structural skeletons
 * API signatures
 * concrete class shape
 * schemas
 * message examples
 * protocol definitions
 * usage examples
-* tests that materially clarify intended behavior
+* behavior-focused tests that materially clarify intended behavior
 * another project-appropriate review artifact
+
+For a code contract, the normal Pass A shape is minimal source-level API or structural skeletons plus the tests
+or usage examples needed to review behavior. Concrete classes with intentionally unimplemented methods are
+valid contract artifacts. Pass A may establish names, types, signatures, visibility, and structural relationships
+without implementing substantive behavior. A standalone prose contract document is appropriate only when
+important semantics cannot be expressed clearly in the native artifacts or when the contract itself is naturally
+non-code. Supplemental prose is fine when it materially improves review.
 
 Pass A should preserve architecture constraints that already exist in approved project truth.
 

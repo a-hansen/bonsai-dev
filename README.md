@@ -46,7 +46,7 @@ bonsai-dev/
             └── ...
 ```
 
-The `.bonsai/` directory is intended to be copied into a software repository.
+The `../../../../Users/Aaron/Desktop/bonsai-contract-artifact-update/.bonsai` directory is intended to be copied into a software repository.
 
 ---
 
@@ -216,13 +216,16 @@ An already approved contract does not require a redundant Bonsai contract gate m
 Large phases, multiple modules, internal abstractions, tests, or implementation dependency changes are not by
 themselves reasons to create Pass A and Pass B.
 
-Pass A produces the reviewable contract.
+Pass A produces the reviewable contract. When the contract is code, Bonsai prefers the native developer-facing
+artifact: minimal source-level API or structural skeletons plus behavior-focused tests or usage examples.
+Substantive behavior remains for Pass B. A separate prose contract document is not the default when the native
+artifacts already make the contract clear.
 
 The human approves it.
 
 Pass B implements it.
 
-Contract-first does **not** mean Bonsai expects interfaces, builders, dependency-injection layers, or other abstractions. Those are implementation choices governed by the project's architecture, conventions, developer context, and other skills.
+Contract-first does **not** mean Bonsai expects interfaces, builders, dependency-injection layers, or other abstractions. Concrete classes with intentionally unimplemented behavior are valid Pass A contract artifacts when appropriate. Those are implementation choices governed by the project's architecture, conventions, developer context, and other skills.
 
 The point of the gate is to review an important contract before a large amount of code depends on it.
 

@@ -41,9 +41,17 @@ Generate optional documents ONLY if our design explicitly demands them:
       Pass A should normally produce:
 
         * the reviewable contract, API shape, schema, protocol surface, extension contract, persistent
-          format, or other approved design surface being established, and
+          format, or other approved design surface being established in the native artifact form developers
+          will ultimately consume when practical, and
         * tests, usage examples, schemas, signatures, examples, or other review artifacts only when
           they materially clarify the intended contract and are appropriate for the project.
+
+      For a code contract, prefer minimal source-level API or structural skeletons plus behavior-focused
+      tests or usage examples over a standalone prose contract document. Concrete classes with intentionally
+      unimplemented methods are valid contract artifacts. Pass A may establish names, types, signatures,
+      visibility, and structural relationships without implementing substantive behavior. Use prose as the
+      primary contract artifact only when important semantics cannot be expressed clearly in the native
+      artifacts or when the contract itself is naturally non-code.
 
       Pass A does not require interfaces, builders, adapters, abstraction layers, new module seams,
       or other implementation indirection merely because Bonsai uses the word `contract`.
@@ -338,14 +346,17 @@ review gate, unless our design discussion explicitly requires a smaller stopping
 
 For an initial Pass A, this usually means:
 
-* define the reviewable contract or durable design surface,
+* define the reviewable contract or durable design surface in its native developer-facing form when practical,
+* for code contracts, prefer minimal source-level API or structural skeletons with substantive behavior left
+  unimplemented,
 * preserve relevant approved architecture boundaries,
-* create tests, usage examples, schema examples, signatures, or other review artifacts only when they
-  materially clarify that contract and fit project conventions,
+* create behavior-focused tests, usage examples, schema examples, signatures, or other review artifacts only
+  when they materially clarify that contract and fit project conventions,
 * stop for human review before Pass B implementation.
 
 Pass A does not require adding interfaces or other implementation indirection unless the approved
-design itself requires them.
+design itself requires them. A standalone prose contract document should not replace native contract
+artifacts when those artifacts can make the contract directly reviewable.
 
 ---
 
@@ -700,10 +711,16 @@ human approval before implementation.
 Pass A should produce:
 
 * the reviewable contract, API shape, schema, protocol surface, extension contract, persistent format,
-  or other durable design surface being established,
+  or other durable design surface being established in its native developer-facing form when practical,
 * relevant approved architecture constraints needed to interpret that contract, and
 * tests, examples, signatures, schemas, or other review artifacts only when they materially clarify
   intended behavior and fit project conventions.
+
+For a code contract, prefer minimal source-level API or structural skeletons plus behavior-focused tests or
+usage examples. Concrete classes with intentionally unimplemented methods are valid contract artifacts. Pass A
+may establish names, types, signatures, visibility, and structural relationships but should leave substantive
+behavior for Pass B. Do not default to a standalone prose contract document when the native source and review
+artifacts already express the contract clearly.
 
 A Bonsai contract gate does not itself require Java interfaces, builders, adapters, dependency
 injection, abstraction layers, or similar indirection.
