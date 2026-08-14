@@ -35,7 +35,7 @@ At startup:
 ## Communication & Style
 
 * **User-facing:** Telegraphic. No filler, exact paths, concise.
-* **Reasoning:** Structured and terse. Explicit blockers and concrete tradeoffs. Focus on material 
+* **Thinking:** Structured and terse. Explicit blockers and concrete tradeoffs. Focus on material 
   decisions and avoid narrating routine tool mechanics, restating known context, or repeatedly 
   reconsidering settled conclusions.
 * **Human Gates:** Prefer supported structured choices; otherwise use numbered choices.

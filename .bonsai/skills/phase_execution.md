@@ -173,7 +173,9 @@ route it through the appropriate gate before implementation.
 
 For a code contract, plan Pass A around the native source-level API or structural skeletons and the tests or
 usage examples needed to review them. Do not default to a prose contract document merely because the phase is
-contract-first.
+contract-first. Plan for the Pass A contract package, including its contract-test source, to compile successfully
+before the contract review gate. Behavior-focused contract tests do not need to pass in Pass A because substantive
+behavior is intentionally deferred to Pass B.
 
 ## Phase Plan Approval Gate
 
@@ -231,6 +233,12 @@ For code contracts:
   relationships needed to make the contract directly reviewable.
 * Leave substantive behavior unimplemented until Pass B. Concrete classes with intentionally unimplemented
   method bodies are valid contract artifacts.
+* The Pass A contract package, including contract-test source, must compile successfully before the contract is
+  presented as ready for review. Use the smallest project-appropriate compile or build check needed to establish
+  that structural validity.
+* Behavior-focused contract tests do not need to pass in Pass A. They may fail because behavior is unimplemented
+  or may be temporarily disabled when that keeps Pass A validation clear. Report their execution status explicitly
+  at the contract gate; do not weaken an approved behavioral expectation merely to obtain a green Pass A test run.
 * Use prose as the primary contract artifact only when important semantics cannot be expressed clearly in the
   native source and review artifacts. Supplemental prose is allowed when it materially improves review.
 
@@ -277,6 +285,17 @@ During Pass B or single-pass implementation:
 
 Do not use Bonsai itself as justification for adding interfaces, builders, adapters, dependency-injection
 layers, abstraction boundaries, module seams, convenience restrictions, or test structure.
+
+For an approved two-pass code contract, Pass A tests preserve behavioral meaning rather than immutable test source.
+During Pass B, test setup, fixtures, fakes, helpers, imports, construction, and other test plumbing may be adapted
+without another contract review when the approved scenarios, inputs, observable outcomes, and failure expectations
+remain materially unchanged. Adding implementation-specific or edge-case tests also does not require contract
+review. STOP for contract review before weakening, removing, contradicting, or materially changing an approved
+behavioral expectation.
+
+Before Pass B for a code contract is complete, every approved Pass A behavioral expectation must be represented by
+an enabled test and all approved contract tests must pass. Any contract test temporarily disabled in Pass A must be
+enabled by that point.
 
 If required behavior conflicts with approved project truth or an approved contract, STOP before changing that
 truth or contract and route the issue through the appropriate clarification, revision, or planning gate.

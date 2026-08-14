@@ -49,8 +49,10 @@ Generate optional documents ONLY if our design explicitly demands them:
       For a code contract, prefer minimal source-level API or structural skeletons plus behavior-focused
       tests or usage examples over a standalone prose contract document. Concrete classes with intentionally
       unimplemented methods are valid contract artifacts. Pass A may establish names, types, signatures,
-      visibility, and structural relationships without implementing substantive behavior. Use prose as the
-      primary contract artifact only when important semantics cannot be expressed clearly in the native
+      visibility, and structural relationships without implementing substantive behavior. The Pass A contract
+      package, including contract-test source, should compile successfully before human review; the behavior tests
+      themselves do not need to pass until Pass B and may be temporarily disabled when appropriate. Use prose as
+      the primary contract artifact only when important semantics cannot be expressed clearly in the native
       artifacts or when the contract itself is naturally non-code.
 
       Pass A does not require interfaces, builders, adapters, abstraction layers, new module seams,
@@ -349,6 +351,8 @@ For an initial Pass A, this usually means:
 * define the reviewable contract or durable design surface in its native developer-facing form when practical,
 * for code contracts, prefer minimal source-level API or structural skeletons with substantive behavior left
   unimplemented,
+* for code contracts, require the Pass A source and contract-test source to compile before human review while
+  allowing the behavior tests themselves to fail or remain temporarily disabled until Pass B,
 * preserve relevant approved architecture boundaries,
 * create behavior-focused tests, usage examples, schema examples, signatures, or other review artifacts only
   when they materially clarify that contract and fit project conventions,
@@ -719,8 +723,11 @@ Pass A should produce:
 For a code contract, prefer minimal source-level API or structural skeletons plus behavior-focused tests or
 usage examples. Concrete classes with intentionally unimplemented methods are valid contract artifacts. Pass A
 may establish names, types, signatures, visibility, and structural relationships but should leave substantive
-behavior for Pass B. Do not default to a standalone prose contract document when the native source and review
-artifacts already express the contract clearly.
+behavior for Pass B. The Pass A contract package, including contract-test source, must compile successfully before
+the contract review gate. Behavior-focused contract tests do not need to pass in Pass A and may be temporarily
+disabled when appropriate; the phase plan should require Pass B to enable any temporarily disabled contract tests
+and make all approved behavioral expectations pass. Do not default to a standalone prose contract document when
+the native source and review artifacts already express the contract clearly.
 
 A Bonsai contract gate does not itself require Java interfaces, builders, adapters, dependency
 injection, abstraction layers, or similar indirection.
