@@ -292,13 +292,18 @@ At a gate that completes planning or contract work for a new substantial pass:
   current session.
 * Do not describe the stop as Bonsai terminating or resetting the session.
 
-When useful, after the gate result and any current-session choices, end with:
+After every completed-step handoff and every completed planning or contract gate, present fresh-session
+guidance after the current-session choices as a separate human action:
 
-```text
 You can also start a fresh session yourself using:
 
+```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
+
+Do not make fresh-session guidance conditional on whether the agent believes a clean session would be useful.
+The human decides whether to continue in the current session or start a fresh one. Do not place fresh-session
+guidance inside the numbered Bonsai action menu.
 
 The fresh-session prompt must remain the canonical pointer only.
 

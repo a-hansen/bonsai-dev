@@ -199,8 +199,9 @@ When the human approves the plan:
 * stop before beginning the newly approved implementation or contract pass unless the human explicitly asks
   to continue in the current session.
 
-When useful, present the canonical fresh-session prompt afterward as a separate human action. Bonsai does not
-terminate, reset, or create the session.
+After the completed phase-plan gate, present the canonical fresh-session guidance after the current-session
+choices as a separate human action. Do not place it inside the numbered gate menu. Bonsai does not terminate,
+reset, or create the session.
 
 ## Two-Pass Contract Gate
 
@@ -239,7 +240,8 @@ After contract approval:
 
 A dry run remains available on request. Do not insert it into the contract menu by default.
 
-When useful, present the canonical fresh-session prompt afterward as a separate human action.
+After the completed contract gate, present the canonical fresh-session guidance after the current-session
+choices as a separate human action. Do not place it inside the numbered gate menu.
 
 ## Implementation Discipline
 
@@ -276,12 +278,18 @@ Do not over-report ordinary file organization or private implementation detail.
 
 ## Fresh Session Startup Prompt
 
-When a clean session would be useful after a completed gate, the response may include only the canonical
+After every completed planning or contract gate, the response must provide fresh-session guidance as a separate
+human action after the current-session choices. The copyable prompt itself must contain only the canonical
 fresh-session prompt:
+
+You can also start a fresh session yourself using:
 
 ```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
+
+Do not make this conditional on whether the agent believes a clean session would be useful, and do not place
+the fresh-session action inside the numbered gate menu.
 
 Before providing that prompt, record all next-step, approval, phase, pass, dry-run, required-skill, boundary,
 and stop-condition details in `state.md` and any required planning documents.

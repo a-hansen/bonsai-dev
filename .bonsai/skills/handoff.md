@@ -190,12 +190,12 @@ may suggest one only when unusual execution risk or ambiguity makes it materiall
 
 ## Fresh Session Prompt
 
-When a substantial gate or completed step makes a clean session useful, place the fresh-session guidance after
-the current-session choices as a separate human action:
+After every completed-step handoff, place the fresh-session guidance after the current-session choices as a
+separate human action:
 
-```text
 You can also start a fresh session yourself using:
 
+```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
@@ -210,6 +210,10 @@ startup/read-only pass.
 
 The clean-session prompt is only a pointer into Bonsai. It is not a handoff packet, and Bonsai does not claim to
 start the session itself.
+
+Do not make this guidance conditional on whether the agent believes a clean session would be useful. The human
+decides whether to continue in the current session or start a fresh one. Never place the fresh-session action
+inside the numbered handoff menu.
 
 ### Canonical Prompt Self-Check
 

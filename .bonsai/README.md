@@ -757,6 +757,15 @@ A useful rule is:
 
 > If removing a fact would not materially change what the next implementation session does, it probably does not belong in `state.md`.
 
+For pass terminology, single-pass work should be recorded as:
+
+```text
+Current Phase Pass: Single-pass Implementation
+```
+
+`Pass A (Contract)`, `Contract Review`, and `Pass B (Implementation)` are reserved for actual two-pass
+contract-first phases. A single-pass implementation phase is not Pass B.
+
 ---
 
 ## `icebox.md`
@@ -972,6 +981,15 @@ Bonsai uses explicit human gates rather than vague prompts such as “awaiting a
 
 The implementation agent should prefer supported structured choices and otherwise use equivalent numbered choices.
 
+## Returning from subordinate workflows
+
+A gate may temporarily invoke a smaller workflow such as observation review, clarification, correction, or triage.
+After that subordinate action completes, the agent reconciles execution memory, recomputes the exact next step and
+execution readiness, and returns to the gate that invoked it. If the action materially changes the workflow or
+creates a new required gate, that new gate replaces the prior one.
+
+A successful subordinate action should not cause the parent handoff or approval gate to disappear.
+
 ## Dry runs
 
 Dry runs remain available but are intentionally de-emphasized.
@@ -1037,7 +1055,10 @@ Examples include:
 * protocols or message formats
 * extension or plugin contracts
 * durable integration surfaces
-* other high-leverage contracts that downstream implementation or external consumers will rely on
+* other durable contracts that downstream implementation or external consumers will rely on and that independently merit human approval before implementation
+
+An already approved durable contract does not require a redundant Bonsai contract gate merely because a phase
+implements it.
 
 Contract-first is **not** automatically required because a phase:
 
@@ -1046,6 +1067,8 @@ Contract-first is **not** automatically required because a phase:
 * creates new classes or packages
 * has internal complexity
 * introduces helper abstractions
+* creates or changes internal module organization
+* changes implementation dependency structure that is not itself an approved durable contract
 * needs tests
 * could theoretically use interfaces
 
@@ -1243,9 +1266,21 @@ For example:
 Out-of-scope observations available: 2
 ```
 
-The human can then choose whether to spend another interaction reviewing them.
+The human can then choose whether to spend another interaction reviewing them. When an observation is reviewed,
+a normal triage prompt is:
 
-Only observations the human intentionally wants to retain belong in `icebox.md`.
+```text
+Should this observation be preserved for later triage?
+
+1. Leave it unpreserved for now.
+2. Preserve it in icebox.md.
+3. Discuss before deciding.
+4. Other.
+```
+
+Only observations the human intentionally wants to retain belong in `icebox.md`. If observation review or an
+immediate correction was invoked from a handoff, the agent returns to that handoff after the subordinate action
+completes, unless the action creates a different required gate.
 
 This keeps both project memory and token usage focused on information that has demonstrated value.
 
@@ -1264,23 +1299,23 @@ Bonsai cannot:
 
 It can only stop its current workflow at an appropriate boundary and tell the human how to continue.
 
-A clean session is often useful when:
-
-* a substantial planning gate completes
-* a contract is approved
-* a major objective completes
-* accumulated conversation context has become noisy
-* the next step begins a substantially different pass
-
-But starting a new session remains a human action.
+A clean session may be especially useful when a planning gate completes, a contract is approved, a major
+objective completes, accumulated conversation context has become noisy, or the next step begins a substantially
+different pass. Starting a new session always remains a human action.
 
 ## Canonical fresh-session prompt
 
-When a clean session would be useful, Bonsai may provide:
+After every completed-step handoff and every completed planning or contract gate, Bonsai provides fresh-session
+guidance after the current-session choices as a separate human action:
+
+You can also start a fresh session yourself using:
 
 ```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
+
+The agent does not decide whether a clean session is useful enough to mention. The human decides whether to use
+the prompt. Fresh-session guidance is not a numbered Bonsai workflow choice.
 
 That prompt is intentionally only a pointer.
 
@@ -1303,21 +1338,42 @@ The new session discovers them through the normal startup process.
 
 A human may also deliberately continue in the current session.
 
-At a normal handoff, choices may look like:
-
-1. Proceed to the recorded next step in this session.
-2. Discuss or correct the result or recorded next step.
-3. Stop here.
-
-When a clean session would be useful, Bonsai may add after those choices:
+At a normal handoff, the completion summary presents these as standalone fields:
 
 ```text
+Next step:
+<actual next step>
+
+Execution readiness:
+<status>
+```
+
+Then it asks:
+
+```text
+What would you like to do next?
+```
+
+When out-of-scope observations exist, choices may look like:
+
+1. Continue with `<concise actual next step>` in the current session.
+2. Review or change the next step.
+3. Review the `<N>` out-of-scope observation(s).
+4. Do not continue right now.
+
+Without observations, omit the observation choice and renumber `Do not continue right now.` to 3. The action
+text should name the actual next step rather than referring indirectly to a "recorded next step."
+
+After every completed-step handoff, Bonsai adds this after the current-session choices:
+
 You can also start a fresh session yourself using:
 
+```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
-Bonsai should not describe this as terminating or resetting the current session.
+This guidance is always shown, remains outside the numbered action menu, and does not imply that Bonsai can
+start, terminate, clear, or reset a session.
 
 ---
 
