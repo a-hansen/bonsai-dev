@@ -27,12 +27,14 @@ For repository code mapping, see [the Bonsai Maps guide](maps/README.md).
 ├── README.md
 ├── design_session.md
 ├── implementation_prompt.md             # Always-loaded implementation router and invariants
-├── developer_context.example.md         # Optional template for local/developer-specific context
+├── developer_context.example.md         # Optional template for human-supplied local/developer context
+├── tooling.md                           # Optional, agent-created learned operational memory
 ├── skills/
 │   ├── phase_execution.md               # Loaded for phase planning or contract gates
 │   ├── dry_run.md                       # Loaded only when a dry run is requested or accepted
 │   ├── handoff.md                       # Loaded when closing work or preparing a handoff
-│   └── final_truth_update.md            # Loaded when final-truth clarification or revision is needed
+│   ├── final_truth_update.md            # Loaded when final-truth clarification or revision is needed
+│   └── tooling_memory.md                # Loaded only when tooling/environment knowledge is relevant
 ├── maps/
 │   └── ...
 └── projects/
@@ -68,7 +70,8 @@ Bonsai separates durable project memory by type.
 | `state.md` | Current resume state | Agent-maintained |
 | `plan/plan_phase_<N>.md` | Detailed active phase execution plan | Agent-maintained |
 | `icebox.md` | Human-triaged deferred observations | Agent-maintained, human-authorized |
-| `.bonsai/developer_context.md` | Optional developer/local context | Developer/team-maintained |
+| `.bonsai/developer_context.md` | Optional human-supplied developer/local context | Developer/team-maintained |
+| `.bonsai/tooling.md` | Optional learned operational tooling/environment memory | Agent-maintained |
 | `.bonsai/skills/*.md` | Triggered implementation workflow | Framework skills |
 
 This separation matters.
@@ -79,6 +82,7 @@ This separation matters.
 * State should describe what matters now, not preserve session history.
 * Icebox entries should exist only because the human chose to preserve them.
 * Developer context should not override project truth.
+* Learned tooling memory should record current operational facts and workarounds, not session history.
 * Triggered skills should not be copied into project memory.
 * Deep requirement areas should not bloat top-level product truth.
 * Deep subsystem architecture should not bloat top-level implementation truth.
@@ -172,6 +176,7 @@ Use an IDE / CLI coding agent to:
 * execute the active plan
 * reconcile proposed and completed work against approved final truth
 * maintain compact operational state
+* preserve durable learned tooling/environment knowledge without loading it into every session
 * surface useful out-of-scope observations without automatically preserving them
 * maintain code maps when structural changes justify it
 
@@ -187,14 +192,15 @@ The coding agent should:
 2. read developer context when present
 3. read the active project memory
 4. read deeper requirements, architecture, phase plans, or skills only when their trigger applies
-5. summarize the current state and exact next step
-6. state execution readiness explicitly
-7. classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`
-8. stop at a structured startup gate
-9. execute only the human-authorized next step
-10. reconcile completed work against final truth and any approved dry-run baseline
-11. clean operational state and record the next exact step
-12. stop at the next natural gate
+5. lazy-load tooling memory only when the tooling-memory trigger applies
+6. summarize the current state and exact next step
+7. state execution readiness explicitly
+8. classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`
+9. stop at a structured startup gate
+10. execute only the human-authorized next step
+11. reconcile completed work against final truth and any approved dry-run baseline
+12. clean operational state and record the next exact step
+13. stop at the next natural gate
 
 `implementation_prompt.md` is the always-loaded router and invariant set. It conditionally loads skills only when the current state or requested action requires them:
 
@@ -203,6 +209,7 @@ The coding agent should:
 .bonsai/skills/dry_run.md               # Optional execution previews
 .bonsai/skills/handoff.md               # Completion reconciliation and handoff
 .bonsai/skills/final_truth_update.md    # Final-truth clarification or revision handling
+.bonsai/skills/tooling_memory.md        # Lazy-loaded learned tooling/environment memory
 ```
 
 This keeps normal implementation sessions smaller without hiding the rules that protect scope, authority, and final truth.
@@ -224,15 +231,16 @@ If useful, copy it to:
 ```
 
 Use this file for stable context that is useful across AI sessions but does not belong in project truth.
+It is intentionally supplied and maintained by the developer or team.
 
 Good examples:
 
 * preferred coding style
 * testing philosophy
 * abstraction preferences
-* local SDK or toolchain paths
-* machine-specific setup notes
-* unusual build/runtime quirks
+* known local SDK or toolchain paths
+* intentionally documented machine-specific setup
+* known build/runtime constraints
 * AI session preferences
 * recurring constraints that apply when AI tools work with you
 
@@ -242,7 +250,11 @@ Bonsai itself should remain usable with different developer styles and different
 
 Do not use developer context for product requirements, target architecture, phase plans, or current execution state.
 
-Those belong in project memory.
+Do not use it as an automatic destination for environment or tooling facts discovered by the implementation
+agent. Learned operational facts belong in optional `.bonsai/tooling.md` when they satisfy the
+tooling-memory skill's preservation rules.
+
+Those project concerns belong in project memory.
 
 ## Source control guidance
 
@@ -258,6 +270,58 @@ Keep it out of source control when it contains:
 Commit it only when the team intentionally wants shared developer/operator context.
 
 Never put secrets in this file.
+
+---
+
+# Optional Tooling Memory
+
+Bonsai can preserve durable operational facts that an implementation agent learns while working in the repository:
+
+```text
+.bonsai/tooling.md
+```
+
+This file is different from `developer_context.md`.
+
+* `developer_context.md` is intentionally supplied and maintained by the developer or team.
+* `tooling.md` is agent-maintained memory learned from actual repository/environment work.
+
+Examples of useful tooling memory include:
+
+* a tool exists but is not on the expected `PATH`
+* a repository must use its wrapper rather than a system build tool
+* a temporary-directory location is unreliable and a repository-local alternative works
+* a recurring permission or runtime constraint changes how commands must be executed
+* an installed tool or runtime version materially limits available commands
+* a known warning is harmless and can be ignored during a specific validation path
+
+`tooling.md` is intentionally lazy-loaded. It is not part of routine implementation startup.
+
+When `state.md` identifies a tooling/environment blocker, the exact next step is explicitly tooling/environment
+work, or execution encounters an unexpected tooling/build/filesystem/runtime problem, the implementation agent
+loads:
+
+```text
+.bonsai/skills/tooling_memory.md
+```
+
+That skill decides whether existing `tooling.md` should be read and whether a newly learned fact is durable
+enough to create or update the file.
+
+The file should preserve current actionable knowledge, not failed-attempt history. A useful entry describes the
+working rule or workaround rather than every command that failed before it was discovered.
+
+The implementation agent may maintain qualifying tooling memory without human approval. That does not authorize
+the agent to install software, change dependencies, modify developer-owned context, alter machine configuration,
+or broaden implementation scope.
+
+If a current tooling issue blocks the exact next step, the blocker still belongs in `state.md`. A durable lesson
+learned while resolving or characterizing that blocker may also belong in `tooling.md`.
+
+Keep secrets out of `tooling.md`.
+
+For source control, keep machine-specific tooling memory local unless the team intentionally wants to share it.
+Repository-wide, reproducible operational knowledge may be committed when that is useful.
 
 ---
 
@@ -896,6 +960,26 @@ This skill prevents implementation or execution memory from silently redefining 
 
 ---
 
+## `.bonsai/skills/tooling_memory.md`
+
+Loaded when:
+
+* `state.md` identifies a tooling/environment blocker
+* the exact next step is explicitly to diagnose or change tooling/environment behavior
+* execution encounters an unexpected tooling, build, test-runner, filesystem, temporary-directory,
+  command-availability, dependency/tool-version, or runtime-environment issue
+
+The skill governs:
+
+* lazy loading of optional `.bonsai/tooling.md`
+* deciding whether a discovered fact is durable enough to preserve
+* updating current operational rules instead of accumulating troubleshooting history
+* separating current blockers from durable operational memory
+* keeping learned observations separate from developer-owned context
+* preventing tooling memory from becoming implicit authority to modify the environment
+
+---
+
 ## `.bonsai/skills/handoff.md`
 
 Loaded when approved work is being closed, a session is ending, or execution state needs to be handed off cleanly.
@@ -946,6 +1030,9 @@ At a high level:
 6. triggered skills only when required
 
 `icebox.md` is not a routine startup read. It is read only when the current step explicitly involves a preserved observation or human-requested icebox triage.
+
+`tooling.md` is also not a routine startup read. It is read through `.bonsai/skills/tooling_memory.md` only when
+a tooling-memory trigger applies.
 
 The agent should respond with a compact startup summary:
 
@@ -1233,6 +1320,27 @@ Do not append historical entries merely because they once mattered.
 
 ---
 
+## Agent-maintained `tooling.md`
+
+`.bonsai/tooling.md` is optional learned operational memory.
+
+Do not create or load it merely because a repository has build tools.
+
+Create or update it only through `.bonsai/skills/tooling_memory.md` when a discovered fact is durable,
+actionable, likely to matter again, and supported by enough evidence to state a useful current rule or workaround.
+
+When maintaining it:
+
+* preserve current operational truth, not troubleshooting history
+* consolidate duplicate entries
+* correct or remove stale entries when disproven
+* keep transient failures, command typos, one-off network problems, and unique temporary paths out
+* keep unresolved current blockers in `state.md`
+* never record secrets
+* do not silently modify `.bonsai/developer_context.md` to match an observation
+
+---
+
 ## Human-triaged `icebox.md`
 
 `icebox.md` is different from normal agent-maintained execution memory.
@@ -1263,7 +1371,11 @@ Examples:
 
 Bonsai should prevent those observations from silently expanding the current task.
 
-The default behavior is:
+A durable tooling/environment fact is not an icebox observation merely because it was discovered incidentally.
+When it qualifies under `.bonsai/skills/tooling_memory.md`, it may be preserved automatically in
+`.bonsai/tooling.md` without human triage.
+
+The default behavior for ordinary out-of-scope observations is:
 
 1. notice the issue
 2. do not fix it
@@ -1477,27 +1589,29 @@ A typical Bonsai project may look like this:
 8. Human proceeds, corrects/discusses the step, or stops
 9. Human requests a dry run only when useful
 10. Agent executes one authorized bounded step
-11. Agent stops before any material deviation or unapproved final-truth revision
-12. Agent may indicate that meaningful out-of-scope observations are available for review
-13. Human chooses whether any observation is worth preserving in `icebox.md`
-14. Agent loads `.bonsai/skills/handoff.md`, reconciles the completed step, and cleans execution memory
-15. Agent records the next exact step and execution readiness
-16. Human either continues deliberately in the same session or starts a fresh one
-17. Load `.bonsai/skills/phase_execution.md` and pause at phase-plan or contract review gates only when they are genuinely required
-18. Explicitly approve updates to human-owned requirements or architecture when implementation reveals a clarification or revision
-19. Keep roadmap, state, phase plans, dry-run baselines, and icebox content compact as the project evolves
+11. If a tooling/environment issue appears, agent lazy-loads `.bonsai/skills/tooling_memory.md` and consults or updates `.bonsai/tooling.md` only as warranted
+12. Agent stops before any material deviation or unapproved final-truth revision
+13. Agent may indicate that meaningful out-of-scope observations are available for review
+14. Human chooses whether any observation is worth preserving in `icebox.md`
+15. Agent loads `.bonsai/skills/handoff.md`, reconciles the completed step, and cleans execution memory
+16. Agent records the next exact step and execution readiness
+17. Human either continues deliberately in the same session or starts a fresh one
+18. Load `.bonsai/skills/phase_execution.md` and pause at phase-plan or contract review gates only when they are genuinely required
+19. Explicitly approve updates to human-owned requirements or architecture when implementation reveals a clarification or revision
+20. Keep roadmap, state, phase plans, dry-run baselines, tooling memory, and icebox content compact as the project evolves
 
 ---
 
 # Summary
 
-Use Bonsai to keep five things cleanly separated:
+Use Bonsai to keep six things cleanly separated:
 
 1. **What the product should be**
 2. **What target architecture has actually been approved**
 3. **What the AI should do next**
 4. **What out-of-scope ideas the human deliberately chose to preserve**
-5. **What the AI should know about the developer or local environment**
+5. **What the developer or team intentionally told the AI about the local environment and working preferences**
+6. **What the AI learned about how to work successfully in this repository/environment**
 
 Human-owned requirements and architecture establish final truth.
 
@@ -1505,6 +1619,10 @@ Agent-maintained plan and state describe current execution.
 
 The icebox holds only deliberately preserved deferred observations.
 
-Developer context and external skills control developer-specific style and working preferences without turning Bonsai itself into an opinionated coding methodology.
+Developer context preserves intentionally supplied developer/local guidance. Optional tooling memory preserves
+qualified operational facts learned by the agent and is loaded only when relevant.
+
+External skills can still control developer-specific working behavior without turning Bonsai itself into an
+opinionated coding methodology.
 
 That separation is what makes fresh-session AI development practical while keeping the human in control of product intent, architecture, and scope.

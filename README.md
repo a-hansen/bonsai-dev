@@ -12,6 +12,7 @@ The basic idea is simple:
 * let coding agents maintain the operational parts
 * keep product and architecture decisions human-owned
 * use fresh AI sessions without having to explain the project again
+* preserve useful tooling/environment lessons without rediscovering them
 * load detailed context only when it is needed
 
 There is no server, database, or external memory service. Bonsai lives in the repository under:
@@ -34,11 +35,13 @@ bonsai-dev/
     ├── design_session.md
     ├── implementation_prompt.md
     ├── developer_context.example.md
+    ├── tooling.md                       # Optional, agent-created learned operational memory
     ├── skills/
     │   ├── phase_execution.md
     │   ├── dry_run.md
     │   ├── handoff.md
-    │   └── final_truth_update.md
+    │   ├── final_truth_update.md
+    │   └── tooling_memory.md
     ├── maps/
     │   └── ...
     └── projects/
@@ -46,7 +49,7 @@ bonsai-dev/
             └── ...
 ```
 
-The `../../../../Users/Aaron/Desktop/bonsai-contract-artifact-update/.bonsai` directory is intended to be copied into a software repository.
+The `.bonsai/` directory is intended to be copied into a software repository.
 
 ---
 
@@ -80,6 +83,10 @@ plan/plan_phase_<N>.md
 ```
 
 There is also an optional `icebox.md` for out-of-scope observations the human explicitly decides are worth preserving.
+
+At the repository level, optional `.bonsai/tooling.md` stores durable operational knowledge the implementation
+agent learns about how to work successfully in the repository/environment. It is agent-maintained and
+lazy-loaded through `.bonsai/skills/tooling_memory.md`, rather than read during every startup.
 
 The goal is to keep each file focused. `state.md`, in particular, is current state rather than a running history.
 
@@ -142,6 +149,12 @@ A normal startup tells you:
 * whether the proposed work affects approved requirements or architecture
 
 The human then decides whether to proceed.
+
+Routine startup does not read `.bonsai/tooling.md`. If the current state is blocked on tooling/environment
+behavior, the exact next step is tooling/environment work, or execution encounters an unexpected tooling,
+build, filesystem, command, version, permission, or runtime issue, the agent loads
+`.bonsai/skills/tooling_memory.md`. That skill decides whether existing tooling memory should be consulted or
+new durable operational knowledge should be preserved.
 
 Bonsai deliberately separates **planning complete** from **ready to implement**. A phase plan can be fully drafted but still require human review before execution.
 
@@ -281,6 +294,67 @@ inside completion prose. Menu choices name the concrete next action.
 
 ---
 
+# Tooling Memory
+
+Implementation agents often learn small but important facts about the working environment:
+
+* a repository must use a particular wrapper or launcher
+* a tool exists but is not available through the expected command or `PATH`
+* a temporary-directory location is unreliable
+* a stable version constraint changes which commands are available
+* a recurring permission/runtime quirk requires a known workaround
+* a warning is known to be harmless in a specific validation path
+
+Without durable memory, a fresh session may rediscover the same fact.
+
+Bonsai can preserve those lessons in:
+
+```text
+.bonsai/tooling.md
+```
+
+This file is different from developer context:
+
+* `.bonsai/developer_context.md` is intentionally supplied and maintained by the developer or team.
+* `.bonsai/tooling.md` is learned and maintained by the implementation agent from actual repository/environment
+  work.
+
+`tooling.md` is not part of routine startup. The agent first loads:
+
+```text
+.bonsai/skills/tooling_memory.md
+```
+
+when a tooling-memory trigger occurs. The skill then lazy-loads existing tooling memory before non-trivial
+troubleshooting and creates the file only when the first learned fact is durable enough to preserve.
+
+Useful entries describe the current working rule or workaround, not the sequence of failed attempts that led to it.
+
+A qualifying fact should be:
+
+* durable
+* reusable
+* actionable
+* evidence-based
+* specific to repository/environment operation
+
+Current unresolved blockers still belong in project `state.md`. A durable lesson discovered while investigating
+the blocker may separately belong in `.bonsai/tooling.md`.
+
+The agent may maintain qualifying tooling memory without a human approval gate. That does not authorize software
+installation, dependency changes, machine configuration changes, edits to developer-owned context, or broader
+implementation scope.
+
+See:
+
+```text
+.bonsai/skills/tooling_memory.md
+```
+
+for the detailed rules.
+
+---
+
 # Fresh Sessions
 
 Bonsai is designed to work well with frequent clean AI sessions.
@@ -322,16 +396,19 @@ Start from:
 .bonsai/developer_context.example.md
 ```
 
-This is a good place for things such as:
+This is a good place for intentionally supplied things such as:
 
 * coding preferences
 * testing preferences
-* local SDK paths
-* build commands
-* machine-specific setup
+* known local SDK paths
+* preferred build commands
+* documented machine-specific setup
 * recurring AI instructions
 
 These are deliberately separate from Bonsai project truth.
+
+Agent-discovered operational facts are not automatically appended here. When they are durable and useful enough
+to preserve, they belong in optional `.bonsai/tooling.md` under `.bonsai/skills/tooling_memory.md`.
 
 Bonsai is meant to work with different developers, coding styles, and external skills rather than defining one preferred engineering style itself.
 
@@ -384,6 +461,9 @@ Copy:
 ```
 
 into the repository.
+
+The optional `.bonsai/tooling.md` file does not need to exist initially. The implementation agent creates it
+only after learning the first operational fact that qualifies for durable tooling memory.
 
 Create:
 

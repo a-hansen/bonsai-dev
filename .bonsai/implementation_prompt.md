@@ -40,9 +40,12 @@ At startup:
   reconsidering settled conclusions.
 * **Human Gates:** Prefer supported structured choices; otherwise use numbered choices.
   **Approve** reviewed artifacts or contracts; **proceed** with stated actions.
-* **Developer Context:** Read optional `.bonsai/developer_context.md` when present. Apply it to local
-  toolchain quirks, coding preferences, AI session preferences, testing preferences, and recurring
+* **Developer Context:** Read optional `.bonsai/developer_context.md` when present. Apply its human-supplied
+  local toolchain notes, coding preferences, AI session preferences, testing preferences, and recurring
   developer-specific constraints.
+* **Learned Tooling Context:** Do not routinely read optional `.bonsai/tooling.md` at startup. Load
+  `.bonsai/skills/tooling_memory.md` when its trigger applies; that skill governs lazy loading and maintenance
+  of learned operational tooling/environment facts.
 * **Code:** Follow project conventions, approved project memory, relevant source guidance, applicable
   external skills, and optional `.bonsai/developer_context.md` when creating or modifying code or tests.
 * **Workflow Neutrality:** Do not invent interfaces, abstraction layers, builders, dependency rules,
@@ -59,11 +62,15 @@ At startup:
 * **Deferred observation store:** `.bonsai/projects/<project>/icebox.md`, when human-triaged deferred
   observations have been intentionally preserved.
 * **Framework skills:** `.bonsai/skills/*.md`. These describe how the agent should work.
-* **Developer context:** `.bonsai/developer_context.md`. This is stable developer/local context, not project truth.
+* **Developer context:** `.bonsai/developer_context.md`. This is stable human-supplied developer/local context,
+  not project truth.
+* **Learned tooling memory:** `.bonsai/tooling.md`, when created. This is agent-maintained current operational
+  knowledge learned from repository/environment work. It is lazy-loaded through
+  `.bonsai/skills/tooling_memory.md` and is not project truth.
 * **Repository maps:** `.bonsai/maps/*.md`. These are navigation aids, not project truth.
 
-Do not use framework skills, developer context, maps, execution memory, or deferred observations as
-substitutes for approved human-owned project truth.
+Do not use framework skills, developer context, learned tooling memory, maps, execution memory, or deferred
+observations as substitutes for approved human-owned project truth.
 
 `icebox.md` is non-authoritative. It contains only observations the human has chosen to preserve for
 possible later consideration. It is not an approved backlog, requirement source, architecture source,
@@ -116,6 +123,9 @@ Read only when required by the rules below:
 * Subsystem architecture files only when relevant to the exact next step.
 * `icebox.md`, only when present and only if the exact next step explicitly involves a preserved observation
   or human-requested icebox triage.
+* `.bonsai/skills/tooling_memory.md`, when `state.md` identifies a tooling/environment blocker or the exact
+  next step is explicitly to diagnose or change tooling/environment behavior. The skill determines whether
+  optional `.bonsai/tooling.md` should then be read.
 
 ### 5. Startup response
 
@@ -164,6 +174,7 @@ Load a skill only when the current task requires it.
 | The human requests a dry run, or explicitly accepts a dry run suggested for unusual execution risk | `.bonsai/skills/dry_run.md` |
 | The exact next step is complete, the session is ending, or a handoff is being prepared | `.bonsai/skills/handoff.md` |
 | Proposed or completed work may clarify or revise human-owned final-truth documents | `.bonsai/skills/final_truth_update.md` |
+| `state.md` identifies a tooling/environment blocker, the exact next step is explicitly tooling/environment work, or execution encounters an unexpected tooling/build/filesystem/runtime issue | `.bonsai/skills/tooling_memory.md` |
 | Repository navigation or code-map updates are needed | Use `.bonsai/maps/code_map.md`; follow its instructions and any required rules in `.bonsai/maps/map_system.md` |
 
 Do not begin substantive execution until required phase-planning, contract, or final-truth gates have
@@ -180,8 +191,16 @@ been satisfied. Do not claim an exact next step is complete until `.bonsai/skill
     * `state.md`
     * The active `plan/plan_phase_<N>.md`, when one exists
     * `icebox.md` only when the human has chosen to preserve or defer an out-of-scope observation
+    * `.bonsai/tooling.md` only under `.bonsai/skills/tooling_memory.md` when a durable learned operational
+      fact qualifies for preservation
 
 * **Focus:** Execute only the exact next step in `state.md`. Do not broaden scope casually.
+
+* **Tooling / Environment Discovery:** Do not routinely load `.bonsai/tooling.md`. If execution encounters
+  an unexpected tooling, build, test-runner, filesystem, temporary-directory, command-availability,
+  dependency/tool-version, or runtime-environment issue, load `.bonsai/skills/tooling_memory.md` before
+  continuing non-trivial troubleshooting. Let that skill determine whether `.bonsai/tooling.md` should be
+  read, created, corrected, or left untouched.
 
 * **Working-Tree Baseline:** Treat the current contents of the working tree as the human's intended starting state.
 
@@ -354,6 +373,10 @@ not bypass `Blocked`, `Design required`, `Phase planning required`, `Awaiting hu
 * **Dry-Run Baseline Discipline:** When a dry run is approved, preserve only its compact active execution
   baseline in `state.md` until that work completes, is abandoned, or is redirected. Remove the baseline
   immediately afterward.
+
+* **Tooling-Memory Discipline:** `.bonsai/tooling.md` is optional, lazy-loaded, agent-maintained learned
+  operational memory. Maintain it only through `.bonsai/skills/tooling_memory.md`. Do not treat it as
+  human-owned project truth, a replacement for `.bonsai/developer_context.md`, or current blocker state.
 
 * **Icebox Discipline:** `icebox.md` is human-triaged deferred memory.
 
