@@ -284,15 +284,22 @@ Bonsai is designed to work well with frequent clean AI sessions.
 
 The project memory lives in the repository, so the conversation itself does not need to carry the full history.
 
-When a clean session makes sense, start one yourself with:
+After a completed-step handoff or completed planning/contract gate leaves executable work, Bonsai offers two
+peer continuation choices: continue the concrete next step in the current session, or continue it in a fresh session.
+Bonsai does not recommend one session choice over the other.
+
+If the human selects fresh-session continuation, Bonsai tells the human to start the new session themselves and
+provides:
 
 ```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
-That prompt intentionally contains no handoff summary.
+That prompt intentionally contains no handoff summary. The new agent reads `state.md` and the other Bonsai files
+to determine what happens next.
 
-The new agent reads `state.md` and the other Bonsai files to determine what happens next.
+A fresh session is not offered as a way around a blocker or required gate. If execution is not ready, Bonsai
+presents the applicable gate or non-execution choices instead.
 
 Bonsai does not attempt to terminate, clear, or create AI sessions. Session control remains with the human.
 

@@ -907,7 +907,7 @@ It guides:
 * dry-run baseline comparison
 * next-step recording
 * optional out-of-scope observation review
-* optional fresh-session guidance
+* current-session or fresh-session continuation after completed work
 
 A handoff is not a session history.
 
@@ -1299,23 +1299,26 @@ Bonsai cannot:
 
 It can only stop its current workflow at an appropriate boundary and tell the human how to continue.
 
-A clean session may be especially useful when a planning gate completes, a contract is approved, a major
-objective completes, accumulated conversation context has become noisy, or the next step begins a substantially
-different pass. Starting a new session always remains a human action.
+A clean session is often useful when:
+
+* a substantial planning gate completes
+* a contract is approved
+* a major objective completes
+* accumulated conversation context has become noisy
+* the next step begins a substantially different pass
+
+But starting a new session remains a human action.
 
 ## Canonical fresh-session prompt
 
-After every completed-step handoff and every completed planning or contract gate, Bonsai provides fresh-session
-guidance after the current-session choices as a separate human action:
-
-You can also start a fresh session yourself using:
+When the human selects fresh-session continuation, Bonsai provides:
 
 ```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
-The agent does not decide whether a clean session is useful enough to mention. The human decides whether to use
-the prompt. Fresh-session guidance is not a numbered Bonsai workflow choice.
+Bonsai does not decide whether the human should continue in the current session or a fresh one. It offers both
+when the recorded next step is executable. Starting the fresh session remains a human action.
 
 That prompt is intentionally only a pointer.
 
@@ -1334,11 +1337,12 @@ Those details belong in `state.md`.
 
 The new session discovers them through the normal startup process.
 
-## Same-session continuation
+## Continuation choices
 
-A human may also deliberately continue in the current session.
+At a normal handoff, the human chooses whether executable work continues in the current session or a fresh one.
+Neither session choice is recommended by Bonsai.
 
-At a normal handoff, the completion summary presents these as standalone fields:
+The completion summary first presents these as standalone fields:
 
 ```text
 Next step:
@@ -1354,26 +1358,24 @@ Then it asks:
 What would you like to do next?
 ```
 
-When out-of-scope observations exist, choices may look like:
+When out-of-scope observations exist and the next step is executable, choices may look like:
 
 1. Continue with `<concise actual next step>` in the current session.
-2. Review or change the next step.
-3. Review the `<N>` out-of-scope observation(s).
-4. Do not continue right now.
+2. Continue with `<concise actual next step>` in a fresh session.
+3. Review or change the next step.
+4. Review the `<N>` out-of-scope observation(s).
+5. Do not continue right now.
 
-Without observations, omit the observation choice and renumber `Do not continue right now.` to 3. The action
+Without observations, omit the observation choice and renumber `Do not continue right now.` to 4. The action
 text should name the actual next step rather than referring indirectly to a "recorded next step."
 
-After every completed-step handoff, Bonsai adds this after the current-session choices:
+Do not add a generic `Other` choice to Bonsai menus. Agent hosts may append their own free-form option.
 
-You can also start a fresh session yourself using:
+If the human selects fresh-session continuation, Bonsai tells the human to start the new session themselves,
+provides the canonical prompt, and stops without executing the next step in the current session.
 
-```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
-```
-
-This guidance is always shown, remains outside the numbered action menu, and does not imply that Bonsai can
-start, terminate, clear, or reset a session.
+If execution readiness does not permit execution, omit both continuation choices and present the applicable gate
+or non-execution actions instead. A fresh session does not bypass a required gate or blocker.
 
 ---
 

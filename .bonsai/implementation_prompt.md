@@ -284,31 +284,37 @@ For an unresolved `Revision`, present:
 
 Bonsai cannot clear, terminate, reset, or create the human's chat or agent session.
 
-At a gate that completes planning or contract work for a new substantial pass:
+At a gate that completes planning or contract work and leaves an executable next step:
 
 * Record the approved result and exact next step in `state.md`.
 * Update any required execution-memory documents.
-* Stop before beginning the newly approved pass unless the human explicitly asks to continue in the
-  current session.
+* Stop before beginning the newly approved pass or step.
+* Present current-session continuation and fresh-session continuation as peer human choices.
+* Do not recommend one session choice over the other.
 * Do not describe the stop as Bonsai terminating or resetting the session.
 
-After every completed-step handoff and every completed planning or contract gate, present fresh-session
-guidance after the current-session choices as a separate human action:
+A normal post-gate continuation menu should offer:
 
-You can also start a fresh session yourself using:
+1. Continue with `<concise actual next step>` in the current session.
+2. Continue with `<concise actual next step>` in a fresh session.
+3. Review or change the next step.
+4. Do not continue right now.
+
+If observations or another gate-specific action must also be available, insert that concrete action before the
+final stop choice. Do not encode a generic `Other` choice; hosts may provide their own free-form escape hatch.
+
+If the human selects fresh-session continuation, do not execute the next step in the current session. Tell the
+human to start the new session themselves, provide the canonical prompt, and stop:
 
 ```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
-Do not make fresh-session guidance conditional on whether the agent believes a clean session would be useful.
-The human decides whether to continue in the current session or start a fresh one. Do not place fresh-session
-guidance inside the numbered Bonsai action menu.
+The fresh-session prompt must remain the canonical pointer only. All next-step, approval, phase, pass, dry-run,
+required-skill, and stop-condition details belong in `state.md`, not in the prompt.
 
-The fresh-session prompt must remain the canonical pointer only.
-
-All next-step, approval, phase, pass, dry-run, required-skill, and stop-condition details belong in
-`state.md`, not in the prompt.
+Do not offer either continuation choice when execution readiness does not permit execution. A fresh session does
+not bypass `Blocked`, `Design required`, `Phase planning required`, `Awaiting human review`, or another required gate.
 
 ## Maintenance Discipline
 

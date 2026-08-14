@@ -69,7 +69,7 @@ After completing the exact next step:
    them. Report only that observations are available for review and give the count.
 
 9. Present the completion summary and handoff gate. Do not begin the next step unless the human explicitly chooses
-   to continue in the current session.
+   current-session continuation. If the human chooses fresh-session continuation, provide the canonical prompt and stop.
 
 ## Out-of-Scope Observation Handling
 
@@ -166,38 +166,50 @@ After the completion summary, present:
 
 Use concrete action text derived from the current `Next step` field.
 
-When out-of-scope observations are available:
+When out-of-scope observations are available and the recorded next step is executable:
 
 1. Continue with `<concise actual next step>` in the current session.
-2. Review or change the next step.
-3. Review the `<N>` out-of-scope observation(s).
+2. Continue with `<concise actual next step>` in a fresh session.
+3. Review or change the next step.
+4. Review the `<N>` out-of-scope observation(s).
+5. Do not continue right now.
+
+When no out-of-scope observations are available and the recorded next step is executable:
+
+1. Continue with `<concise actual next step>` in the current session.
+2. Continue with `<concise actual next step>` in a fresh session.
+3. Review or change the next step.
 4. Do not continue right now.
 
-When no out-of-scope observations are available:
-
-1. Continue with `<concise actual next step>` in the current session.
-2. Review or change the next step.
-3. Do not continue right now.
+Do not mark either continuation choice as recommended. Bonsai identifies the next project action, but the human
+chooses whether to perform it in the current session or a fresh one.
 
 If there is no executable next step because execution readiness is `Complete`, `Blocked`, `Design required`,
-`Phase planning required`, or `Awaiting human review`, replace the continue choice with the concrete applicable
-gate or omit it. Never imply that execution can continue when the recorded readiness says otherwise.
+`Phase planning required`, or `Awaiting human review`, omit both continuation choices and present the concrete
+applicable gate or non-execution choices instead. Never imply that a fresh session bypasses a required gate or
+blocker.
 
-If the current next step requires a named gate, present that named gate instead of a normal immediate-continue menu.
+If the current next step requires a named gate, present that named gate instead of a normal continuation menu.
 
 Do not routinely include a dry-run option. The human can request one at an applicable execution gate, and Bonsai
 may suggest one only when unusual execution risk or ambiguity makes it materially useful.
 
-## Fresh Session Prompt
+## Fresh Session Continuation
 
-After every completed-step handoff, place the fresh-session guidance after the current-session choices as a
-separate human action:
+Fresh-session continuation is a first-class human choice when an executable next step exists. Do not print the
+canonical prompt merely because a handoff occurred. Print it only after the human selects the fresh-session
+continuation choice or otherwise explicitly asks for a fresh-session prompt.
 
-You can also start a fresh session yourself using:
+When selected, do not execute the next step in the current session. Tell the human that starting the new session
+is their action and provide:
 
 ```text
+Start a fresh session yourself using:
+
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
+
+Then stop.
 
 Replace `<project>` with the active Bonsai project key or project memory directory name.
 
@@ -205,15 +217,11 @@ Do not add project path, exact next step, approval status, dry-run status, workf
 gate instructions, required skills, stop conditions, previous-session summary, or next-session instructions to
 the copyable prompt.
 
-Those details must be recorded in `state.md` before handoff. The new session discovers them through the normal
+Those details must already be recorded in `state.md`. The new session discovers them through the normal
 startup/read-only pass.
 
 The clean-session prompt is only a pointer into Bonsai. It is not a handoff packet, and Bonsai does not claim to
 start the session itself.
-
-Do not make this guidance conditional on whether the agent believes a clean session would be useful. The human
-decides whether to continue in the current session or start a fresh one. Never place the fresh-session action
-inside the numbered handoff menu.
 
 ### Canonical Prompt Self-Check
 
@@ -229,7 +237,8 @@ If additional information seems important for the next session, update `state.md
 
 Stop after presenting the completion summary and applicable handoff or named gate.
 
-Do not continue into the next step unless the human explicitly chooses to proceed in the current session.
+Do not continue into the next step unless the human explicitly chooses current-session continuation. If the human
+chooses fresh-session continuation, provide the canonical prompt and stop without executing the next step.
 
 When a subordinate workflow is invoked from the handoff, stop at that subordinate workflow's required human gate
 when necessary. After the subordinate workflow completes, return to the invoking handoff gate unless a different

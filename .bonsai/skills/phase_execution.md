@@ -196,12 +196,12 @@ When the human approves the plan:
 * mark the plan approved,
 * reconcile `plan.md` and `state.md`,
 * record the exact next step and execution readiness,
-* stop before beginning the newly approved implementation or contract pass unless the human explicitly asks
-  to continue in the current session.
+* stop before beginning the newly approved implementation or contract pass, and
+* if the next step is executable, present current-session and fresh-session continuation as peer choices.
 
-After the completed phase-plan gate, present the canonical fresh-session guidance after the current-session
-choices as a separate human action. Do not place it inside the numbered gate menu. Bonsai does not terminate,
-reset, or create the session.
+Do not recommend one session choice over the other. If the human selects fresh-session continuation, tell the
+human to start it themselves, provide the canonical fresh-session prompt, and stop without beginning the next pass.
+Bonsai does not terminate, reset, or create the session.
 
 ## Two-Pass Contract Gate
 
@@ -236,12 +236,13 @@ After contract approval:
 * record the approval,
 * set `Current Phase Pass: Pass B (Implementation)`,
 * recompute the exact next step and execution readiness,
-* stop before Pass B begins unless the human explicitly asks to continue in the current session.
+* stop before Pass B begins, and
+* if Pass B is executable, present current-session and fresh-session continuation as peer choices.
 
-A dry run remains available on request. Do not insert it into the contract menu by default.
+Do not recommend one session choice over the other. If the human selects fresh-session continuation, tell the
+human to start it themselves, provide the canonical fresh-session prompt, and stop without beginning Pass B.
 
-After the completed contract gate, present the canonical fresh-session guidance after the current-session
-choices as a separate human action. Do not place it inside the numbered gate menu.
+A dry run remains available on request. Do not insert it into the contract-review menu by default.
 
 ## Implementation Discipline
 
@@ -276,25 +277,32 @@ When relevant, report:
 
 Do not over-report ordinary file organization or private implementation detail.
 
-## Fresh Session Startup Prompt
+## Fresh Session Continuation
 
-After every completed planning or contract gate, the response must provide fresh-session guidance as a separate
-human action after the current-session choices. The copyable prompt itself must contain only the canonical
-fresh-session prompt:
+After a completed phase-plan or contract gate leaves an executable next step, offer continuation as peer choices:
 
-You can also start a fresh session yourself using:
+1. Continue with `<concise actual next step>` in the current session.
+2. Continue with `<concise actual next step>` in a fresh session.
+3. Review or change the next step.
+4. Do not continue right now.
+
+Gate-specific actions may be inserted when needed. Do not encode a generic `Other` option; the host may provide
+its own free-form choice. Do not mark either continuation choice as recommended.
+
+If the human selects fresh-session continuation, provide only the canonical pointer for the new session:
 
 ```text
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
 
-Do not make this conditional on whether the agent believes a clean session would be useful, and do not place
-the fresh-session action inside the numbered gate menu.
-
 Before providing that prompt, record all next-step, approval, phase, pass, dry-run, required-skill, boundary,
 and stop-condition details in `state.md` and any required planning documents.
 
-Do not embed those details in the fresh-session prompt. Starting the fresh session is a human action.
+Do not embed those details in the fresh-session prompt. Starting the fresh session is a human action, and the
+current session must stop without executing the next step.
+
+Do not offer fresh-session continuation when the next step is not executable. A new session does not bypass a
+planning, contract, final-truth, blocker, or other required gate.
 
 ## Stop Conditions
 
