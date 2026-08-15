@@ -65,7 +65,7 @@ This directory also contains a completed Bonsai project memory package for one s
 - Java implementation
 - Gradle build and test workflow
 
-The included memory files represent the output of a completed design session. They are ready to hand off to an IDE or CLI coding agent for implementation.
+The included memory files represent the output of a completed design session. They intentionally stop at the post-design, pre-phase-plan checkpoint. The first implementation interaction creates and reviews the detailed Phase 1 plan before any contract or implementation work begins.
 
 Use this path when you want to inspect a completed Bonsai memory package or exercise the implementation workflow without first conducting a new design session.
 
@@ -89,9 +89,14 @@ Read .bonsai/implementation_prompt.md and follow its instructions. Active projec
 The coding agent should:
 
 1. Read the included project memory.
-2. Summarize the current execution state.
-3. Identify the exact next implementation step.
-4. Recommend an AI effort level.
-5. Stop for human approval or redirection before making changes.
+2. Recognize that Phase 1 is active, uses two-pass contract-first execution, and still requires detailed phase planning.
+3. Load `.bonsai/skills/phase_execution.md`.
+4. Stop at the normal Startup Gate before making changes.
+5. When authorized to proceed, create `plan/plan_phase_1.md` from `.bonsai/templates/plan_phase_template.md` using the settled requirements and architecture.
+6. Update `plan.md` and `state.md` to record the phase plan as `Ready for Review`.
+7. Stop at the Phase Plan Approval Gate before beginning Pass A.
+8. After explicit phase-plan approval, continue through the normal Pass A contract review gate and then Pass B implementation workflow.
+
+The checked-in example deliberately does not include `plan/plan_phase_1.md`. Creating and approving that file is the first planning gate after design synthesis.
 
 The included memory files are reference project artifacts, not a completed application.
