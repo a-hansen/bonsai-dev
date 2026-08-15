@@ -29,6 +29,9 @@ For repository code mapping, see [the Bonsai Maps guide](maps/README.md).
 ├── implementation_prompt.md             # Always-loaded implementation router and invariants
 ├── developer_context.example.md         # Optional template for human-supplied local/developer context
 ├── tooling.md                           # Optional, agent-created learned operational memory
+├── templates/
+│   ├── plan_phase_template.md           # Canonical structure for implementation-time phase plans
+│   └── icebox_template.md               # Canonical structure for first-time icebox creation
 ├── skills/
 │   ├── phase_execution.md               # Loaded for phase planning or contract gates
 │   ├── dry_run.md                       # Loaded only when a dry run is requested or accepted
@@ -68,10 +71,11 @@ Bonsai separates durable project memory by type.
 | `architecture/architecture_<SUBSYSTEM>.md` | Deep subsystem architecture | Human-owned |
 | `plan.md` | Execution roadmap | Agent-maintained |
 | `state.md` | Current resume state | Agent-maintained |
-| `plan/plan_phase_<N>.md` | Detailed active phase execution plan | Agent-maintained |
+| `plan/plan_phase_<N>.md` | Detailed active phase execution plan; always used for initial Phase 1 planning, conditional later | Agent-maintained |
 | `icebox.md` | Human-triaged deferred observations | Agent-maintained, human-authorized |
 | `.bonsai/developer_context.md` | Optional human-supplied developer/local context | Developer/team-maintained |
 | `.bonsai/tooling.md` | Optional learned operational tooling/environment memory | Agent-maintained |
+| `.bonsai/templates/*.md` | Reusable structures for implementation-time artifacts | Framework templates |
 | `.bonsai/skills/*.md` | Triggered implementation workflow | Framework skills |
 
 This separation matters.
@@ -157,9 +161,11 @@ into the same conversation.
 * output rules
 * clarification rules
 * execution-readiness rules
-* inline document templates
+* inline templates for the core project files and optional layered requirements/architecture
 
-The design AI uses that single document to generate durable Bonsai project memory.
+The design AI uses that single document to generate durable Bonsai project memory. It does not generate the
+initial detailed phase plan. Instead, a new project leaves design synthesis with Phase 1 planning as the first
+implementation gate.
 
 Bonsai should preserve the design that emerged from the conversation. It should not invent interfaces, abstraction layers, builders, module boundaries, testing strategies, or other implementation conventions merely to make the generated documents look architecturally complete.
 
@@ -192,15 +198,17 @@ The coding agent should:
 2. read developer context when present
 3. read the active project memory
 4. read deeper requirements, architecture, phase plans, or skills only when their trigger applies
-5. lazy-load tooling memory only when the tooling-memory trigger applies
-6. summarize the current state and exact next step
-7. state execution readiness explicitly
-8. classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`
-9. stop at a structured startup gate
-10. execute only the human-authorized next step
-11. reconcile completed work against final truth and any approved dry-run baseline
-12. clean operational state and record the next exact step
-13. stop at the next natural gate
+5. for a newly synthesized project, draft `plan/plan_phase_1.md` as the first implementation planning action
+   and stop for human approval before substantive Phase 1 work
+6. lazy-load tooling memory only when the tooling-memory trigger applies
+7. summarize the current state and exact next step
+8. state execution readiness explicitly
+9. classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`
+10. stop at a structured startup gate
+11. execute only the human-authorized next step
+12. reconcile completed work against final truth and any approved dry-run baseline
+13. clean operational state and record the next exact step
+14. stop at the next natural gate
 
 `implementation_prompt.md` is the always-loaded router and invariant set. It conditionally loads skills only when the current state or requested action requires them:
 
@@ -397,16 +405,15 @@ into the same conversation.
 
 The design AI will use the inline instructions and templates in that document to synthesize the conversation into durable project memory.
 
-It must generate:
+For initial synthesis it must generate:
 
 * `requirements.md`
 * `architecture.md`
 * `plan.md`
 * `state.md`
 
-It may also generate these optional files when the design discussion clearly warrants them:
+It may also generate these optional human-owned design files when the design discussion clearly warrants them:
 
-* `plan/plan_phase_<N>.md`
 * `requirements/requirements_<AREA>.md`
 * `architecture/architecture_<SUBSYSTEM>.md`
 
@@ -419,23 +426,22 @@ plan.md
 state.md
 ```
 
-Layered requirements, subsystem architecture files, and detailed phase plans are created only when their extra structure materially improves project memory.
+Layered requirements and subsystem architecture files are created only when their extra structure materially
+improves project memory.
 
-A detailed phase plan should not exist merely because a phase is complicated or touches several modules.
-
-If a phase plan is generated during design synthesis, it begins as:
-
-```text
-Plan Status: Ready for Review
-```
-
-not as approved implementation authority.
-
-`state.md` should make that clear with:
+The design session does **not** generate `plan/plan_phase_1.md`. When the design is sufficient to proceed,
+`state.md` should initialize the first implementation boundary as:
 
 ```text
-Execution Readiness: Awaiting human review
+Active Phase Plan File: None
+Phase Plan Status: None
+Current Phase Pass: Phase Planning
+Execution Readiness: Phase planning required
 ```
+
+The first implementation session drafts `plan/plan_phase_1.md` from
+`.bonsai/templates/plan_phase_template.md` and stops at the Phase Plan Approval Gate. This initial phase-plan
+review happens every time, even when Phase 1 is single-pass and straightforward.
 
 ---
 
@@ -473,13 +479,14 @@ For a simple project, the initial result may look like:
 └── state.md
 ```
 
-For a more complex project, the design session may also produce optional layered files beneath:
+For a more complex project, the design session may also produce optional layered design files beneath:
 
 ```text
-plan/
 requirements/
 architecture/
 ```
+
+The `plan/` directory is created later by the implementation workflow when it drafts the first phase plan.
 
 ---
 
@@ -526,7 +533,13 @@ Example:
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: audit-logging
 ```
 
-The coding agent will load the project memory, summarize the next execution step, state execution readiness, classify anticipated final-truth impact, and stop at a structured startup gate before substantive work begins.
+The coding agent will load the project memory, summarize the next execution step, state execution readiness,
+classify anticipated final-truth impact, and stop at a structured startup gate before substantive work begins.
+
+For a newly synthesized project, that first authorized step is phase planning. The agent loads
+`.bonsai/skills/phase_execution.md`, creates `plan/plan_phase_1.md` from
+`.bonsai/templates/plan_phase_template.md`, updates execution memory, and stops again for phase-plan approval
+before any substantive Phase 1 implementation.
 
 The human may authorize the step, correct or discuss the proposed next step, or stop.
 
@@ -617,6 +630,10 @@ Examples:
    architecture/architecture_<SUBSYSTEM>.md
    plan/plan_phase_<N>.md
    ```
+
+   Reuse `.bonsai/design_session.md` when useful. For an existing project it can apply the same requirements
+   and architecture structures to the affected top-level or layered design documents without requiring a full
+   project regeneration.
 
 3. Explain the proposed pivot and the reason for it.
 4. Ask the AI to update only the affected Bonsai documents.
@@ -872,20 +889,38 @@ Instead:
 
 A human may later promote a preserved item into authoritative project memory or active execution work.
 
+When the human first chooses to preserve an observation and the project does not yet have `icebox.md`, the agent
+creates it from:
+
+```text
+.bonsai/templates/icebox_template.md
+```
+
+The template is not a reason to create an empty icebox.
+
 ---
 
 ## `plan/plan_phase_<N>.md`
 
-**Optional agent-maintained detailed execution plan for an active phase.**
+**Agent-maintained detailed execution plan for an active phase.**
 
-Use this when a phase:
+Phase 1 is intentionally special: every newly synthesized project drafts `plan/plan_phase_1.md` as the first
+implementation planning action and stops for human approval before substantive implementation. The implementation
+agent creates it from:
+
+```text
+.bonsai/templates/plan_phase_template.md
+```
+
+For Phase 2 and later, create a detailed phase plan when the phase:
 
 * needs detailed ordered sequencing that would bloat `plan.md`
 * uses contract-first two-pass execution
 * has multiple meaningful human review or validation gates
 * has explicit approved constraints that must remain visible during execution
 
-Do not create one merely because the implementation touches several modules or contains many ordinary coding steps.
+Do not create a later phase plan merely because the implementation touches several modules or contains many
+ordinary coding steps.
 
 A phase plan has an explicit planning status:
 
@@ -897,6 +932,26 @@ Superseded
 ```
 
 `Ready for Review` means planning is complete enough for human review, not that implementation may begin.
+
+---
+
+# Framework Templates
+
+Reusable implementation-time artifact templates live under:
+
+```text
+.bonsai/templates/
+```
+
+Bonsai intentionally keeps only templates with explicit runtime consumers:
+
+* `plan_phase_template.md` is consumed by `.bonsai/skills/phase_execution.md` whenever a new detailed phase plan
+  is created.
+* `icebox_template.md` is consumed when the human first authorizes preservation of an out-of-scope observation
+  and the project does not yet have `icebox.md`.
+
+Requirements and architecture templates remain inline in `design_session.md` because those artifacts are created
+and revised in the Web UI design workflow.
 
 ---
 
@@ -920,7 +975,8 @@ Loaded when current work involves:
 * Pass A contract work
 * contract review gates
 
-This file contains detailed phase and contract-first execution procedure.
+This file contains detailed phase and contract-first execution procedure. It uses
+`.bonsai/templates/plan_phase_template.md` whenever it creates a new phase plan.
 
 It also ensures Bonsai does not create abstractions or module boundaries solely to satisfy its own workflow,
 while allowing native source-level API or structural skeletons to serve directly as code-contract review artifacts.
@@ -1348,6 +1404,8 @@ When maintaining it:
 The agent does not automatically append to it.
 
 Update `icebox.md` only when the human explicitly chooses to preserve or defer an out-of-scope observation.
+If it does not yet exist, create it from `.bonsai/templates/icebox_template.md` and instantiate the approved
+observation as the first entry.
 
 Do not treat `icebox.md` as approved scope.
 
@@ -1585,20 +1643,22 @@ A typical Bonsai project may look like this:
 4. Save it under `.bonsai/projects/<project>/`
 5. Optionally create `.bonsai/developer_context.md`
 6. Coding-agent startup
-7. Agent summarizes current state, execution readiness, and exact next step
-8. Human proceeds, corrects/discusses the step, or stops
-9. Human requests a dry run only when useful
-10. Agent executes one authorized bounded step
-11. If a tooling/environment issue appears, agent lazy-loads `.bonsai/skills/tooling_memory.md` and consults or updates `.bonsai/tooling.md` only as warranted
-12. Agent stops before any material deviation or unapproved final-truth revision
-13. Agent may indicate that meaningful out-of-scope observations are available for review
-14. Human chooses whether any observation is worth preserving in `icebox.md`
-15. Agent loads `.bonsai/skills/handoff.md`, reconciles the completed step, and cleans execution memory
-16. Agent records the next exact step and execution readiness
-17. Human either continues deliberately in the same session or starts a fresh one
-18. Load `.bonsai/skills/phase_execution.md` and pause at phase-plan or contract review gates only when they are genuinely required
-19. Explicitly approve updates to human-owned requirements or architecture when implementation reveals a clarification or revision
-20. Keep roadmap, state, phase plans, dry-run baselines, tooling memory, and icebox content compact as the project evolves
+7. Agent summarizes current state, execution readiness, and the Phase 1 planning next step
+8. Human authorizes phase planning, corrects/discusses the step, or stops
+9. Agent creates `plan/plan_phase_1.md` from the canonical template and stops for phase-plan approval
+10. Human approves or revises the phase plan
+11. Human requests a dry run only when useful
+12. Agent executes one authorized bounded step
+13. If a tooling/environment issue appears, agent lazy-loads `.bonsai/skills/tooling_memory.md` and consults or updates `.bonsai/tooling.md` only as warranted
+14. Agent stops before any material deviation or unapproved final-truth revision
+15. Agent may indicate that meaningful out-of-scope observations are available for review
+16. Human chooses whether any observation is worth preserving in `icebox.md`
+17. Agent loads `.bonsai/skills/handoff.md`, reconciles the completed step, and cleans execution memory
+18. Agent records the next exact step and execution readiness
+19. Human either continues deliberately in the same session or starts a fresh one
+20. For later phases, load `.bonsai/skills/phase_execution.md` and create another phase plan only when the phase warrants one; pause at contract review gates when genuinely required
+21. Explicitly approve updates to human-owned requirements or architecture when implementation reveals a clarification or revision
+22. Keep roadmap, state, phase plans, dry-run baselines, tooling memory, and icebox content compact as the project evolves
 
 ---
 

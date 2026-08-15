@@ -17,8 +17,8 @@ external skills.
 
 ## Output Protocol
 
-Generate the foundational project documents as distinct Markdown code blocks so I can easily copy
-and paste them into my local file system.
+For an initial design synthesis, generate the foundational project documents as distinct Markdown code blocks
+so I can easily copy and paste them into my local file system.
 
 You must generate:
 
@@ -27,43 +27,7 @@ You must generate:
 3. `plan.md`
 4. `state.md`
 
-Generate optional documents ONLY if our design explicitly demands them:
-
-* `plan/plan_phase_<N>.md`
-  *(Only when the initial active phase has already been discussed in enough execution detail that a
-  phase-level plan will materially improve the first implementation session. Otherwise, leave
-  detailed phase planning to the implementation workflow when the phase becomes active.)*
-
-    * **Two-Pass Contract-First Semantics:** Use two-pass contract-first execution only when the phase
-      establishes or changes a contract or design surface that independently merits human approval
-      before implementation.
-
-      Pass A should normally produce:
-
-        * the reviewable contract, API shape, schema, protocol surface, extension contract, persistent
-          format, or other approved design surface being established in the native artifact form developers
-          will ultimately consume when practical, and
-        * tests, usage examples, schemas, signatures, examples, or other review artifacts only when
-          they materially clarify the intended contract and are appropriate for the project.
-
-      For a code contract, prefer minimal source-level API or structural skeletons plus behavior-focused
-      tests or usage examples over a standalone prose contract document. Concrete classes with intentionally
-      unimplemented methods are valid contract artifacts. Pass A may establish names, types, signatures,
-      visibility, and structural relationships without implementing substantive behavior. The Pass A contract
-      package, including contract-test source, should compile successfully before human review; the behavior tests
-      themselves do not need to pass until Pass B and may be temporarily disabled when appropriate. Use prose as
-      the primary contract artifact only when important semantics cannot be expressed clearly in the native
-      artifacts or when the contract itself is naturally non-code.
-
-      Pass A does not require interfaces, builders, adapters, abstraction layers, new module seams,
-      or other implementation indirection merely because Bonsai uses the word `contract`.
-
-      If approved architecture already defines module or dependency boundaries relevant to the
-      contract, preserve and make those boundaries reviewable. Do not invent additional boundaries
-      solely to satisfy the gate.
-
-      Pass A ends at a human review gate. Pass B implements against the approved contract and
-      approved project architecture.
+Generate optional design-truth documents ONLY if our design explicitly demands them:
 
 * `architecture/architecture_<SUBSYSTEM>.md`
   *(If a subsystem has deep, isolated complexity that should not bloat the top-level architecture.)*
@@ -73,6 +37,22 @@ Generate optional documents ONLY if our design explicitly demands them:
   requirements.)*
 
 Do not generate any other project documents unless the user explicitly requests them.
+
+### Existing-Project Design Updates
+
+This design-session packet may also be reused later in a Web UI to refine an existing Bonsai design.
+
+When the user supplies current Bonsai project-memory files and asks for a design update:
+
+* treat the supplied human-owned requirements and architecture as the current approved design baseline,
+* use the same inline requirements and architecture templates, including area and subsystem templates when
+  deeper design truth belongs there,
+* update only the files materially affected by the approved design discussion unless the user asks for a full
+  regeneration, and
+* include `plan.md` and `state.md` only when the design change requires roadmap or current-state reconciliation.
+
+Do not turn a design-update use of this packet into implementation execution. Detailed design-update workflow can
+be refined separately as Bonsai evolves.
 
 ---
 
@@ -186,8 +166,6 @@ Use them as follows:
       `requirements/requirements_<AREA>.md`.
     * Use a subsystem architecture template only when generating
       `architecture/architecture_<SUBSYSTEM>.md`.
-    * Use a phase plan template only when generating
-      `plan/plan_phase_<N>.md`.
 
 2. **Instantiate templates; do not merely repeat them.**
 
@@ -204,8 +182,7 @@ Use them as follows:
 
     * If `requirements.md` points to `requirements/requirements_<AREA>.md`, that file must also be generated.
     * If `architecture.md` points to `architecture/architecture_<SUBSYSTEM>.md`, that file must also be generated.
-    * If `plan.md` points to `plan/plan_phase_<N>.md`, that file must also be generated.
-    * If no linked optional file is generated, the corresponding field must say `None`.
+    * If no linked optional design-truth file is generated, the corresponding field must say `None`.
 
 5. **Keep execution state aligned.**
 
@@ -214,11 +191,13 @@ Use them as follows:
         * active phase,
         * phase status,
         * phase execution mode,
-        * whether an active phase plan file exists,
-        * phase-plan approval state when a phase plan exists.
+        * active phase-plan file state, and
+        * phase-plan approval state.
 
-    * If a phase plan is generated, `state.md` must reference it.
-    * If no phase plan is generated, `state.md` must say `None`.
+    * Initial synthesis does not generate a phase plan.
+    * `state.md` must initialize the active phase plan file and phase-plan status to `None`.
+    * When design is ready to leave synthesis, `state.md` must make drafting the initial phase plan the first
+      implementation planning action and set execution readiness to `Phase planning required`.
     * `state.md` must make execution readiness explicit.
 
 6. **Use question sections rather than weakening the document.**
@@ -247,7 +226,7 @@ In `plan.md`, define:
 * The initial roadmap
 * The first active phase
 * The execution mode of the first active phase, when it can be responsibly determined from the design discussion
-* The active phase-plan approval state when a separate phase plan exists
+* No active phase-plan file yet; initial detailed phase planning occurs as the first implementation gate
 
 Use:
 
@@ -279,30 +258,33 @@ pass, do not create a redundant contract gate merely because implementation depe
 single-pass execution unless the phase is establishing or materially changing another review-worthy durable contract.
 
 If the first phase's execution mode cannot be responsibly determined from the design discussion,
-set it to `To determine at activation` rather than guessing. In that case, ensure `state.md`
-makes execution-mode resolution part of the implementation startup path before substantive work begins.
+set it to `To determine at activation` rather than guessing. The first implementation planning action will
+resolve the mode as part of drafting `plan/plan_phase_1.md` before substantive work begins.
 
 ---
 
-## Phase-Plan Restraint
+## Initial Phase-Planning Boundary
 
-Do not generate `plan/plan_phase_<N>.md` merely because a phase is active,
-complex in the abstract, or uses multiple files.
+Do not generate `plan/plan_phase_<N>.md` during design synthesis.
 
-Generate it only when our design discussion already contains enough execution-level sequencing,
-review gates, scope constraints, contract detail, or validation detail to justify preserving
-a phase-level plan before implementation begins.
+For a newly synthesized project whose design is sufficient to proceed toward implementation:
 
-A two-pass phase normally requires a phase plan because its contract review gate must be explicit.
+* `plan.md` identifies the first active phase but records its detailed phase plan as `None`.
+* `state.md` records `Active Phase Plan File: None`.
+* `state.md` records `Phase Plan Status: None`.
+* `state.md` records `Current Phase Pass: Phase Planning`.
+* `state.md` records `Execution Readiness: Phase planning required`.
+* The exact next step is to draft `plan/plan_phase_1.md` during the first implementation session.
+* That phase plan is reviewed at the Phase Plan Approval Gate before any substantive Phase 1 implementation begins.
 
-Otherwise, leave the phase plan absent so the implementation workflow can create one closer to
-execution, when repository reality is available.
+This first phase-plan gate is intentional even when Phase 1 is single-pass and otherwise straightforward. It gives
+the human a consistent first implementation checkpoint after Web-UI design synthesis.
 
-When a phase plan is generated during synthesis:
+Later phase plans remain an implementation-time decision. The implementation workflow creates them only when
+the active phase warrants a dedicated detailed plan under the phase-execution rules.
 
-* Set its `Plan Status` to `Ready for Review`, not `Approved`.
-* Set `state.md` execution readiness to `Awaiting human review`.
-* Make review of that phase plan the exact next step.
+If unresolved foundational design questions require `Execution Readiness: Design required`, that design gate takes
+precedence. Once design is sufficient to proceed, the next implementation boundary is still initial phase planning.
 
 ---
 
@@ -311,13 +293,13 @@ When a phase plan is generated during synthesis:
 In `state.md`, initialize:
 
 * The current phase
-* The active phase plan file, if one exists
-* The phase-plan approval state, if one exists
-* The current phase pass
+* `Active Phase Plan File: None` for initial synthesis
+* `Phase Plan Status: None` for initial synthesis
+* `Current Phase Pass: Phase Planning` when design is sufficient to proceed
 * The phase execution mode, or `To determine at activation` when that is the honest result of synthesis
 * Explicit execution readiness
-* The exact first implementation step, expressed at the correct execution unit
-* The success condition for that step
+* The exact first implementation action: draft the initial phase plan when design is sufficient to proceed
+* The success condition for that planning action
 
 Use these execution-readiness values:
 
@@ -328,39 +310,13 @@ Use these execution-readiness values:
 * `Blocked` - execution cannot safely continue until a stated blocker is resolved.
 * `Complete` - no further implementation step is currently required.
 
-For a two-pass phase, the first executable Pass A step should cover the approved contract work
-through its next review gate unless the design explicitly requires a smaller unit.
+Do not initialize a newly synthesized project directly into `Single-pass Implementation` or
+`Pass A (Contract)`, even when the first phase's execution mode is already clear. The current pass remains
+`Phase Planning` until `plan/plan_phase_1.md` has been drafted and approved.
 
-For a single-pass phase, set `Current Phase Pass: Single-pass Implementation` and use the first bounded
-implementation step. Reserve `Pass A (Contract)`, `Contract Review`, and `Pass B (Implementation)` for
-actual two-pass contract-first phases. A single-pass phase must never be represented as Pass B.
-
-When execution mode remains unresolved, use mode resolution and any required phase-plan drafting as
-the exact next step.
-
----
-
-## Two-Pass State Initialization
-
-When the first active phase uses two-pass contract-first execution, initialize `state.md`
-so that the exact first implementation step runs the current pass through its next explicit human
-review gate, unless our design discussion explicitly requires a smaller stopping point.
-
-For an initial Pass A, this usually means:
-
-* define the reviewable contract or durable design surface in its native developer-facing form when practical,
-* for code contracts, prefer minimal source-level API or structural skeletons with substantive behavior left
-  unimplemented,
-* for code contracts, require the Pass A source and contract-test source to compile before human review while
-  allowing the behavior tests themselves to fail or remain temporarily disabled until Pass B,
-* preserve relevant approved architecture boundaries,
-* create behavior-focused tests, usage examples, schema examples, signatures, or other review artifacts only
-  when they materially clarify that contract and fit project conventions,
-* stop for human review before Pass B implementation.
-
-Pass A does not require adding interfaces or other implementation indirection unless the approved
-design itself requires them. A standalone prose contract document should not replace native contract
-artifacts when those artifacts can make the contract directly reviewable.
+After that approval, the implementation workflow transitions to `Single-pass Implementation` or
+`Pass A (Contract)` as appropriate. For a two-pass phase, the first executable Pass A step should cover the
+approved contract work through its next review gate unless the approved phase plan requires a smaller unit.
 
 ---
 
@@ -654,9 +610,12 @@ write: "See active phase plan file.")*
 * Current session status, exact next action, blockers, current pass state, and active dry-run baseline belong in `state.md`.
 * Keep phase status, execution mode, phase-plan references, and phase-plan approval state consistent with `state.md`.
 * When `state.md` records a phase-level or pass-level transition, verify whether this roadmap also requires a corresponding update.
-* Add a separate `plan/plan_phase_<N>.md` when a phase requires detailed sequencing, a durable contract review gate,
-  multiple meaningful review or validation gates, or enough execution detail that it would bloat this file.
-* Do not create a phase plan merely to document ordinary implementation decomposition.
+* The implementation workflow always creates `plan/plan_phase_1.md` as the first implementation planning gate
+  for a newly synthesized project.
+* For later phases, add a separate `plan/plan_phase_<N>.md` when the phase requires detailed sequencing, a durable
+  contract review gate, multiple meaningful review or validation gates, or enough execution detail that it would
+  bloat this file.
+* Do not create a later phase plan merely to document ordinary implementation decomposition.
 * When a `plan/plan_phase_<N>.md` file exists, treat it as the authoritative detailed execution plan for that phase.
   Do not partially duplicate phase-level sequencing here.
 * If an active phase plan file exists but is incomplete, stale, or inconsistent with current approved
@@ -667,118 +626,6 @@ write: "See active phase plan file.")*
 * A phase plan marked `Approved` has completed its planning gate. If no other blocker or contract gate remains,
   `state.md` should make the next executable step explicit and mark execution readiness accordingly.
 * Compress completed phase detail aggressively once it no longer helps execution.
-```
-
----
-
-## Template: `plan/plan_phase_<N>.md`
-
-```markdown
-# AI Plan - Phase <N>: <Phase Name>
-
-**[Meta: Agent-maintained | Active Phase Detail | Compress when done]**  
-**Project:** <Project name> | **Parent:** `../plan.md`  
-**Phase Status:** <Not started | Active | Awaiting Review | Blocked | Complete>  
-**Plan Status:** <Draft | Ready for Review | Approved | Superseded>  
-**Mode:** <Single-pass | Two-pass contract-first>
-
-## Objective & Scope
-
-**Objective:** <Concrete outcome this phase must produce>  
-**Inputs:** [Requirements Section] | [Architecture Section] | [Prior Phase Output]  
-**In Scope:** [List items]  
-**Out of Scope / Do Not Do Yet:** [List items]  
-**Expected Deliverables:** [List deliverables]
-
-## Execution Constraints
-
-* **Implementation Scope:** [Known modules/subsystems/packages/layers this phase may create or modify, or `Not prescribed`]
-* **Approved Boundaries:** [Relevant architecture boundaries or `None`]
-* **Public Contracts:** [APIs, schemas, protocols, persistent formats, extension points, or other durable contracts this phase establishes or changes, or `None`]
-* **Human Review Focus:** [What the reviewer must inspect before the next gate, or `None`]
-
-Do not invent internal seams, interfaces, abstraction layers, dependency rules, or module boundaries merely
-to populate this section.
-
-## Ordered Work
-
-*(If Single-Pass, delete Pass A and rename the implementation section to `### Implementation`. Do not use a Pass B label for single-pass work.)*
-
-### Pass A: Contract (Review Gate)
-
-Use Pass A only when this phase establishes or materially changes a contract that independently merits
-human approval before implementation.
-
-* **Step A1 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
-* **Step A2 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
-
-Pass A should produce:
-
-* the reviewable contract, API shape, schema, protocol surface, extension contract, persistent format,
-  or other durable design surface being established in its native developer-facing form when practical,
-* relevant approved architecture constraints needed to interpret that contract, and
-* tests, examples, signatures, schemas, or other review artifacts only when they materially clarify
-  intended behavior and fit project conventions.
-
-For a code contract, prefer minimal source-level API or structural skeletons plus behavior-focused tests or
-usage examples. Concrete classes with intentionally unimplemented methods are valid contract artifacts. Pass A
-may establish names, types, signatures, visibility, and structural relationships but should leave substantive
-behavior for Pass B. The Pass A contract package, including contract-test source, must compile successfully before
-the contract review gate. Behavior-focused contract tests do not need to pass in Pass A and may be temporarily
-disabled when appropriate; the phase plan should require Pass B to enable any temporarily disabled contract tests
-and make all approved behavioral expectations pass. Do not default to a standalone prose contract document when
-the native source and review artifacts already express the contract clearly.
-
-A Bonsai contract gate does not itself require Java interfaces, builders, adapters, dependency
-injection, abstraction layers, or similar indirection.
-
-**Stop here for Human Review before Pass B.**
-
-### Pass B: Implementation
-
-* **Step 1 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
-* **Step 2 <Name>:** <Goal> | **Files:** [Paths] | **Done:** <Condition>
-
-## Validation & Done Criteria
-
-* **Validation Strategy:** [Project-appropriate tests, builds, manual checks, examples, or other verification]
-* **Architecture Validation:** [Checks required to confirm approved architecture or contracts were preserved, or `None`]
-* **Definition of Done:** [List completion conditions. For two-pass, include faithful implementation of the approved contract]
-
-## Context & Wrap-up
-
-* **Dependencies:** [List known dependencies]
-* **Risks:** [List known risks]
-* **Open Questions:** [Active execution questions, prioritized by importance]
-* **Completion Summary:** *(Fill when done)* **Outcome:** [Results] |
-  **Unlocked:** [Next capability]
-
-## Maintenance Rules
-
-* Treat this file as the authoritative detailed execution plan for this phase.
-* Keep `plan.md` at roadmap level. Do not duplicate phase-level sequencing there.
-* Keep `state.md` aligned with this file for:
-    * phase-plan approval state,
-    * current pass,
-    * exact next step,
-    * review-gate status,
-    * blockers,
-    * phase completion state.
-* Preserve approved project architecture and contracts during execution.
-* Do not introduce interfaces, abstraction layers, adapters, builders, dependency constraints, or other
-  structures merely to satisfy Bonsai workflow.
-* Implementation style and test style follow project conventions, approved project memory,
-  developer context, and applicable external skills.
-* If required behavior conflicts with approved architecture or an approved contract, stop and require
-  phase-plan correction, final-truth clarification, or final-truth revision before continuing.
-* When a pass boundary, review gate, blocker state, phase status, or plan approval state changes,
-  verify whether `state.md` and `plan.md` require corresponding updates.
-* If this phase plan becomes incomplete, stale, or inconsistent with current approved project direction,
-  correct it before substantive phase execution continues.
-* Set `Plan Status: Ready for Review` when drafting is complete and human approval is required.
-* Set `Plan Status: Approved` only after explicit human approval.
-* Compress completed phase detail when it no longer helps execution, while preserving enough summary
-  to explain the outcome and what it unlocked.
 ```
 
 ---

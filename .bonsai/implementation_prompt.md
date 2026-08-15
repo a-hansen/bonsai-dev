@@ -61,6 +61,8 @@ At startup:
 * **Execution memory:** `.bonsai/projects/<project>/plan.md`, active phase plans, and `state.md`.
 * **Deferred observation store:** `.bonsai/projects/<project>/icebox.md`, when human-triaged deferred
   observations have been intentionally preserved.
+* **Reusable artifact templates:** `.bonsai/templates/plan_phase_template.md` and
+  `.bonsai/templates/icebox_template.md`. Read them only when creating the corresponding artifact.
 * **Framework skills:** `.bonsai/skills/*.md`. These describe how the agent should work.
 * **Developer context:** `.bonsai/developer_context.md`. This is stable human-supplied developer/local context,
   not project truth.
@@ -120,6 +122,7 @@ Read only when required by the rules below:
 * If `state.md` does not identify a phase plan, use `plan.md` to determine whether one exists.
 * `.bonsai/skills/phase_execution.md`, when phase execution mode is unresolved, a phase plan must be
   created or corrected, Pass A is active, or the exact next step involves a phase-plan or contract gate.
+  That skill loads `.bonsai/templates/plan_phase_template.md` when drafting a new phase plan.
 * Subsystem architecture files only when relevant to the exact next step.
 * `icebox.md`, only when present and only if the exact next step explicitly involves a preserved observation
   or human-requested icebox triage.
@@ -190,7 +193,8 @@ been satisfied. Do not claim an exact next step is complete until `.bonsai/skill
     * `plan.md`
     * `state.md`
     * The active `plan/plan_phase_<N>.md`, when one exists
-    * `icebox.md` only when the human has chosen to preserve or defer an out-of-scope observation
+    * `icebox.md` only when the human has chosen to preserve or defer an out-of-scope observation; when the
+      file does not yet exist, create it from `.bonsai/templates/icebox_template.md`
     * `.bonsai/tooling.md` only under `.bonsai/skills/tooling_memory.md` when a durable learned operational
       fact qualifies for preservation
 
@@ -230,6 +234,8 @@ been satisfied. Do not claim an exact next step is complete until `.bonsai/skill
       out-of-scope observations are available for review and give the count.
     * If the human chooses to review them, present the observations.
     * Preserve an observation in `icebox.md` only when the human explicitly chooses to defer or retain it.
+      If `icebox.md` does not yet exist, create it from `.bonsai/templates/icebox_template.md` and instantiate
+      the approved observation as the first entry.
     * If observation review was invoked from a handoff or other gate, return to that invoking gate after the
       review or selected follow-up action completes, subject to the Invoking-Gate Return rule.
     * If an observation prevents safe completion of the current exact next step, treat it as a blocker or
@@ -365,6 +371,12 @@ not bypass `Blocked`, `Design required`, `Phase planning required`, `Awaiting hu
 
 * **Phase Plan Authority:** When a `plan/plan_phase_<N>.md` exists, treat it as the authoritative detailed
   execution plan for that phase. `plan.md` should retain only roadmap-level phase truth.
+
+* **Initial Phase Planning:** A newly synthesized project should enter implementation with
+  `Execution Readiness: Phase planning required`, no active phase plan, and Phase 1 as the active roadmap phase.
+  The first planning action is to load `.bonsai/skills/phase_execution.md`, draft
+  `plan/plan_phase_1.md` from `.bonsai/templates/plan_phase_template.md`, and stop at the Phase Plan Approval Gate
+  before substantive Phase 1 implementation.
 
 * **Planning Readiness:** A phase plan in `Draft` or `Ready for Review` state is not implementation
   authorization. After explicit approval, mark it `Approved` and update `state.md` so execution readiness

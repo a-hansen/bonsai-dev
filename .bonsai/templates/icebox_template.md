@@ -13,21 +13,14 @@ The icebox is not an automatic observation log.
 Agents may notice out-of-scope issues during design or implementation, but must not write them here until
 the human chooses to preserve or defer them.
 
+Do not create a project `icebox.md` merely because this template exists. Create it only when the human first
+chooses to preserve an observation, and instantiate the first approved observation as `ICE-001`.
+
 An item in the icebox is worth remembering, not approved for execution.
 
 ## Entries
 
 ### ICE-001 — <Short observation title>
-
-**Status:** <Deferred | Promoted | Rejected | Superseded>  
-**Observed During:** <Design synthesis | Phase <N> | Pass A | Pass B | Other context>  
-**Observation:** <Concise independently understandable description>  
-**Why Keep It:** <Why the human chose to preserve it>  
-**Possible Destination:** <requirements.md | architecture.md | plan.md | code/maps | issue tracker | Unknown>
-
----
-
-### ICE-002 — <Short observation title>
 
 **Status:** <Deferred | Promoted | Rejected | Superseded>  
 **Observed During:** <Design synthesis | Phase <N> | Pass A | Pass B | Other context>  
@@ -45,6 +38,8 @@ An item in the icebox is worth remembering, not approved for execution.
 ## Maintenance Rules
 
 * Add an entry only after the human explicitly chooses to preserve or defer an out-of-scope observation.
+* When creating `icebox.md` from this template, replace the sample `ICE-001` placeholders with the approved
+  observation and project name. Do not leave unused template placeholders in the project file.
 * Do not automatically create icebox entries for bugs, technical debt, missing tests, refactor opportunities,
   documentation gaps, or speculative improvements discovered during implementation.
 * Do not treat icebox entries as requirements, architecture decisions, roadmap commitments, or authorized work.

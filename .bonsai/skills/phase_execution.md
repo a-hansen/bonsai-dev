@@ -20,6 +20,7 @@ Before executing this skill, inspect the project memory needed for the current s
 * `plan.md`
 * `state.md`
 * Active `plan/plan_phase_<N>.md`, when one exists
+* `.bonsai/templates/plan_phase_template.md`, when drafting a new phase plan
 * The approved contract, approved dry-run baseline, or recorded exact next step, when applicable
 * Any relevant maps or developer context needed to understand execution constraints
 
@@ -115,7 +116,24 @@ Use final-truth reconciliation when the issue changes or clarifies human-owned f
 
 ## Phase Plan Creation
 
-When activating a new phase, determine whether that phase needs a detailed `plan/plan_phase_<N>.md`.
+Use `.bonsai/templates/plan_phase_template.md` as the canonical structural template whenever creating a new
+`plan/plan_phase_<N>.md`. Instantiate it with project-specific phase content; do not leave template placeholders
+in the project plan.
+
+### Initial Phase
+
+For a newly synthesized project, always create `plan/plan_phase_1.md` before substantive Phase 1 execution.
+
+This is Bonsai's first implementation gate after Web-UI design synthesis, even when Phase 1 is single-pass and
+otherwise straightforward. Use repository reality, approved project truth, and the roadmap to draft the plan,
+set `Plan Status: Ready for Review`, reconcile `plan.md` and `state.md`, and stop at the Phase Plan Approval Gate.
+
+The initial phase-plan gate exists for human review of execution intent. It does not by itself imply
+two-pass contract-first execution.
+
+### Later Phases
+
+When activating Phase 2 or later, determine whether that phase needs a detailed `plan/plan_phase_<N>.md`.
 
 Create one before substantive phase execution when preserving detailed execution-level information outside
 `plan.md` materially improves the workflow, such as when the phase:
@@ -126,18 +144,22 @@ Create one before substantive phase execution when preserving detailed execution
 * has approved scope or architectural constraints that need to remain visible across several bounded steps, or
 * otherwise contains enough execution detail that a dedicated active phase plan materially improves resumption.
 
-Do not create a phase plan merely because a phase is complex in the abstract, touches several files or modules,
-creates internal abstractions, or needs ordinary implementation decomposition.
+Do not create a later phase plan merely because a phase is complex in the abstract, touches several files or
+modules, creates internal abstractions, or needs ordinary implementation decomposition.
 
 Update `plan.md` and `state.md` to reflect the resolved execution mode and the phase plan path when one is created.
-For single-pass phases, set `Current Phase Pass: Single-pass Implementation` when implementation becomes the
-active pass state.
+For single-pass phases, set `Current Phase Pass: Single-pass Implementation` only after the applicable phase-plan
+approval gate has completed and implementation becomes the active pass state.
 
 ## Missing or Incomplete Phase Plans
 
-* **Missing Phase Plan:** If the current active phase genuinely requires a detailed `plan/plan_phase_<N>.md`
-  but none exists, treat drafting that phase plan as the exact next step before substantive phase execution.
-  After drafting it, use the Phase Plan Approval Gate.
+* **Missing Initial Phase Plan:** If Phase 1 is active and `plan/plan_phase_1.md` does not yet exist, treat
+  drafting it from `.bonsai/templates/plan_phase_template.md` as the exact next step before substantive phase
+  execution. After drafting it, use the Phase Plan Approval Gate.
+
+* **Missing Later Phase Plan:** If a later active phase genuinely requires a detailed `plan/plan_phase_<N>.md`
+  but none exists, treat drafting that phase plan from `.bonsai/templates/plan_phase_template.md` as the exact
+  next step before substantive phase execution. After drafting it, use the Phase Plan Approval Gate.
 
 * **Incomplete Existing Phase Plan:** If `plan/plan_phase_<N>.md` already exists but is incomplete, stale, or
   inconsistent with current approved project direction, treat completing or correcting that phase plan as the

@@ -93,6 +93,11 @@ injection, abstraction layers, or similar indirection.
   structures merely to satisfy Bonsai workflow.
 * Implementation style and test style follow project conventions, approved project memory,
   developer context, and applicable external skills.
+* For an approved two-pass code contract, Pass A behavior tests preserve behavioral expectations rather than
+  immutable test source. During Pass B, fixtures, fakes, helpers, imports, construction, and other test plumbing
+  may change without another contract review when approved scenarios, inputs, observable outcomes, and failure
+  expectations remain materially unchanged. Require contract review before weakening, removing, contradicting,
+  or materially changing an approved behavioral expectation.
 * If required behavior conflicts with approved architecture or an approved contract, stop and require
   phase-plan correction, final-truth clarification, or final-truth revision before continuing.
 * When a pass boundary, review gate, blocker state, phase status, or plan approval state changes,

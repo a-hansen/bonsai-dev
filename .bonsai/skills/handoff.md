@@ -21,6 +21,8 @@ Before producing a handoff, inspect the relevant approved basis for the work:
 * Active `plan/plan_phase_<N>.md`, when applicable.
 * Human-owned final-truth documents affected by the completed work.
 * `icebox.md` only when the completed step explicitly involved a previously preserved observation.
+* `.bonsai/templates/icebox_template.md` when the human chooses to preserve an observation and `icebox.md`
+  does not yet exist.
 
 ## Handoff Procedure
 
@@ -91,6 +93,8 @@ At handoff:
   4. Other.
 
 * If the human explicitly chooses to preserve or defer an observation, write it to `icebox.md`.
+* If `icebox.md` does not yet exist, create it from `.bonsai/templates/icebox_template.md`, instantiate the
+  project name and first `ICE-<NNN>` entry, and do not leave template placeholders in the project file.
 * If the human rejects or leaves an unpersisted observation unpreserved, let it disappear rather than creating
   historical baggage.
 * Do not put durable observation lists in `state.md`, `plan.md`, phase plans, or handoff summaries.
