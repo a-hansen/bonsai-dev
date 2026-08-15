@@ -107,12 +107,17 @@ Read optional `.bonsai/developer_context.md`, when present.
 
 ### 3. Project core truth and execution memory
 
-Read project core files in this order:
+Read only the project core files named below, in this order:
 
 1. `.bonsai/projects/<project>/requirements.md`
 2. `.bonsai/projects/<project>/architecture.md`
 3. `.bonsai/projects/<project>/plan.md`
 4. `.bonsai/projects/<project>/state.md`
+
+Do not discover project memory by recursively scanning `.bonsai/projects/<project>/` or by treating
+directory membership as authorization to read a file. Files such as `README.md`, notes, examples, archived
+artifacts, or other project-local material are not startup context unless this prompt, `state.md`, `plan.md`,
+an active phase plan, or a loaded skill explicitly requires them for the exact next step.
 
 ### 4. Conditional project and skill context
 

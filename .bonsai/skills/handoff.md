@@ -208,7 +208,7 @@ When selected, do not execute the next step in the current session. Tell the hum
 is their action and provide:
 
 ```text
-Start a fresh session yourself using:
+Start a new session and use the following prompt to continue:
 
 Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
 ```
