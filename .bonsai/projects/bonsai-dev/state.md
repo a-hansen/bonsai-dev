@@ -15,20 +15,21 @@ The state is converted to `agent_state.md` during validated v2 promotion.
 
 ## Current Execution State
 
-**Current Phase:** Archaeology and Artifact Contracts  
-**Active Phase Plan File:** None  
-**Phase Plan Status:** None  
-**Current Phase Pass:** Phase Planning  
-**Phase Execution Mode:** Single-pass  
-**Execution Readiness:** Phase planning required  
-**Current Objective:** Draft the detailed Phase 1 archaeology/contract plan and stop for human review before standard-artifact rewriting begins.
+**Current Phase:** Bootstrap and Core Execution Model
+**Active Phase Plan File:** None
+**Phase Plan Status:** None
+**Current Phase Pass:** Phase Planning
+**Phase Execution Mode:** Unresolved
+**Execution Readiness:** Phase planning required
+**Current Objective:** Resolve Phase 2 execution mode and determine whether a detailed Phase 2 plan is warranted.
 
-* **Current Snapshot:** Bonsai 1.4 remains the active runtime in `.bonsai`. Bonsai 2.0 is being built in the temporary sibling `bonsai/` staging tree. `bonsai/specification.md` is v2 final truth and `bonsai/README.md` is the current v2 usage guide. The self-hosting project lives at `.bonsai/projects/bonsai-dev/` and intentionally uses v1.4 `plan.md` / `state.md` naming until promotion. Initial grouped artifact contracts have been seeded but still require Phase 1 archaeology. Generated test output will live outside `bonsai/`; eventual promotion will archive the current `.bonsai`, construct and validate a complete candidate, promote v2, convert execution-memory names, prove a fresh v2 session, and then remove staging.
-* **Active Files:** [`requirements.md`, `architecture.md`, `plan.md`, `state.md`, `artifact_contracts/README.md`, `artifact_contracts/core_workflows.md`, `artifact_contracts/project_workflows.md`, `artifact_contracts/code_maps.md`, `artifact_contracts/promotion_validation.md`, `bonsai/specification.md`, `bonsai/README.md`, `.bonsai/templates/plan_phase_template.md`]
-* **Blockers / Risks:** [Phase 1 cannot begin until its detailed plan is drafted and approved; primary project risk is losing mature Bonsai 1.4 behavior by simplifying or relocating it before its rationale and edge cases are captured]
+* **Current Snapshot:** The human approved the complete Phase 1 contract layer as later-phase implementation authority. Phase 1 is complete and Phase 2 is active for planning only. The existing approved contracts already govern Phase 2 behavior, so a redundant contract-first pass is not indicated. No Phase 2 plan or implementation is yet approved.
+* **Recommended Mode:** Single-pass — Phase 2 implements already-approved durable artifact contracts and does not currently establish another independently review-worthy contract.
+* **Active Files:** [`state.md`, `plan.md`, `requirements.md`, `architecture.md`, `artifact_contracts/README.md`, `artifact_contracts/core_workflows.md`, `bonsai/specification.md`, `bonsai/README.md`]
+* **Blockers / Risks:** [No implementation blocker; Phase 2 activation planning and any required phase-plan review must complete before staged implementation]
 
-**Exact Next Step:** Create `plan/plan_phase_1.md` from `.bonsai/templates/plan_phase_template.md`. The plan must sequence bounded archaeological extraction beginning with the core execution cluster, define Keep / Adapt / Drop / Missing classification and contract-review gates, keep mapping archaeology as a distinct high-volume batch, forbid substantive staged v2 implementation during Phase 1, update `plan.md` and `state.md` to record the plan as `Ready for Review`, and stop at the Phase Plan Approval Gate.  
-**Success Condition:** `plan/plan_phase_1.md` exists as a reviewable Phase 1 plan, identifies the archaeological source batches and contract outputs, protects learned behavior from premature rewriting, defines how missing v2 responsibilities are assigned, keeps the staged distribution untouched except for approved project-memory/design inputs, is recorded as `Plan Status: Ready for Review`, and leaves execution readiness at `Awaiting human review`.
+**Exact Next Step:** Execute Phase 2 activation planning: assess and resolve the execution mode, determine whether detailed sequencing warrants `plan/plan_phase_2.md`, draft it from the phase-plan template if warranted, reconcile roadmap/state, and stop at the applicable planning gate before implementation.
+**Success Condition:** Phase 2 execution mode is approved, any warranted detailed phase plan is complete and reviewed, roadmap/state agree, and one bounded staged implementation step is authorized without reopening approved Phase 1 contracts.
 
 ### Approved Dry-Run Baseline
 

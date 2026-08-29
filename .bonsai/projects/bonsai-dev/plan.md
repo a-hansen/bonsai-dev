@@ -23,12 +23,12 @@ The target Bonsai 2.0 execution-memory artifact is `agent_plan.md`. Conversion t
 
 1. **Archaeology and Artifact Contracts:** Inventory the Bonsai 1.4 standard, extract learned behavior and edge cases, classify Keep / Adapt / Drop / Missing, and produce reviewed contracts before implementation |
    **Mode:** Single-pass |
-   **Status:** Active |
-   **Plan:** None |
-   **Plan Status:** None
+   **Status:** Completed |
+   **Plan:** `plan/plan_phase_1.md` |
+   **Plan Status:** Approved
 2. **Bootstrap and Core Execution Model:** Implement the staged v2 startup/bootstrap, implementation router, identity resolution, and core menu/gate behavior under `bonsai/` |
    **Mode:** To determine at activation |
-   **Status:** Pending |
+   **Status:** Active |
    **Plan:** None |
    **Plan Status:** None
 3. **Context and Project Workflows:** Implement developer/agent context layering, project management, Bonsai Home creation, project-memory synthesis, phase execution, final-truth handling, dry runs, handoff, and templates |
@@ -49,21 +49,13 @@ The target Bonsai 2.0 execution-memory artifact is `agent_plan.md`. Conversion t
 
 ## Active Phase Detail
 
-* **Goal:** Produce a reviewable durable contract layer that captures the behavior Bonsai 2.0 must preserve, adapt, deliberately drop, or newly implement before standard artifacts are rewritten.
-* **Execution Readiness:** Phase planning required
-* **Scope:** [Inventory existing standard artifacts, extract core execution behavior, extract project/context workflow behavior, extract mapping behavior in bounded batches, identify missing v2 seams, reconcile contracts against `bonsai/specification.md`, define validation obligations without implementing staged v2 artifacts]
-* **Approved Constraints:** [Bonsai 1.4 remains the running runtime, `bonsai/` is temporary staged v2 distribution, do not put generated test output under `bonsai/`, do not create duplicate v1/v2 execution-memory truth, do not materially rewrite standard artifacts before relevant contract coverage is understood, specification wins over archaeological evidence]
-* **Ordered Steps:**
-    1. Draft `plan/plan_phase_1.md` from `.bonsai/templates/plan_phase_template.md` and stop for Phase Plan Approval.
-    2. After approval, execute bounded archaeology beginning with the core execution cluster.
-    3. Review contract coverage before moving from archaeology into staged implementation.
-* **Validation:** [All existing standard artifacts inventoried, each target artifact or unresolved seam has explicit contract coverage, high-value learned behavior is classified, v2-required missing behavior is assigned or explicitly unresolved, no substantive staged v2 implementation occurs during Phase 1]
-* **Done When:** Phase 1 contracts are sufficient and reviewed so Phase 2 can implement the staged v2 core without relying on chat history or blindly copying v1.4 artifacts.
+Phase 2 activation planning is current. Execution mode and detailed-phase-plan need are unresolved; no active
+Phase 2 plan exists yet.
 
 ## Deferred & Completed
 
-* **Deferred:** [All staged v2 implementation until Phase 2+, test harness/output creation until needed by implementation/validation, promotion/self-overwrite until Phase 5]
-* **Completed:** [Bonsai v2 operating specification, current v2 user-facing README, self-hosting repository/staging model, artifact-contract approach, temporary staging/promotion architecture, test-output separation decision]
+* **Deferred:** [Phase 3+ workflow implementation until those phases activate, test harness/output creation until needed by implementation/validation, promotion/self-overwrite until Phase 5]
+* **Completed:** [Bonsai v2 operating specification, current v2 user-facing README, self-hosting repository/staging model, artifact-contract approach, temporary staging/promotion architecture, test-output separation decision, Phase 1 archaeology and approved complete artifact-contract layer]
 
 ## Maintenance Rules
 
@@ -73,5 +65,5 @@ The target Bonsai 2.0 execution-memory artifact is `agent_plan.md`. Conversion t
 * Do not create duplicate `agent_plan.md` / `agent_state.md` files during bootstrap.
 * Keep phase status, execution mode, plan references, and approval state consistent with `state.md`.
 * Add a separate `plan/plan_phase_<N>.md` only when required by the active Bonsai 1.4 workflow or genuinely useful for later phases.
-* Do not implement staged v2 artifacts during Phase 1 merely because their target paths are known.
+* Do not implement staged v2 artifacts until the active phase's planning and review gates authorize them.
 * Compress completed phase detail aggressively when it no longer helps execution.

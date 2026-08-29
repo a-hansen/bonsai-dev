@@ -1,140 +1,158 @@
 # Artifact Contracts — Validation and Self-Hosting Promotion
 
 **Project:** `bonsai-dev`  
-**Status:** Seeded; exact implementation seams to be finalized before Phase 5
+**Status:** Phase 1 promotion/validation archaeology complete; contract batch approved
 
 ## Purpose
 
-Define the durable boundaries required to test artifact-producing Bonsai workflows, keep the staged distribution clean, safely replace the Bonsai runtime that built v2, and prove the repository is truly self-hosting afterward.
+Define the durable behavior required to validate artifact-producing Bonsai workflows, keep the staged v2
+distribution independently shippable, construct and verify a complete replacement runtime, preserve repository
+memory, provide a tested rollback point, promote without a half-installed `.bonsai`, prove the result in a genuinely
+fresh session, and collapse the repository back to one Bonsai tree.
+
+This contract does not choose a helper-script package or claim that one directory-swap command is portable across
+all hosts. It defines the observable invariants any Phase 5 implementation must satisfy.
+
+No v1.4 promotion implementation exists to preserve. Most promotion behavior is therefore **Missing** relative to
+the archaeological source and required directly by approved requirements, architecture, and the v2 specification.
 
 ---
 
-## Contract: Staged Distribution Purity
+## Archaeological Evidence and Classification
 
-### Role
+### Distribution and test boundaries
 
-Keep:
+| Evidence | Source evidence | Approved rule | Class | Rationale / owner | Validation obligation |
+| --- | --- | --- | --- | --- | --- |
+| `PROMO-VAL-01` | No v1.4 validation harness; current `bonsai/` contains only candidate `README.md` and `specification.md`. | REQ-2, REQ-3; Architecture **Staging Principle** and **Distribution Purity** | Missing | Phase 5 validation must treat the entire staged tree as candidate distribution input without exclusion filters. | A purity check fails for any generated log, test result, candidate, backup, or repository memory under `bonsai/`. |
+| `PROMO-VAL-02` | No v1.4 boundary enforcement. | REQ-4; Architecture **Golden Artifact Model** | Missing | Durable fixtures/expected results belong under `tests/`; generated runs belong under ignored `build/`. | Every scenario writes to an isolated `build/bonsai-tests/<scenario>/`; reruns are deterministic and do not mutate durable inputs. |
+| `PROMO-VAL-03` | No v1.4 artifact-contract validator. | REQ-6, REQ-7; specification **File Maintenance Discipline** | Missing | Candidate validation must check distribution references and required artifact identities against approved contracts. | Missing files, stale paths, duplicate compatibility identities, and references outside the candidate standard fail validation. |
+| `PROMO-VAL-04` | Existing Web UI and mapping workflows produce Markdown/artifact trees but have no repeatable output tests. | REQ-4, REQ-16; Architecture **Golden Artifact Model** | Missing | Use semantic assertions where behavior matters and golden output only where exact stable structure is contractual. | Formatting-only drift does not fail semantic scenarios; exact archive/tree contracts fail on structural drift. |
+| `PROMO-VAL-05` | No v1.4 topology suite. | REQ-16; specification **Bonsai 2.0 Validation Cases** | Missing | Validation must cover Embedded, Bonsai Home, multi-project, multi-repository, external-source, and greenfield operation. | All six topologies have named, isolated, repeatable scenarios. |
+| `PROMO-VAL-06` | `.gitignore` ignores `build/` but not `.bonsai-backups/`. | REQ-4, REQ-11; Architecture **Local rollback archive** | Missing | Before live promotion, disposable generated output and local backups must be excluded from source control without placing ignores inside staged distribution. | Preflight verifies `build/` and `.bonsai-backups/` are ignored; archives/results are not staged for commit. |
+| `PROMO-VAL-07` | No destructive-test isolation exists. | REQ-12; Architecture **Candidate construction** | Missing | Candidate, failure, rollback, and conversion tests operate only on copied fixture trees under `build/`. | Validation refuses a fixture root resolving to live `.bonsai`, live `bonsai/`, repository root, or another broad path. |
 
-```text
-repo/bonsai/
-```
+### Candidate construction and preservation
 
-equal to the candidate Bonsai 2.0 distribution during the bootstrap refactor.
+| Evidence | Source evidence | Approved rule | Class | Rationale / owner | Validation obligation |
+| --- | --- | --- | --- | --- | --- |
+| `PROMO-CAND-01` | v1.4 has no candidate builder. | REQ-12; Architecture **Candidate construction** | Missing | Build the complete `.bonsai` candidate in disposable storage before touching live runtime. | Candidate assembly leaves live `.bonsai` byte-for-byte unchanged. |
+| `PROMO-CAND-02` | Current live `.bonsai` mixes standard files with repository context/projects. | REQ-13; Architecture **Preservation boundary** | Adapt | Classify live paths by ownership; take v2 standard only from validated `bonsai/`, never by merging the old tree. | Candidate contains no legacy standard file merely because it existed under live `.bonsai`. |
+| `PROMO-CAND-03` | `.bonsai/projects/bonsai-dev/` contains human truth/contracts plus v1.4 execution memory. | REQ-1, REQ-13; Architecture **Bootstrap Execution Memory** | Adapt | Preserve human/project truth and semantically convert only current useful execution memory to v2 identities. | Candidate retains requirements, architecture, approved contracts, applicable layered truth/icebox/context, and current execution meaning. |
+| `PROMO-CAND-04` | `plan.md`, `state.md`, and `plan/plan_phase_<N>.md` are the active v1.4 names. | REQ-1, REQ-9, REQ-13; specification **Agent Execution Memory** | Adapt | Convert to `agent_plan.md`, `agent_state.md`, and `plan/agent_plan_phase_<N>.md`; this is semantic current-truth conversion, not blind rename. | Cross-references, active plan paths, pass/readiness, objective, and exact next step use v2 semantics; no competing v1 names remain. |
+| `PROMO-CAND-05` | v1.4 execution files contain bootstrap notes and old runtime instructions that become stale after promotion. | specification **Clean Rebuild Objective** | Drop | Remove obsolete bootstrap/current-runtime instructions during conversion while preserving current roadmap and resume truth. | Converted memory contains no instruction to use v1.4, stage v2 as future work, or start with `implementation_prompt.md`. |
+| `PROMO-CAND-06` | `.bonsai/developer_context.md` is human-owned repository context and ignored by Git. | REQ-13; specification **Repository-local Bonsai memory** and **Developer Context** | Keep | Preserve repository developer context verbatim when present; do not synthesize or normalize it during promotion. | Candidate retains the file content/ownership and does not place it in the shared standard. |
+| `PROMO-CAND-07` | v1 `.bonsai/tooling.md` may exist; approved v2 contracts retire that identity in favor of scoped `agent_context.md`. | REQ-13; specification **Agent Context**; approved core/project contracts | Adapt | Convert qualifying repository tooling memory to repository `agent_context.md`; merge only by current meaning and never keep both identities. | Fixture with tooling memory yields one non-secret v2 repository agent-context file and no `tooling.md`. |
+| `PROMO-CAND-08` | `.bonsai/maps/` currently contains only v1.4 mapping-standard/control artifacts; no generated repository code map exists. | REQ-10, REQ-13; approved mapping contract | Drop + conditional Adapt | Replace v1 map control files with v2 standard; preserve only separately identifiable runtime source-map data when present and validated, converting placement/identity as required. | Current candidate carries no v1 `map_prompt.md`, `map_system.md`, `repo_session.md`, or map templates under runtime map data. |
+| `PROMO-CAND-09` | `.bonsai/projects/task-tracker/` is checked-in v1.4 example memory; approved Step 3 classifies it only as possible validation material and forbids automatic conversion. | REQ-4, REQ-9, REQ-13; Phase 1 Step 3 approved contract | Drop from promoted runtime; disposition gate | Do not preserve it as v1 compatibility project or silently delete it. Before live promotion, human-approved source preparation must relocate/adapt it under `tests/fixtures/` or explicitly retire it. | Candidate construction blocks while the path remains unclassified under live `.bonsai`; no candidate contains v1 task-tracker execution names. |
+| `PROMO-CAND-10` | Future repository-owned paths may exist beyond today's inventory. | REQ-12, REQ-13 | Missing | Preflight uses an explicit classification manifest/report for every live top-level/local-memory path and stops on unknowns. | An extra project/context/map path cannot be silently dropped or blindly copied. |
 
-### Responsibilities
+### Backup, swap, and rollback
 
-- contain only artifacts intended to ship as Bonsai;
-- remain suitable as direct input to isolated validation and promotion;
-- allow a complete-tree comparison without filtering generated test debris.
+| Evidence | Source evidence | Approved rule | Class | Rationale / owner | Validation obligation |
+| --- | --- | --- | --- | --- | --- |
+| `PROMO-BACKUP-01` | No v1.4 backup workflow. | REQ-11; Architecture **Local rollback archive** | Missing | Create a timestamped local archive of pre-promotion `.bonsai` only after candidate validation and immediately before live mutation. | Archive name is collision-safe and captures a restorable `.bonsai` root. |
+| `PROMO-BACKUP-02` | No archive verification. | REQ-12 | Missing | Validate archive readability, safe paths, inventory, and content equivalence before promotion continues. | Corrupt, incomplete, path-unsafe, or colliding archive fails preflight and leaves live runtime untouched. |
+| `PROMO-BACKUP-03` | No rollback rehearsal. | REQ-12; Architecture **Swap** | Missing | Isolated validation must prove restoration from the produced archive, not merely archive creation. | A copied fixture is restored to the pre-promotion inventory/content and starts with its pre-promotion state. |
+| `PROMO-BACKUP-04` | No v1.4 rule for archive lifetime. | REQ-11, REQ-14 | Missing | Keep the archive outside both Bonsai trees through promotion/proof; do not automatically delete the recovery point during finalization. | Successful cleanup removes staging only, not the rollback archive. |
+| `PROMO-SWAP-01` | No v1.4 live promotion operation. | REQ-12; Architecture **Swap** | Missing | Live mutation begins only with validated staged tree, validated complete candidate, verified archive, approved exact next step, and clean preflight classifications. | Every missing precondition stops before moving/replacing live `.bonsai`. |
+| `PROMO-SWAP-02` | No portable atomic-directory guarantee. | REQ-12 | Missing, packaging unresolved | The implementation must choose the safest host-supported same-filesystem replacement and minimize incomplete exposure; exact command/script remains Phase 5 host work. | Failure injection at each mutation boundary proves live candidate or recoverable old runtime, never an accepted partial merge. |
+| `PROMO-SWAP-03` | No v1.4 rollback behavior. | REQ-12 | Missing | Preserve a recoverable old live directory until candidate placement verifies; restore it automatically when safe or stop with exact archive/quarantine recovery instructions. | Simulated candidate-placement and post-placement verification failures retain both rollback assets and an unambiguous recovery path. |
+| `PROMO-SWAP-04` | Manual copying is the only implied fallback in old guidance. | Constraint: no manual copying; Architecture **Guardrails** | Drop | Promotion is one controlled workflow/state machine, not a human sequence of ad hoc copies. | The normal release path builds, validates, archives, swaps, and verifies without manual file selection. |
+| `PROMO-SWAP-05` | No v1.4 post-swap state. | REQ-14; Architecture **Fresh-Session Self-Hosting Proof** | Missing | Candidate `agent_state.md` must already record `Promoted, Unproven`, `Ready to execute`, and the fresh-session proof as its objective/next step; rollback archive retains the pre-promotion state. | First v2 startup sees proof as the exact next step, not stale promotion construction work or an invented readiness value. |
+| `PROMO-SWAP-06` | No v1.4 secret/scope safeguard. | Developer Context; destructive-action rules | Missing | Promotion reports exact roots and never archives/writes outside resolved repository targets; it does not print context contents. | Ambiguous/broad roots, symlink/path escape, or unresolved target identity block destructive action. |
 
-### Must not
+### Fresh-session proof and final collapse
 
-- contain generated test outputs;
-- contain test logs;
-- contain promotion scratch directories;
-- contain local rollback archives;
-- contain repository-specific Bonsai project memory.
+| Evidence | Source evidence | Approved rule | Class | Rationale / owner | Validation obligation |
+| --- | --- | --- | --- | --- | --- |
+| `PROMO-PROOF-01` | v1.4 fresh prompt uses `implementation_prompt.md`. | REQ-14; specification **Startup Bootstrap** | Adapt + Drop | Acceptance must start a genuinely fresh session with only `Read .bonsai/start.md and follow its instructions.`; old entry is not fallback. | Proof records that v2 `start.md` and v2 implementation router were used. |
+| `PROMO-PROOF-02` | No v1.4 v2-memory startup. | REQ-14 | Missing | Acceptance must resolve the newly promoted repository `.bonsai` as the Embedded Bonsai Home, then resolve repository/project identity and converted memory. External-home preference is tested separately and cannot satisfy self-hosting proof. | Startup evidence identifies promoted `.bonsai` as Bonsai Home and reports `bonsai-dev`, correct phase/pass/readiness, and the exact post-promotion next step. |
+| `PROMO-PROOF-03` | Current chat has archaeological context unavailable to a new session. | REQ-7, REQ-14; specification **Session Boundaries** | Missing | Proof cannot rely on prior chat, injected handoff packet, or v1 prompt. | A fresh session succeeds using durable promoted files and canonical pointer only. |
+| `PROMO-PROOF-04` | No operational self-hosting acceptance. | REQ-14 | Missing | After startup gate, the human authorizes one bounded Bonsai-development action that routes/executes under v2 semantics. | Proof is not satisfied by file existence or startup prose alone. |
+| `PROMO-PROOF-05` | No v1.4 failure disposition. | REQ-12, REQ-14 | Missing | Failed proof leaves `bonsai/` and archive intact and routes to rollback or bounded repair; it cannot declare promotion complete. | Failure state identifies current live runtime, recovery assets, and one exact recovery decision. |
+| `PROMO-PROOF-06` | No staging-finalization workflow. | REQ-14, REQ-15 | Missing | Successful proof updates execution memory and stops at a separate explicit staging-removal action. | `bonsai/` still exists immediately after proof and is removed only after proof success and human continuation. |
+| `PROMO-PROOF-07` | Bootstrap tree currently has two standards by design. | REQ-15; Architecture **Stable Repository Model** | Missing | Final validation requires `.bonsai/` to be the single shipped/self-hosting standard and source tree. | No sibling `bonsai/`, no duplicate v1 execution names, and no runtime dependence on build output remain. |
 
-### Validation cases
+### Clean rebuild and completion
 
-- clean-tree assertion detects accidental generated files under `bonsai/`;
-- staged tree can be copied directly as the standard portion of an isolated embedded Bonsai fixture.
-
----
-
-## Contract: Test Artifact Boundaries
-
-### Role
-
-Provide repeatable validation for workflows that produce files, directories, zips, maps, or execution-memory changes.
-
-### Durable inputs
-
-Conventionally:
-
-```text
-tests/fixtures/
-```
-
-### Durable expected outputs
-
-When golden artifacts are appropriate:
-
-```text
-tests/expected/
-```
-
-### Generated outputs
-
-Conventionally:
-
-```text
-build/bonsai-tests/
-```
-
-### Responsibilities
-
-- isolate each scenario's generated output;
-- allow deterministic cleanup/re-run;
-- compare only behavior/artifacts intentionally covered by the test;
-- support artifact-producing workflows such as project-memory generation, mapping, startup/project routing, and promotion.
-
-### Must not
-
-- write actual test results into `bonsai/`;
-- let golden outputs become a second specification;
-- require golden-file comparison when semantic assertions are more appropriate;
-- preserve disposable run output in source control.
-
-### Validation cases
-
-At minimum support eventual scenarios for:
-
-- `create_project_memory.md` output;
-- `create_map_repo.md` output;
-- code-map output;
-- embedded startup;
-- Bonsai Home startup;
-- project selection/switching;
-- agent-context layering;
-- promotion candidate construction;
-- self-hosting project-memory conversion.
+| Evidence | Source evidence | Approved rule | Class | Rationale / owner | Validation obligation |
+| --- | --- | --- | --- | --- | --- |
+| `PROMO-FINAL-01` | Bootstrap plans/state contain temporary staging truth. | REQ-15; specification **Clean Rebuild Objective** | Adapt | Post-proof memory keeps current v2 execution truth and prunes completed bootstrap mechanics. | Fresh clone needs only `.bonsai/start.md` plus durable project/source memory, not promotion history. |
+| `PROMO-FINAL-02` | Human-owned requirements/architecture/contracts document the self-hosting lifecycle. | REQ-6, REQ-15 | Keep | Preserve durable design and archaeological citations; do not globally rewrite human truth merely because paths changed. | Final-truth updates occur only if current wording becomes false, through explicit clarification/revision handling. |
+| `PROMO-FINAL-03` | Exact helper packaging is absent. | specification **Optional Helper Scripts** and **Design Boundaries Still Being Validated** | Missing, explicitly unresolved | Phase 5 may implement the smallest project-appropriate driver, but conceptual correctness cannot depend on its name or shell. | Contract scenarios can exercise behavior independently of one helper command identity. |
+| `PROMO-FINAL-04` | Migration from arbitrary v1 projects is not implemented. | REQ-9; specification **Migration** | Drop | Only the explicitly approved self-hosting conversion is in scope; no general v1 compatibility/migration layer survives. | Candidate contains no generic v1 loader, aliases, or dual execution-memory format. |
 
 ---
 
-## Contract: Self-Hosting Backup
+## Contract: Staged Distribution and Validation Boundary
 
 ### Role
 
-Create an immediate local rollback point immediately before live promotion.
+Keep `repo/bonsai/` equal to the complete candidate Bonsai v2 standard and validate artifact-producing workflows
+without contaminating it or the live runtime.
 
-### Output
+### Trigger
 
-Conventionally:
+Phase 5 validation preparation, every candidate-standard validation, and promotion preflight.
 
-```text
-.bonsai-backups/
-    bonsai-YYYYMMDD-HHMMSS.zip
-```
+### Inputs / Reads
+
+- approved specification and artifact contracts;
+- staged `repo/bonsai/` as a whole tree;
+- durable fixtures under `tests/fixtures/`;
+- durable expected artifacts under `tests/expected/` when exact comparison is justified;
+- copied source/project/runtime fixtures for the six required topologies.
 
 ### Responsibilities
 
-- archive the pre-promotion `.bonsai` sufficiently for direct rollback;
-- use an unambiguous local datetime stamp;
-- complete successfully before the live standard is replaced;
-- keep backups outside both staged `bonsai/` and live `.bonsai/`.
+- validate that every staged file is intended distribution content;
+- validate required artifact presence, canonical identities, internal references, and ownership boundaries;
+- execute scenarios in isolated per-run output directories;
+- support semantic assertions, tree/inventory assertions, and golden comparisons according to contract stability;
+- make cleanup/re-run deterministic;
+- validate Embedded, Bonsai Home, multi-project, multi-repository, external-source, and greenfield behavior;
+- keep destructive promotion/rollback tests entirely inside disposable fixture roots;
+- verify `build/` and `.bonsai-backups/` are ignored before generating those outputs in live-repository work.
 
 ### Must not
 
-- be treated as source-controlled release history;
-- replace Git history or formal release artifacts;
-- continue promotion if the required backup fails.
+- write generated output, fixtures, local context, project memory, candidates, backups, or logs under `bonsai/`;
+- mutate live `.bonsai` during ordinary validation;
+- treat golden files as authority over requirements/specification/contracts;
+- require exact-text goldens when semantic behavior is the contract;
+- resolve destructive test paths from broad roots, unvalidated variables, or ambiguous symlinks;
+- accept a candidate merely because files exist.
+
+### Writes
+
+Only isolated generated output such as:
+
+```text
+build/bonsai-tests/<scenario>/
+build/bonsai-promotion/<run>/
+```
+
+Durable fixture/golden changes are normal source changes and require the applicable implementation scope; test runs
+do not rewrite them.
+
+### Delegates to
+
+Candidate construction and isolated promotion/rollback validators defined below.
+
+### Human gates
+
+- approval of durable expected artifacts when their exact content defines reviewed behavior;
+- acceptance of any required check that cannot pass is a material deviation;
+- no live-promotion authority is implied by validation success.
 
 ### Validation cases
 
-- archive can reconstruct the pre-promotion `.bonsai`;
-- timestamp naming does not collide in normal use;
-- backup failure prevents destructive promotion.
+- generated file injected under `bonsai/` fails purity;
+- missing/dangling/stale standard reference fails integrity;
+- each required topology runs from isolated fixtures;
+- repeated scenario run produces equivalent results;
+- destructive fixture accidentally aimed at live/broad path is refused.
 
 ---
 
@@ -142,165 +160,425 @@ Conventionally:
 
 ### Role
 
-Build a complete replacement `.bonsai` without mutating the live runtime.
+Construct and validate a complete candidate `repo/.bonsai` in disposable storage without mutating the live v1.4
+runtime.
 
-### Working location
+### Trigger
 
-A disposable location such as:
+Only after staged v2 validation passes and project state authorizes Phase 5 candidate construction.
 
-```text
-build/bonsai-promotion/candidate/.bonsai/
-```
+### Inputs / Reads
 
-### Inputs
-
-- validated staged `bonsai/`;
-- current repository-local Bonsai memory that must survive;
-- explicit v1.4 → v2 self-hosting execution-memory conversion rules.
+- validated complete staged standard at `repo/bonsai/`;
+- explicit staged-standard artifact inventory;
+- read-only inventory of live `repo/.bonsai/` classified as old standard, repository memory, convertible memory,
+  runtime map data, explicitly excluded material, or unknown;
+- approved preservation and conversion rules in this contract;
+- current `bonsai-dev` execution state at candidate-build time.
 
 ### Responsibilities
 
-- copy the candidate v2 standard into the candidate root;
-- preserve applicable repository-owned memory;
-- convert `bonsai-dev` execution memory:
-  - `plan.md` → `agent_plan.md`;
-  - `state.md` → `agent_state.md`;
-  - active/future `plan/plan_phase_<N>.md` → v2 naming when applicable;
-- remove bootstrap-only v1.4 execution-memory duplicates from the candidate;
-- validate that no required local memory was lost;
-- validate that no legacy v1 standard file leaked into the candidate merely because it shared the old `.bonsai` tree.
+1. create an empty disposable candidate root;
+2. copy the staged standard without filtering into `candidate/.bonsai/`;
+3. inject only classified repository-owned memory;
+4. semantically convert current useful `bonsai-dev` execution memory to v2 identities;
+5. convert qualifying repository tooling memory to `agent_context.md` when present;
+6. preserve human-owned developer context verbatim;
+7. preserve validated runtime source-map data only when it is distinguishable from v1 mapping-standard files;
+8. reject unknown live paths until their disposition is approved;
+9. validate candidate layout, references, ownership, memory completeness, source-control boundaries, and startup
+   semantics;
+10. emit a concise candidate inventory/classification report outside staged distribution.
 
 ### Must not
 
-- merge the entire old `.bonsai` blindly;
-- overwrite the live runtime while candidate assembly is incomplete;
-- create both v1 and v2 execution-memory names as competing truths.
+- merge old `.bonsai` wholesale;
+- mutate live `.bonsai`;
+- place repository memory in the shared standard portion;
+- preserve obsolete v1 control files, aliases, or dual execution-memory names;
+- bulk rename stale execution history;
+- rewrite human-owned truth to modernize archaeological citations;
+- automatically convert or silently discard `task-tracker`;
+- proceed with any unclassified live path.
 
-### Preservation set
-
-At minimum:
+### Writes
 
 ```text
-.bonsai/projects/bonsai-dev/
+build/bonsai-promotion/<run>/candidate/.bonsai/
+build/bonsai-promotion/<run>/candidate-inventory.*
 ```
 
-must survive semantically.
+The exact report serialization is implementation detail; its classifications and validation result are required.
 
-Repository-local developer/agent context must survive when present and applicable.
+### Delegates to
 
-The exact broader preservation set must be finalized from the v2 standard artifact inventory before implementation.
+- staged-distribution validator;
+- execution-memory semantic conversion;
+- candidate startup/layout validator;
+- agent-context conversion rules already approved in core/project contracts.
+
+### Human gates
+
+- unclassified live memory;
+- `task-tracker` fixture relocation/retirement;
+- any proposed loss or semantic change to human-owned memory;
+- any conversion ambiguity that changes current execution meaning.
 
 ### Validation cases
 
-- candidate contains staged standard plus project memory;
-- candidate contains v2 execution-memory names only;
-- candidate excludes obsolete v1 standard files;
-- candidate preserves repository context that contract says must survive;
-- candidate passes startup-layout validation before live swap.
+- current self-hosting tree;
+- developer context present/absent;
+- tooling context present and converted;
+- unknown project blocks construction;
+- optional runtime map data is preserved while v1 map-control artifacts are not;
+- current state/plan/active phase plan convert with correct cross-references;
+- candidate contains v2 names only and starts in isolated Embedded mode;
+- live-tree inventory/content remains unchanged.
 
 ---
 
-## Contract: Live Promotion
+## Preservation and Conversion Set
+
+### Preserve into the candidate
+
+| Live material | Candidate treatment |
+| --- | --- |
+| `.bonsai/projects/bonsai-dev/requirements.md` and layered requirements | Preserve human-owned truth unchanged |
+| `.bonsai/projects/bonsai-dev/architecture.md` and layered architecture | Preserve human-owned truth unchanged |
+| `.bonsai/projects/bonsai-dev/artifact_contracts/` | Preserve approved project design and archaeological evidence |
+| `.bonsai/projects/bonsai-dev/icebox.md`, if present | Preserve human-triaged human-owned memory unchanged |
+| `.bonsai/projects/bonsai-dev/agent_context.md`, if present | Preserve current project-scoped agent context |
+| `.bonsai/projects/bonsai-dev/plan.md` | Convert current useful roadmap meaning to `agent_plan.md` |
+| `.bonsai/projects/bonsai-dev/state.md` | Convert current resume meaning to `agent_state.md` and set the post-promotion proof gate |
+| Active/useful `.bonsai/projects/bonsai-dev/plan/plan_phase_<N>.md` | Convert to `plan/agent_plan_phase_<N>.md`; prune obsolete completed detail |
+| `.bonsai/developer_context.md`, if present | Preserve verbatim as repository human-owned context |
+| `.bonsai/agent_context.md`, if present | Preserve current repository agent context |
+| `.bonsai/tooling.md`, if present | Convert/merge current qualifying meaning into repository `agent_context.md`; remove old identity |
+| Separately identifiable runtime source-map data, if present | Preserve/convert under v2 named-source map-store rules after identity validation |
+
+### Replace from the staged standard
+
+All v1.4 distribution files—including root prompts/guides, `skills/`, `templates/`, and mapping control/template
+files—are replaced by the validated staged v2 standard. They are not preservation inputs.
+
+### Require disposition before promotion
+
+| Live material | Required disposition |
+| --- | --- |
+| `.bonsai/projects/task-tracker/` | Relocate/adapt into `tests/fixtures/` or explicitly retire through human-approved source work; never copy as v1 project memory |
+| Any other project or unknown top-level local path | Explicitly classify as preserve/convert, relocate, or retire before candidate validation can pass |
+| Ambiguous `.bonsai/maps/` content | Establish whether it is old standard or runtime map data; do not guess |
+
+This is an exact classification policy rather than a fragile filename-only copy list: known categories have one
+treatment, and unknown categories block promotion.
+
+### Execution-memory conversion rules
+
+- preserve current phase status, ordering, execution mode, approval state, objective, blockers, exact next step,
+  and success condition;
+- change paths/names and metadata to v2 `agent_` identities;
+- update execution-memory cross-references, including phase-plan parent/active paths;
+- set candidate promotion status to `Promoted, Unproven`, execution readiness to `Ready to execute`, and the
+  fresh-session self-hosting proof as the current objective/exact next step;
+- keep only active/useful phase details; completed bootstrap history is compressed into roadmap-level outcome;
+- remove v1.4 bootstrap notes, stale staging-as-future language, old canonical prompts, and expired dry-run state;
+- preserve archaeological v1 path citations in human-owned contracts/architecture when they remain accurate evidence;
+- never create both old and new execution-memory filenames.
+
+---
+
+## Contract: Backup and Rollback
 
 ### Role
 
-Replace the Bonsai runtime that built v2 with the fully validated v2 candidate.
+Create and verify an immediate local recovery point before any live runtime mutation and preserve recovery until
+the promoted v2 is proven.
+
+### Trigger
+
+After complete candidate validation and immediately before an explicitly authorized live promotion.
+
+### Inputs / Reads
+
+- exact resolved live `repo/.bonsai/`;
+- candidate/preflight report;
+- local backup root `repo/.bonsai-backups/`.
+
+### Responsibilities
+
+- create a collision-safe timestamped archive conventionally named
+  `.bonsai-backups/bonsai-YYYYMMDD-HHMMSS.zip`;
+- archive a directly restorable `.bonsai` root;
+- reject unsafe archive entry paths;
+- verify archive readability, inventory, and content equivalence;
+- restore the archive into an isolated fixture and validate the recovered v1.4 startup/state before live swap;
+- retain the archive through promotion, fresh proof, and staging cleanup;
+- expose the exact archive path without printing context contents.
+
+### Must not
+
+- continue after backup or verification failure;
+- overwrite an existing archive;
+- place the archive under `.bonsai`, `bonsai`, or `build`;
+- treat the archive as source-controlled release history;
+- delete the archive automatically at project completion.
+
+### Writes
+
+```text
+repo/.bonsai-backups/bonsai-<timestamp>.zip
+build/bonsai-promotion/<run>/restore-verification/
+```
+
+### Delegates to
+
+Archive creation plus isolated restore verification; exact host tooling is not fixed by this contract.
+
+### Human gates
+
+- live promotion remains a separate destructive action after backup success;
+- backup path/restore ambiguity blocks promotion.
+
+### Validation cases
+
+- normal archive/restore;
+- filename collision;
+- corrupt/incomplete archive;
+- unsafe entry path;
+- backup permission/failure;
+- restored v1.4 state equals the pre-promotion source.
+
+---
+
+## Contract: Live Promotion State Machine
+
+### Role
+
+Replace the running v1.4 `.bonsai` with the fully validated candidate while preventing an accepted half-install and
+retaining a clear rollback path.
+
+### Trigger
+
+Only when current project state names live promotion as the approved exact next step and every precondition passes.
+
+### Inputs / Reads
+
+- exact validated candidate root and its inventory/content identity;
+- exact live repository `.bonsai` root;
+- verified rollback archive path and restore result;
+- complete preservation/disposition/preflight report;
+- current execution state and the human's exact live-promotion authorization;
+- host/filesystem capabilities needed to choose the replacement strategy.
+
+### States and invariants
+
+| State | Required invariant |
+| --- | --- |
+| Prepared | Staged tree validated; live untouched |
+| Candidate Validated | Complete candidate validated outside live tree; live untouched |
+| Backup Verified | Restorable archive verified; live untouched |
+| Swap Authorized | Human explicitly authorized exact live target/candidate/archive operation |
+| Promoted, Unproven | Live `.bonsai` equals candidate; staging and archive retained; candidate state requires fresh proof |
+| Proof Failed / Recovery Required | Staging and archive retained; current live identity and exact rollback/repair choice explicit |
+| Proven, Cleanup Pending | Fresh-session proof passed; staging still retained until separate cleanup action |
+| Complete | Staging removed; `.bonsai` is sole standard/source; archive retained locally |
+
+No state may accept a partially copied hybrid tree as a valid runtime.
 
 ### Preconditions
 
-- staged distribution passes required validation;
-- complete candidate `.bonsai` passes validation;
-- timestamped backup succeeds;
-- current project state records promotion as the authorized exact next step.
+- staged distribution and complete candidate validations pass;
+- preservation/disposition report has no unknowns;
+- converted execution memory is internally consistent;
+- rollback archive and isolated restore validation pass;
+- candidate and live roots are exact, non-broad, and safe for the selected host strategy;
+- current execution state and human authorization name this promotion.
 
 ### Responsibilities
 
-- use the safest host-supported directory replacement procedure;
-- minimize the interval in which live `.bonsai` is incomplete;
-- verify the resulting live tree after replacement;
-- leave rollback archive and staged `bonsai/` intact until fresh-session proof succeeds.
+- use the safest host-supported replacement strategy, preferring same-filesystem directory operations where they
+  actually provide stronger guarantees;
+- retain the old live directory in recoverable quarantine until new placement verifies when the host strategy
+  permits;
+- verify promoted inventory/content against the validated candidate;
+- verify local bootstrap and post-promotion state are readable;
+- restore the old directory automatically when safe after a failed placement, or stop with exact verified archive/
+  quarantine recovery directions;
+- keep staging and archive intact;
+- report the resulting live state without claiming self-hosting completion.
 
 ### Must not
 
-- delete live `.bonsai` before a complete candidate exists;
-- continue silently after partial-copy failures;
-- remove `bonsai/` in the same destructive step as promotion;
-- claim self-hosting success merely because file copy completed.
+- delete live `.bonsai` before candidate, backup, and authorization exist;
+- perform in-place merge/copy over live standard;
+- continue through failed checks or partial operations;
+- remove staging during the swap;
+- use manual file selection as the normal release path;
+- claim atomicity unsupported by the host;
+- broaden targets through unresolved variables, globs, symlinks, or repository-root recursion.
+
+### Writes
+
+The exact live `.bonsai` replacement plus host-local quarantine/transaction records outside staged distribution.
+Packaging and temporary names are Phase 5 implementation details.
+
+### Delegates to
+
+Candidate verifier, archive/rollback verifier, host-specific replacement implementation, and promoted-tree verifier.
+
+### Human gates
+
+- explicit authorization immediately before live replacement;
+- any changed precondition invalidates prior authorization;
+- failed promotion requires a concrete rollback/repair decision when automatic restoration is not safe.
 
 ### Validation cases
 
-- successful swap;
-- simulated copy/swap failure with rollback assets retained;
-- promoted tree equals validated candidate;
-- current self-hosting project is still present.
+- success path;
+- failure before live mutation;
+- failure moving old live aside;
+- failure placing candidate;
+- failure verifying new live tree;
+- automatic restoration where safe;
+- exact archive recovery when restoration is not automatic;
+- no accepted hybrid/partial tree at any boundary.
 
 ---
 
-## Contract: Fresh-Session Self-Hosting Proof
+## Contract: Fresh-Session Self-Hosting Proof and Finalization
 
 ### Role
 
-Prove that the promoted Bonsai 2.0 can resume and operate the project that created it.
+Prove that promoted Bonsai v2 can independently resume and continue the project that created it, then remove the
+temporary sibling standard only after that proof.
 
-### Test instruction
+### Trigger
 
-From a fresh coding-agent session in the repository:
+Live candidate verification succeeds and state is `Promoted, Unproven`.
 
-```text
-Read .bonsai/start.md and follow its instructions.
-```
+### Inputs / Reads
 
-### Success criteria
+- promoted repository `.bonsai/start.md` and v2 standard;
+- converted `.bonsai/projects/bonsai-dev/agent_plan.md`, `agent_state.md`, and active phase plan;
+- applicable repository/project context;
+- canonical fresh-session prompt only.
 
-The new v2 runtime:
+### Responsibilities
 
-- resolves Bonsai Home / embedded identity correctly;
-- resolves repository home;
-- resolves the `bonsai-dev` project correctly;
-- reads `agent_plan.md` / `agent_state.md`;
-- reports the correct phase, readiness, and exact next step;
-- can execute or route one bounded authorized follow-up under v2 rules.
+1. require the human to start a genuinely new coding-agent session;
+2. use exactly:
 
-### Responsibilities after success
+   ```text
+   Read .bonsai/start.md and follow its instructions.
+   ```
 
-- mark the self-hosting transition complete;
-- remove temporary `repo/bonsai/`;
-- ensure `.bonsai/` is now the single canonical distribution/self-hosting source tree;
-- update project architecture/state if any temporary bootstrap statements are no longer current.
+3. run in an acceptance environment with no valid external `BONSAI_HOME`, resolve the newly promoted repository
+   `.bonsai` as the Embedded Bonsai Home, and resolve repository home and `bonsai-dev` correctly;
+4. load v2 agent execution memory and report correct phase/pass/readiness/next step;
+5. prove no v1 prompt/control fallback was used;
+6. after its normal gate, execute or route one human-authorized bounded Bonsai-development action under v2;
+7. record proof success in v2 execution memory;
+8. stop at a separate staging-removal action;
+9. after explicit continuation, remove `repo/bonsai/` and verify `.bonsai/` is the only standard/source tree;
+10. reconcile remaining execution memory and any final-truth clarification/revision that is actually required.
 
 ### Must not
 
-- use the old v1.4 implementation prompt as fallback without surfacing failure;
-- rely on the old chat session's volatile context;
-- delete staging before the fresh-session proof succeeds.
+- reuse the promotion chat as the acceptance session;
+- inject a handoff packet beyond the canonical pointer;
+- satisfy self-hosting acceptance through an external Bonsai Home instead of the promoted repository `.bonsai`;
+- load v1.4 implementation files as silent fallback;
+- declare success from file presence or startup output alone;
+- delete staging or archive before proof;
+- remove staging in the same destructive action as live promotion;
+- globally rewrite historical final-truth citations without an approved impact.
+
+### Writes
+
+- current v2 `agent_state.md`/roadmap updates needed to record proof and cleanup state;
+- removal of temporary `repo/bonsai/` only after proof and explicit continuation;
+- no deletion of the local rollback archive.
+
+### Delegates to
+
+Normal v2 bootstrap, implementation router, handoff, and final-truth reconciliation when applicable.
+
+### Human gates
+
+- human starts the fresh session;
+- normal v2 startup gate;
+- authorization of one bounded follow-up action;
+- failed proof recovery decision;
+- separate staging-removal continuation;
+- any final-truth clarification/revision exposed by completed promotion.
 
 ### Validation cases
 
-The proof itself is an acceptance test and should also be represented by repeatable isolated startup tests where feasible.
+- acceptance resolves promoted Embedded `.bonsai` with no valid external `BONSAI_HOME`;
+- a separate topology fixture validates external `BONSAI_HOME` preference without being counted as self-hosting proof;
+- correct `bonsai-dev` resume from v2 names;
+- no prior-chat dependency;
+- no v1 fallback;
+- bounded v2 action succeeds;
+- failed proof retains staging/archive and yields recovery state;
+- successful proof retains staging until cleanup gate;
+- cleanup yields one `.bonsai` standard/source tree.
 
 ---
 
-## Contract: Post-Promotion Repository Invariant
+## Post-Promotion Repository Invariant
 
-After successful promotion:
+After proof and cleanup:
 
 ```text
 repo/.bonsai/
 ```
 
-is simultaneously:
+is simultaneously the shipped Bonsai standard, the source contributors modify, the Embedded runtime for
+self-hosting, and the location of repository/project memory. There is no sibling `repo/bonsai/` source twin, no
+v1 standard/control artifact, no duplicate v1/v2 execution-memory format, and no dependency on disposable build
+output.
 
-- the Bonsai distribution that users can copy/use;
-- the Bonsai standard source contributors edit;
-- the embedded Bonsai runtime for developing Bonsai itself;
-- the location containing repository/project memory needed for self-hosting.
+The local rollback archive may remain under ignored `.bonsai-backups/`. Disposable test/promotion output may remain
+under ignored `build/` until normal cleanup, but neither is runtime authority.
 
-There is no permanent:
+---
 
-```text
-repo/bonsai/
-```
+## Cross-Contract Validation Matrix
 
-source twin.
+| Scenario | Required proof |
+| --- | --- |
+| Staged distribution purity | Whole-tree allow/contract check; no generated/local memory |
+| Artifact reference integrity | Every standard reference resolves to one canonical identity; known v1 stale names absent |
+| Project-memory synthesis | Semantic ownership/content plus archive/tree structure |
+| Map calibration and creation | Optional calibration, source authority, named-source storage, canonical templates |
+| Embedded standalone | Local `.bonsai/start.md` resolves embedded standard/project simply |
+| Bonsai Home | Valid home preferred while repository-local project/context remains local |
+| Multi-project repository | Deterministic listing/selection; concurrent session selection remains session-local |
+| Multi-repository project | `investment-app`, `barcache`, and `tickerview` maps/sources align and reuse context |
+| External source | Mapping succeeds without source project memory |
+| Greenfield | No repeated map pressure |
+| Candidate construction | Standard replacement plus exact memory preservation/conversion; live untouched |
+| Task-tracker disposition | No automatic v1 conversion or silent loss; approved fixture/retirement outcome |
+| Backup/restore | Archive verified and independently restorable before mutation |
+| Swap failures | Failure injection leaves verified old or new tree and clear recovery assets |
+| Promoted startup | v2 local bootstrap and converted state work in isolation |
+| Fresh-session proof | Canonical pointer only, correct resume, one bounded v2 action |
+| Final collapse | staging absent; `.bonsai` sole source/standard; archive non-authoritative |
 
-Future Bonsai revisions should normally be performed directly under v2's own workflow. If a future revision again requires destructive replacement of the running standard, the same staging/promotion pattern may be used deliberately rather than creating a permanently duplicated source tree.
+---
+
+## Explicitly Unresolved Implementation Decisions
+
+These are owned, bounded Phase 5 implementation decisions rather than missing product behavior:
+
+1. **Host-specific replacement mechanism:** Choose and failure-test the safest strategy available on the actual
+   host/filesystem. The transactional invariants above are fixed; the command sequence is not.
+2. **Helper/driver packaging:** Use the smallest project-appropriate executable seam, if any. Do not create a
+   permanent framework or make the AI workflow conceptually depend on one script name.
+3. **Minimal transaction report format:** Preserve classifications/check results needed for safe execution and
+   review, but do not establish a public schema without demonstrated reuse.
+4. **Current `task-tracker` disposition:** Before promotion implementation can be live-ready, human review must
+   approve fixture relocation/adaptation or explicit retirement. Automatic v1 project conversion is prohibited.
+
+No unresolved item authorizes live mutation, compatibility artifacts, failed checks, or manual-copy promotion.
