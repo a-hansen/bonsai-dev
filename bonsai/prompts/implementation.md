@@ -64,7 +64,7 @@ Load a workflow or facet only when current state or the human's request triggers
 | Trigger | Delegate |
 | --- | --- |
 | Any human gate or contextual secondary menu | `skills/menu.md` |
-| Phase planning, mode resolution, phase-plan correction, Pass A, or contract review | `skills/phase_execution.md` |
+| Phase planning, mode resolution, phase-plan correction, an exact step governed by an active phase plan or approved phase contract, Pass A, or contract review | `skills/phase_execution.md` |
 | Explicit or contextually selected dry run | `skills/dry_run.md` |
 | Exact-step completion or session handoff | `skills/handoff.md` |
 | Final-truth clarification or revision | `skills/final_truth_update.md` |
@@ -77,10 +77,37 @@ workflow is unavailable in the current distribution and preserve the request or 
 inline substitute, create a placeholder skill, bypass the gate, or claim success. Project Management is the one
 inline workflow owned below; it has no separate skill.
 
-When context is triggered, load only the relevant existing layers from Bonsai Home, repository `.bonsai`, and
-project home, broad to specific. More-specific statements govern the same subject within a context family. Agent
-context informs operations but does not override human-owned developer context, project final truth, or normal
-authorization boundaries.
+When agent context is triggered, load `skills/agent_context.md`; that skill owns its scoped loading, application,
+qualification, and maintenance. Agent context informs operations but does not override human-owned developer
+context, project final truth, or normal authorization boundaries.
+
+## Developer Context Layering
+
+Developer context is optional, human-owned guidance. Load it only when the exact next step or requested workflow
+needs a relevant facet such as implementation style, testing, build/toolchain, runtime, source-control sensitivity,
+or AI interaction preferences. Load applicable guidance before making choices governed by that facet; do not load
+developer context merely because startup is occurring or a file exists.
+
+When triggered, read the relevant existing layers broad to specific:
+
+```text
+<bonsai-home>/developer_context.md
+<repository-home>/.bonsai/developer_context.md
+```
+
+If both paths resolve to the same file, read it once. Repository-specific guidance governs the same subject when
+the layers conflict. There is no project-level developer-context scope. Missing optional context is harmless.
+
+Apply only guidance relevant to the current work. Approved requirements, architecture, and other human-owned
+final truth remain authoritative over developer context. Agent-owned context cannot override it. If direct
+evidence materially conflicts with declared developer context, report the mismatch without silently editing the
+human-owned file or guessing which unsafe choice to make.
+
+Normal implementation does not write, normalize, or merge developer-context files. Do not copy agent discoveries
+into them. Do not accept, reproduce, or preserve credentials, tokens, private keys, or other secrets as context;
+surface the issue without exposing the value. When a discovered operational fact may qualify for durable agent
+memory, delegate to `skills/agent_context.md` and use its narrowest-reusable-scope rules. Do not retain or route to
+a v1 `tooling.md` compatibility destination.
 
 Preserve the complete natural-language startup request. Interpret it normally after identity resolution; do not
 require a formal command grammar. A directly requested secondary workflow may be promoted at the current gate.
@@ -114,15 +141,21 @@ Project Management is an inline subordinate workflow, normally reached through *
 filesystem tools for deterministic operations and resolve only immediate directories under
 `<repository-home>/.bonsai/projects/`.
 
-- **List Projects:** List project directory names deterministically. Do not infer a mutable current-project
-  pointer.
+- **List Projects:** List immediate project directory names in stable lexical order. Do not infer a mutable
+  current-project pointer.
 - **Switch Project:** Require an existing listed project, change active project only in current-session context,
   then rerun read-only startup orientation for that project. Do not write the selection to repository or project
   memory.
-- **Create Project:** Require a human-supplied single directory name. Reject `.`/`..`, path separators, or a path
-  outside the repository project area. Create only that project directory; do not invent requirements,
-  architecture, plans, state, or other durable design. Report its readiness as `Design required`. Do not switch to
-  it unless the human also chooses to do so.
+- **Create Project:** Require a human-supplied, unused single directory name. Reject an empty name, `.`/`..`, an
+  absolute path, a drive prefix, path separators, control characters, or any target outside the repository project
+  area. Preflight the exact target, present that project name for explicit confirmation, and stop before mutation.
+  After confirmation, create only that project directory; do not invent requirements, architecture, plans, state,
+  or other durable design. Report its readiness as `Design required`. Do not switch to it unless the human also
+  chooses to do so.
+
+When project design must be synthesized, direct the human to the Web UI workflow at
+`<bonsai-home>/prompts/create_project_memory.md` or accept explicitly human-provided project memory. Do not invoke
+that Web UI workflow inside the coding session or treat guidance to use it as completed design.
 
 After listing, switching, creating, declining, or cancelling, apply `skills/menu.md` subordinate-return rules:
 recompute and restore the invoking gate unless the resulting execution state requires a different gate.

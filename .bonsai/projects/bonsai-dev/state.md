@@ -15,38 +15,31 @@ The state is converted to `agent_state.md` during validated v2 promotion.
 
 ## Current Execution State
 
-**Current Phase:** Context and Project Workflows
+**Current Phase:** Integrated Code Maps
 **Active Phase Plan File:** None
 **Phase Plan Status:** None
 **Current Phase Pass:** Phase Planning
-**Phase Execution Mode:** Unresolved
+**Phase Execution Mode:** To determine at activation
 **Execution Readiness:** Phase planning required
-**Current Objective:** Resolve Phase 3 execution mode and draft a detailed Phase 3 plan if warranted.
+**Current Objective:** Resolve Phase 4 execution mode and draft its detailed execution plan for human review.
 
-* **Current Snapshot:** Phase 2 is complete. Integrated checks confirm coherent bootstrap/router/menu ownership,
-  canonical paths, v2 execution-memory names, guarded later-skill references, README/specification alignment, and a
-  pure five-file staged distribution. Deferred obligations remain binding: Phase 3 owns broader project-memory and
-  context workflows, phase execution, final-truth, dry-run, handoff, agent context, Bonsai Home, and related
-  end-to-end workflow behavior; Phase 4 owns code-map behavior; Phase 5 owns full operating-model scenario
-  validation.
-* **Recommended Mode:** Single-pass — Phase 3 implements already-approved artifact contracts and does not establish
-  another independently review-worthy durable contract.
-* **Recommended Phase Plan:** Create one — the phase has ordered workflow artifacts, multiple bounded validation
-  points, and inherited deferred obligations that must remain visible across implementation steps. Treat inline
-  Project Management as an existing Phase 2 dependency to integrate and validate, not reimplement; correct it only
-  if Phase 3 exposes an approved-contract gap.
-* **Active Files:** [`state.md`, `plan.md`, `requirements.md`, `architecture.md`, `artifact_contracts/README.md`,
-  `artifact_contracts/core_workflows.md`, `artifact_contracts/project_workflows.md`, `bonsai/specification.md`,
-  `bonsai/README.md`, `.bonsai/skills/phase_execution.md`, `.bonsai/templates/plan_phase_template.md`]
+* **Current Snapshot:** Phases 1–3 are complete. Phase 3 focused conformance checks passed across references,
+  routing, ownership, v2 naming, lazy loading, invoking-gate return, Project Management scenarios, and staged-tree
+  purity. Approved-contract gaps in active-phase-plan routing and safe confirmed project creation/design guidance
+  were corrected in `bonsai/prompts/implementation.md`. Phase 4 map behavior and Phase 5 topology/promotion
+  validation remain unclaimed.
+* **Active Plan:** Phase 4 is active but unplanned. Recommend Single-pass because Phase 1 already approved the
+  durable mapping contracts; create a detailed plan because ordered map integration and validation work materially
+  benefits from a resumable execution surface.
+* **Active Files:** [`state.md`, `plan.md`, `artifact_contracts/code_maps.md`, `bonsai/specification.md`,
+  `bonsai/README.md`, `.bonsai/templates/plan_phase_template.md`]
 * **Blockers / Risks:** [None]
 
-**Exact Next Step:** Execute Phase 3 activation planning: assess and resolve execution mode, draft a detailed
-`plan/plan_phase_3.md` from the phase-plan template if warranted, assign inherited deferred obligations to concrete
-owning steps or later validation, treat inline Project Management as an existing Phase 2 dependency to integrate
-and validate rather than reimplement, reconcile roadmap/state, and stop at the applicable plan-review gate.
-**Success Condition:** Phase 3 mode is resolved, any warranted detailed plan is complete and ready for review,
-Phase 2 deferred obligations remain explicitly routed, roadmap/state agree, and no Phase 3 implementation begins
-before the applicable approval gate.
+**Exact Next Step:** Resolve Phase 4 as Single-pass and draft `plan/plan_phase_4.md` from the approved mapping
+contracts and phase-plan template for human review.
+**Success Condition:** Phase 4 mode, scope, ordered work, validation boundaries, and deferrals are reconciled across
+the roadmap, state, and a complete `Ready for Review` phase plan; stop at the Phase Plan Approval Gate before map
+implementation.
 
 ### Approved Dry-Run Baseline
 
