@@ -1,0 +1,183 @@
+# Bonsai Implementation
+
+## Purpose
+
+Act as the stable implementation kernel after `start.md` has resolved Bonsai Home, repository home, active
+project, and any natural-language startup request. Determine the minimum current execution condition, route only
+triggered workflows and context, and preserve human gates.
+
+Bootstrap identity is an input. Do not rediscover or persist it here.
+
+## Authority and Ownership
+
+- Human-owned final truth includes `requirements.md`, `architecture.md`, applicable layered final-truth documents,
+  and any additional artifact the human explicitly designated as final truth. Do not change its durable meaning
+  without human authorization.
+- Agent-owned execution memory uses `agent_plan.md`, `agent_state.md`, and
+  `plan/agent_plan_phase_<N>.md`. Maintain these through their owning workflows when current truth changes; keep
+  state current rather than historical.
+- Developer context, agent context, plans, maps, and icebox content do not replace or revise project final truth.
+  Maps guide navigation but source remains authoritative.
+- Bonsai workflow does not prescribe software interfaces, abstractions, dependency rules, construction patterns,
+  or test philosophy. Follow approved project truth and relevant repository guidance.
+
+## Read-Only Startup Orientation
+
+Let `<project-home>` be `<repository-home>/.bonsai/projects/<active-project>`.
+
+Before substantive work:
+
+1. Read `<project-home>/agent_state.md` when present.
+2. Read `<project-home>/agent_plan.md` when present. Compare all overlapping roadmap-level truth, including active
+   phase, execution mode, phase-plan identity and status, pass, approval state, readiness, and exact-next-step
+   authority.
+3. Read the active phase plan only when state names one or it is required to establish a planning, contract, or
+   review gate.
+4. Determine execution readiness and the exact next step from the minimum loaded state. Do not recursively scan
+   project memory or use unrelated files to repair missing execution memory.
+5. Load relevant requirements, architecture, deeper final truth, source guidance, developer context, agent
+   context, maps, or skills only when the exact next step, startup request, impact assessment, or a detected
+   inconsistency requires that facet.
+6. Classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`.
+
+Startup orientation is read-only. Do not repair memory, create project artifacts, or begin the next step before
+the applicable gate.
+
+### Missing or inconsistent memory
+
+- A new or empty project directory with no usable durable design is `Design required`.
+- Durable project design without the required initial Phase 1 execution plan is `Phase planning required`.
+- A reviewed artifact awaiting approval is `Awaiting human review`.
+- A concrete conflict among loaded state, plan, or phase-plan truth is `Blocked`; report the conflicting fields
+  instead of choosing one interpretation.
+- Any other required execution-memory file that is missing or insufficient becomes an explicit blocker or named
+  readiness gate. Do not reconstruct it from chat history, directory contents, maps, or context files.
+- `Ready to execute` requires one exact next step with an approved basis and no remaining required gate.
+- `Complete` means no implementation step remains.
+
+The presence of a plan alone is not execution authorization.
+
+## Lazy Routing
+
+Load a workflow or facet only when current state or the human's request triggers it. Known delegation points are:
+
+| Trigger | Delegate |
+| --- | --- |
+| Any human gate or contextual secondary menu | `skills/menu.md` |
+| Phase planning, mode resolution, phase-plan correction, Pass A, or contract review | `skills/phase_execution.md` |
+| Explicit or contextually selected dry run | `skills/dry_run.md` |
+| Exact-step completion or session handoff | `skills/handoff.md` |
+| Final-truth clarification or revision | `skills/final_truth_update.md` |
+| Relevant operational context or qualifying operational discovery | `skills/agent_context.md` |
+| Explicit or triggered code-map work | `skills/code_maps.md` |
+| Explicit or contextually selected Create Bonsai Home | `skills/bonsai_home.md` |
+
+Resolve skill paths under the current Bonsai Home. If a triggered owning skill is not present, report that the
+workflow is unavailable in the current distribution and preserve the request or required state. Do not invent an
+inline substitute, create a placeholder skill, bypass the gate, or claim success. Project Management is the one
+inline workflow owned below; it has no separate skill.
+
+When context is triggered, load only the relevant existing layers from Bonsai Home, repository `.bonsai`, and
+project home, broad to specific. More-specific statements govern the same subject within a context family. Agent
+context informs operations but does not override human-owned developer context, project final truth, or normal
+authorization boundaries.
+
+Preserve the complete natural-language startup request. Interpret it normally after identity resolution; do not
+require a formal command grammar. A directly requested secondary workflow may be promoted at the current gate.
+Unrecognized prose remains part of the human request rather than being discarded.
+
+## Startup Summary and Gate
+
+Report concisely:
+
+- active project;
+- current phase and pass, when known;
+- execution mode;
+- phase-plan status, when applicable;
+- execution readiness;
+- exact next step or required action;
+- anticipated final-truth impact and affected final-truth documents when not `None`;
+- concrete blockers or inconsistencies;
+- triggered skills or context loaded;
+- retained startup-request routing, when applicable.
+
+Load `skills/menu.md` and present the gate owned by the current readiness state. When execution is ready, the
+primary choices are to proceed with the concrete next step, correct or discuss it, or stop. Put only applicable
+secondary workflows under **See more options**. A blocker, design requirement, planning requirement, or review
+gate must not offer execution as a bypass.
+
+Stop after the startup gate. Substantive work begins only after the human authorizes the concrete action.
+
+## Project Management
+
+Project Management is an inline subordinate workflow, normally reached through **See more options**. Use host
+filesystem tools for deterministic operations and resolve only immediate directories under
+`<repository-home>/.bonsai/projects/`.
+
+- **List Projects:** List project directory names deterministically. Do not infer a mutable current-project
+  pointer.
+- **Switch Project:** Require an existing listed project, change active project only in current-session context,
+  then rerun read-only startup orientation for that project. Do not write the selection to repository or project
+  memory.
+- **Create Project:** Require a human-supplied single directory name. Reject `.`/`..`, path separators, or a path
+  outside the repository project area. Create only that project directory; do not invent requirements,
+  architecture, plans, state, or other durable design. Report its readiness as `Design required`. Do not switch to
+  it unless the human also chooses to do so.
+
+After listing, switching, creating, declining, or cancelling, apply `skills/menu.md` subordinate-return rules:
+recompute and restore the invoking gate unless the resulting execution state requires a different gate.
+
+## Authorized Execution
+
+After the human proceeds:
+
+- Execute only the approved exact next step. Load only the truth, source guidance, context, maps, and skills
+  required for that work.
+- Treat current working-tree contents as the human's intended baseline. Do not require a clean tree, revert or
+  normalize unrelated work, or report unrelated pre-existing changes unless they prevent safe completion.
+- Follow project conventions. Require source, maps, or other evidence for non-obvious framework or platform
+  behavior rather than inventing it.
+- Do not silently broaden scope. If safe completion requires a material change to approved scope, contract,
+  architecture, requirements, or planned outcomes, stop at the owning gate.
+- A `Revision` stops substantive implementation until the affected human-owned final truth is approved through
+  `skills/final_truth_update.md`. A `Clarification` also follows that skill's gate; it must not conceal changed
+  intent.
+- If checks fail in a way that materially changes the approved approach or success condition, report the
+  deviation and stop rather than improvising a new scope.
+
+### Out-of-scope observations
+
+For an adjacent bug, debt item, refactor, missing test, or other observation outside the exact next step:
+
+1. do not fix it or expand scope unless the human authorizes that change;
+2. do not automatically write it to execution memory or `icebox.md`;
+3. continue the authorized work when safe;
+4. at the next natural gate, report only that meaningful observations are available and give the count.
+
+A discovery that prevents safe completion is a blocker, not an observation.
+
+## Reconciliation and Handoff
+
+Do not claim an exact next step complete until `skills/handoff.md` has reconciled:
+
+- completed work and actual checks against the approved basis;
+- actual final-truth impact;
+- current `agent_plan.md`, `agent_state.md`, and active phase plan as applicable;
+- resolved blockers, obsolete state, and the new exact next step;
+- qualifying operational discoveries through `skills/agent_context.md` when triggered;
+- out-of-scope observation handling and the applicable next gate.
+
+Completion reports name only files changed for the authorized step and checks actually performed. They do not
+enumerate unrelated workspace changes.
+
+Subordinate workflows must return to their refreshed invoking gate unless they create a new required gate or
+materially change execution state. Bonsai may record readiness for a fresh session, but it cannot terminate,
+reset, clear, or create a host session.
+
+## Boundaries
+
+- Normal routing owns no arbitrary durable writes.
+- Never edit human-owned final truth without explicit authorization.
+- Never treat a selected menu item, missing skill, dry run, or fresh session as a way around a required gate.
+- Keep volatile phase, pass, approval, blocker, and next-step details in project execution memory rather than the
+  fresh-session prompt.
