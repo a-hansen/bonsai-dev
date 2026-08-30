@@ -15,31 +15,29 @@ The state is converted to `agent_state.md` during validated v2 promotion.
 
 ## Current Execution State
 
-**Current Phase:** Integrated Code Maps
+**Current Phase:** Validation, Promotion, and Self-Hosting Proof
 **Active Phase Plan File:** None
-**Phase Plan Status:** None
-**Current Phase Pass:** Phase Planning
-**Phase Execution Mode:** To determine at activation
+**Phase Plan Status:** Required
+**Current Phase Pass:** Not established
+**Phase Execution Mode:** Unresolved
 **Execution Readiness:** Phase planning required
-**Current Objective:** Resolve Phase 4 execution mode and draft its detailed execution plan for human review.
+**Current Objective:** Activate Phase 5 through execution-mode assessment and a reviewed detailed phase plan.
 
-* **Current Snapshot:** Phases 1–3 are complete. Phase 3 focused conformance checks passed across references,
-  routing, ownership, v2 naming, lazy loading, invoking-gate return, Project Management scenarios, and staged-tree
-  purity. Approved-contract gaps in active-phase-plan routing and safe confirmed project creation/design guidance
-  were corrected in `bonsai/prompts/implementation.md`. Phase 4 map behavior and Phase 5 topology/promotion
-  validation remain unclaimed.
-* **Active Plan:** Phase 4 is active but unplanned. Recommend Single-pass because Phase 1 already approved the
-  durable mapping contracts; create a detailed plan because ordered map integration and validation work materially
-  benefits from a resumable execution surface.
-* **Active Files:** [`state.md`, `plan.md`, `artifact_contracts/code_maps.md`, `bonsai/specification.md`,
-  `bonsai/README.md`, `.bonsai/templates/plan_phase_template.md`]
-* **Blockers / Risks:** [None]
+* **Current Snapshot:** Phases 1–4 are complete. Phase 4 focused conformance passed for the full staged mapping
+  artifact graph and bounded workflow contracts. The supplied released-source scenario created a reusable `aon`
+  map in the active Bonsai Home, preserved its archive unchanged, used no project/Git assumptions, and left no
+  runtime map data in `bonsai/`. Full topology, automatic-discovery, promotion, and fresh-session claims remain
+  unproven and belong to Phase 5.
+* **Active Plan:** None. Phase 5 requires detailed sequencing and review before its multi-topology validation and
+  destructive self-promotion work can execute.
+* **Active Files:** [`state.md`, `plan.md`, future `plan/plan_phase_5.md`]
+* **Blockers / Risks:** [Phase 5 execution mode is unresolved; no Phase 5 plan is approved]
 
-**Exact Next Step:** Resolve Phase 4 as Single-pass and draft `plan/plan_phase_4.md` from the approved mapping
-contracts and phase-plan template for human review.
-**Success Condition:** Phase 4 mode, scope, ordered work, validation boundaries, and deferrals are reconciled across
-the roadmap, state, and a complete `Ready for Review` phase plan; stop at the Phase Plan Approval Gate before map
-implementation.
+**Exact Next Step:** Assess Phase 5 execution mode against approved project truth and existing artifact contracts,
+then draft `plan/plan_phase_5.md` from the canonical template and present the Phase Plan Approval Gate.
+**Success Condition:** Phase 5 has a justified execution mode and a review-ready detailed plan covering required
+validation, preservation, rollback, promotion, execution-memory conversion, fresh-session proof, staging cleanup,
+human gates, and explicit stop conditions without beginning destructive execution.
 
 ### Approved Dry-Run Baseline
 

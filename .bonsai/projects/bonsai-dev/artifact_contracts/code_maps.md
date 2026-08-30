@@ -278,6 +278,8 @@ For all actions:
 - treat project memory and `map_repo.md` as calibration, not proof;
 - preserve explicit uncertainty;
 - keep reads and writes bounded to the approved action;
+- distinguish map-owned artifacts from supplied source inputs, human-owned calibration, and other colocated files;
+- resolve the exact owned mutation or removal targets instead of treating the named map directory as wholly owned;
 - reconcile map state and qualifying agent context;
 - return to the invoking Bonsai gate.
 
@@ -316,6 +318,10 @@ For contextual first use and maintenance:
 - silently use an incompatible map snapshot;
 - replace source inspection with maps or calibration;
 - broaden mapping scope without human direction;
+- move, rename, modify, or remove a supplied source artifact as part of map lifecycle work;
+- retain transient source inspection or extraction as durable map data;
+- infer ownership of every colocated file from its presence beneath the named map directory;
+- remove the named map directory wholesale when it contains non-map-owned artifacts;
 - create optional artifacts because templates exist;
 - make `manifest.tsv` mandatory or its subsystem registry the sole identity record;
 - turn `code_map.md` into project state, a package registry, or an encyclopedia;
@@ -353,6 +359,13 @@ Within the named source directory in the active map store:
 
 It may maintain qualifying source locations or selection rules only through `skills/agent_context.md` at the
 narrowest reusable scope.
+
+Map lifecycle ownership is artifact-specific. Create, update/rebuild, and remove operations may mutate or remove
+only the agent-owned map artifacts they actually create or manage. They must preserve `map_repo.md`, supplied source
+artifacts, and other colocated non-map-owned files. A destructive rebuild or removal must resolve and present its
+exact owned targets rather than assuming ownership of the named map directory. Direct source inspection and any
+transient read-only extraction are not durable map writes; transient inspection belongs outside the durable map
+store and must not be retained as map data.
 
 ### Delegates to
 
@@ -399,6 +412,9 @@ no invented next objective.
 - one source map reused by several projects;
 - one project uses `investment-app`, `barcache`, and `tickerview` maps;
 - released-source and active-checkout identities do not silently cross;
+- a supplied released-source archive without project memory or Git metadata remains authoritative source input;
+- create/update/rebuild/remove preserve a supplied source archive colocated with map-owned artifacts, and transient
+  inspection never becomes durable map data;
 - identity mismatch routes to an explicit choice;
 - inspect is read-only; remove/rebuild is gated;
 - declined first-use creation does not recur as a primary interruption;
@@ -427,6 +443,10 @@ no invented next objective.
 
 All artifacts live under one named source directory in the active map store. Generated map data is not part of
 the shipped Bonsai standard and is never written into the staged `bonsai/` distribution.
+
+The named source directory is a storage boundary, not a blanket ownership boundary. Map lifecycle operations own
+only the agent-owned map artifacts they actually create or manage. Human-owned calibration, supplied source
+artifacts, and any other colocated non-map-owned files survive create, update/rebuild, and remove operations.
 
 ### Entry and identity
 
@@ -469,6 +489,8 @@ Implementation loads only the entry and the deeper facet needed for the current 
 - TSV files preserve their canonical headers, literal tabs, fixed columns, one logical row per line, and concise
   cells;
 - update related artifacts together only when the approved map change affects them;
+- preserve supplied source artifacts and other colocated non-map-owned files during every lifecycle operation;
+- keep transient source inspection or extraction outside durable map data;
 - state is pruned whenever the active objective, uncertainty, or next step changes.
 
 ### Completion and maintenance
@@ -569,6 +591,9 @@ Later implementation and validation must prove:
     normal implementation startup read.
 15. **Gate return:** subordinate mapping completes by reconciling state/context and returning to the refreshed
     invoking gate.
+16. **Lifecycle ownership:** create/update/rebuild/remove mutate only explicitly owned map artifacts; supplied source
+    artifacts and other colocated non-map-owned files survive, directory-wide deletion is prohibited when such files
+    exist, and transient source inspection never becomes durable map data.
 
 ## Explicitly Unresolved Implementation Detail
 

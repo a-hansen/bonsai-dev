@@ -69,7 +69,7 @@ Load a workflow or facet only when current state or the human's request triggers
 | Exact-step completion or session handoff | `skills/handoff.md` |
 | Final-truth clarification or revision | `skills/final_truth_update.md` |
 | Relevant operational context or qualifying operational discovery | `skills/agent_context.md` |
-| Explicit or triggered code-map work | `skills/code_maps.md` |
+| **Manage Code Maps**, an explicit code-map request, map-guided navigation or map/source alignment, or an accepted contextual mapping or maintenance action | `skills/code_maps.md` |
 | Explicit or contextually selected Create Bonsai Home | `skills/bonsai_home.md` |
 
 Resolve skill paths under the current Bonsai Home. If a triggered owning skill is not present, report that the
@@ -80,6 +80,14 @@ inline workflow owned below; it has no separate skill.
 When agent context is triggered, load `skills/agent_context.md`; that skill owns its scoped loading, application,
 qualification, and maintenance. Agent context informs operations but does not override human-owned developer
 context, project final truth, or normal authorization boundaries.
+
+Code-map editing is not routine implementation startup or an automatic consequence of source changes. During an
+authorized implementation facet, a substantial existing source without a useful map may receive one contextual
+creation action. If the human declines, keep creation under applicable secondary options instead of interrupting
+again in the same context; do not pressure greenfield work. Surface bounded maintenance only for an explicit
+request or a known material structural change. Load `skills/code_maps.md` only after one of these actions is
+accepted or when the current facet actually requires map-guided navigation or map/source alignment; that skill
+owns source/store identity, map loading, lifecycle gates, context delegation, and return to the invoking gate.
 
 ## Developer Context Layering
 

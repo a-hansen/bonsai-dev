@@ -37,26 +37,26 @@ The target Bonsai 2.0 execution-memory artifact is `agent_plan.md`. Conversion t
    **Plan:** `plan/plan_phase_3.md` |
    **Plan Status:** Approved
 4. **Integrated Code Maps:** Preserve useful mature mapping internals while integrating source identity, Bonsai Home map storage, project-aware mapping, map selection, and normal Bonsai routing |
-   **Mode:** To determine at activation |
+   **Mode:** Single-pass |
+   **Status:** Completed |
+   **Plan:** `plan/plan_phase_4.md` |
+   **Plan Status:** Approved
+5. **Validation, Promotion, and Self-Hosting Proof:** Validate staged v2 and artifact-producing workflows, build/validate a complete replacement candidate, archive current `.bonsai`, promote v2, convert the self-hosting project to v2 execution-memory names, prove fresh-session self-hosting, and remove staging |
+   **Mode:** Unresolved |
    **Status:** Active |
    **Plan:** None |
-   **Plan Status:** None
-5. **Validation, Promotion, and Self-Hosting Proof:** Validate staged v2 and artifact-producing workflows, build/validate a complete replacement candidate, archive current `.bonsai`, promote v2, convert the self-hosting project to v2 execution-memory names, prove fresh-session self-hosting, and remove staging |
-   **Mode:** To determine at activation |
-   **Status:** Pending |
-   **Plan:** None |
-   **Plan Status:** None
+   **Plan Status:** Required
 
 ## Active Phase Detail
 
-Phases 1–3 are complete. Phase 4 is active at its planning boundary: execution mode remains unresolved and no
-detailed phase plan exists. The recommended mode is Single-pass because the durable mapping contracts were already
-approved in Phase 1; a detailed Phase 4 plan is warranted for ordered integration and validation work.
+Phases 1–4 are complete. Phase 5 is active for execution-mode assessment and detailed planning. Its mode is
+unresolved and no phase plan is approved; destructive promotion or broader operating-model validation is not ready
+to execute until the Phase 5 planning gate is completed.
 
 ## Deferred & Completed
 
-* **Deferred:** [Phase 5 operating-model validation and promotion/self-overwrite]
-* **Completed:** [Bonsai v2 operating specification, current v2 user-facing README, self-hosting repository/staging model, artifact-contract approach, temporary staging/promotion architecture, test-output separation decision, Phase 1 archaeology and approved complete artifact-contract layer, Phase 2 staged bootstrap and core execution model, Phase 3 context and project workflows]
+* **Deferred:** [None beyond active Phase 5 scope]
+* **Completed:** [Bonsai v2 operating specification, current v2 user-facing README, self-hosting repository/staging model, artifact-contract approach, temporary staging/promotion architecture, test-output separation decision, Phase 1 archaeology and approved complete artifact-contract layer, Phase 2 staged bootstrap and core execution model, Phase 3 context and project workflows, Phase 4 integrated code maps and focused released-source validation]
 
 ## Maintenance Rules
 
