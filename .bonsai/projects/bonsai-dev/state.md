@@ -15,21 +15,38 @@ The state is converted to `agent_state.md` during validated v2 promotion.
 
 ## Current Execution State
 
-**Current Phase:** Bootstrap and Core Execution Model
+**Current Phase:** Context and Project Workflows
 **Active Phase Plan File:** None
 **Phase Plan Status:** None
 **Current Phase Pass:** Phase Planning
 **Phase Execution Mode:** Unresolved
 **Execution Readiness:** Phase planning required
-**Current Objective:** Resolve Phase 2 execution mode and determine whether a detailed Phase 2 plan is warranted.
+**Current Objective:** Resolve Phase 3 execution mode and draft a detailed Phase 3 plan if warranted.
 
-* **Current Snapshot:** The human approved the complete Phase 1 contract layer as later-phase implementation authority. Phase 1 is complete and Phase 2 is active for planning only. The existing approved contracts already govern Phase 2 behavior, so a redundant contract-first pass is not indicated. No Phase 2 plan or implementation is yet approved.
-* **Recommended Mode:** Single-pass — Phase 2 implements already-approved durable artifact contracts and does not currently establish another independently review-worthy contract.
-* **Active Files:** [`state.md`, `plan.md`, `requirements.md`, `architecture.md`, `artifact_contracts/README.md`, `artifact_contracts/core_workflows.md`, `bonsai/specification.md`, `bonsai/README.md`]
-* **Blockers / Risks:** [No implementation blocker; Phase 2 activation planning and any required phase-plan review must complete before staged implementation]
+* **Current Snapshot:** Phase 2 is complete. Integrated checks confirm coherent bootstrap/router/menu ownership,
+  canonical paths, v2 execution-memory names, guarded later-skill references, README/specification alignment, and a
+  pure five-file staged distribution. Deferred obligations remain binding: Phase 3 owns broader project-memory and
+  context workflows, phase execution, final-truth, dry-run, handoff, agent context, Bonsai Home, and related
+  end-to-end workflow behavior; Phase 4 owns code-map behavior; Phase 5 owns full operating-model scenario
+  validation.
+* **Recommended Mode:** Single-pass — Phase 3 implements already-approved artifact contracts and does not establish
+  another independently review-worthy durable contract.
+* **Recommended Phase Plan:** Create one — the phase has ordered workflow artifacts, multiple bounded validation
+  points, and inherited deferred obligations that must remain visible across implementation steps. Treat inline
+  Project Management as an existing Phase 2 dependency to integrate and validate, not reimplement; correct it only
+  if Phase 3 exposes an approved-contract gap.
+* **Active Files:** [`state.md`, `plan.md`, `requirements.md`, `architecture.md`, `artifact_contracts/README.md`,
+  `artifact_contracts/core_workflows.md`, `artifact_contracts/project_workflows.md`, `bonsai/specification.md`,
+  `bonsai/README.md`, `.bonsai/skills/phase_execution.md`, `.bonsai/templates/plan_phase_template.md`]
+* **Blockers / Risks:** [None]
 
-**Exact Next Step:** Execute Phase 2 activation planning: assess and resolve the execution mode, determine whether detailed sequencing warrants `plan/plan_phase_2.md`, draft it from the phase-plan template if warranted, reconcile roadmap/state, and stop at the applicable planning gate before implementation.
-**Success Condition:** Phase 2 execution mode is approved, any warranted detailed phase plan is complete and reviewed, roadmap/state agree, and one bounded staged implementation step is authorized without reopening approved Phase 1 contracts.
+**Exact Next Step:** Execute Phase 3 activation planning: assess and resolve execution mode, draft a detailed
+`plan/plan_phase_3.md` from the phase-plan template if warranted, assign inherited deferred obligations to concrete
+owning steps or later validation, treat inline Project Management as an existing Phase 2 dependency to integrate
+and validate rather than reimplement, reconcile roadmap/state, and stop at the applicable plan-review gate.
+**Success Condition:** Phase 3 mode is resolved, any warranted detailed plan is complete and ready for review,
+Phase 2 deferred obligations remain explicitly routed, roadmap/state agree, and no Phase 3 implementation begins
+before the applicable approval gate.
 
 ### Approved Dry-Run Baseline
 

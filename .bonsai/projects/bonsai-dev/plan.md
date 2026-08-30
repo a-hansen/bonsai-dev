@@ -27,13 +27,13 @@ The target Bonsai 2.0 execution-memory artifact is `agent_plan.md`. Conversion t
    **Plan:** `plan/plan_phase_1.md` |
    **Plan Status:** Approved
 2. **Bootstrap and Core Execution Model:** Implement the staged v2 startup/bootstrap, implementation router, identity resolution, and core menu/gate behavior under `bonsai/` |
+   **Mode:** Single-pass |
+   **Status:** Completed |
+   **Plan:** `plan/plan_phase_2.md` |
+   **Plan Status:** Approved
+3. **Context and Project Workflows:** Implement developer/agent context layering, Bonsai Home creation, project-memory synthesis, phase execution, final-truth handling, dry runs, handoff, and templates; integrate and validate the inline Project Management already implemented by the Phase 2 router, correcting it only if Phase 3 exposes an approved-contract gap |
    **Mode:** To determine at activation |
    **Status:** Active |
-   **Plan:** None |
-   **Plan Status:** None
-3. **Context and Project Workflows:** Implement developer/agent context layering, project management, Bonsai Home creation, project-memory synthesis, phase execution, final-truth handling, dry runs, handoff, and templates |
-   **Mode:** To determine at activation |
-   **Status:** Pending |
    **Plan:** None |
    **Plan Status:** None
 4. **Integrated Code Maps:** Preserve useful mature mapping internals while integrating source identity, Bonsai Home map storage, project-aware mapping, map selection, and normal Bonsai routing |
@@ -49,13 +49,16 @@ The target Bonsai 2.0 execution-memory artifact is `agent_plan.md`. Conversion t
 
 ## Active Phase Detail
 
-Phase 2 activation planning is current. Execution mode and detailed-phase-plan need are unresolved; no active
-Phase 2 plan exists yet.
+Phase 2 is complete. Phase 3 activation planning is current: execution mode is unresolved, and a detailed phase
+plan appears warranted because the phase spans several ordered workflow artifacts and must preserve Phase 2's
+deferred contract obligations across bounded steps and validation gates. Inline Project Management is an existing
+Phase 2 dependency for Phase 3 to integrate and validate, not a Phase 3 reimplementation target; correct it only
+if Phase 3 exposes an approved-contract gap.
 
 ## Deferred & Completed
 
-* **Deferred:** [Phase 3+ workflow implementation until those phases activate, test harness/output creation until needed by implementation/validation, promotion/self-overwrite until Phase 5]
-* **Completed:** [Bonsai v2 operating specification, current v2 user-facing README, self-hosting repository/staging model, artifact-contract approach, temporary staging/promotion architecture, test-output separation decision, Phase 1 archaeology and approved complete artifact-contract layer]
+* **Deferred:** [Phase 4 integrated code maps, Phase 5 operating-model validation and promotion/self-overwrite]
+* **Completed:** [Bonsai v2 operating specification, current v2 user-facing README, self-hosting repository/staging model, artifact-contract approach, temporary staging/promotion architecture, test-output separation decision, Phase 1 archaeology and approved complete artifact-contract layer, Phase 2 staged bootstrap and core execution model]
 
 ## Maintenance Rules
 
