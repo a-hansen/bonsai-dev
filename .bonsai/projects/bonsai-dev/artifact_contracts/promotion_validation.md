@@ -28,7 +28,7 @@ the archaeological source and required directly by approved requirements, archit
 | `PROMO-VAL-02` | No v1.4 boundary enforcement. | REQ-4; Architecture **Golden Artifact Model** | Missing | Durable fixtures/expected results belong under `tests/`; generated runs belong under ignored `build/`. | Every scenario writes to an isolated `build/bonsai-tests/<scenario>/`; reruns are deterministic and do not mutate durable inputs. |
 | `PROMO-VAL-03` | No v1.4 artifact-contract validator. | REQ-6, REQ-7; specification **File Maintenance Discipline** | Missing | Candidate validation must check distribution references and required artifact identities against approved contracts. | Missing files, stale paths, duplicate compatibility identities, and references outside the candidate standard fail validation. |
 | `PROMO-VAL-04` | Existing Web UI and mapping workflows produce Markdown/artifact trees but have no repeatable output tests. | REQ-4, REQ-16; Architecture **Golden Artifact Model** | Missing | Use semantic assertions where behavior matters and golden output only where exact stable structure is contractual. | Formatting-only drift does not fail semantic scenarios; exact archive/tree contracts fail on structural drift. |
-| `PROMO-VAL-05` | No v1.4 topology suite. | REQ-16; specification **Bonsai 2.0 Validation Cases** | Missing | Validation must cover Embedded, Bonsai Home, multi-project, multi-repository, external-source, and greenfield operation. | All six topologies have named, isolated, repeatable scenarios. |
+| `PROMO-VAL-05` | No v1.4 topology suite. | REQ-16; specification **Bonsai 2.0 Validation Cases** | Missing | Validation must cover Embedded, Bonsai Home, multi-project, multi-repository, external-source, and greenfield operation. Multi-repository proof uses real Barcache and Tickerview external sources plus controlled consuming-project fixtures; Investment App is future out-of-band validation, not a Phase 5 input. | All six topologies have named, isolated, repeatable scenarios; actual Barcache and Tickerview maps are generated, rediscovered, and reused from an isolated/test Bonsai Home without modifying either source repository or its legacy Bonsai state. |
 | `PROMO-VAL-06` | `.gitignore` ignores `build/` but not `.bonsai-backups/`. | REQ-4, REQ-11; Architecture **Local rollback archive** | Missing | Before live promotion, disposable generated output and local backups must be excluded from source control without placing ignores inside staged distribution. | Preflight verifies `build/` and `.bonsai-backups/` are ignored; archives/results are not staged for commit. |
 | `PROMO-VAL-07` | No destructive-test isolation exists. | REQ-12; Architecture **Candidate construction** | Missing | Candidate, failure, rollback, and conversion tests operate only on copied fixture trees under `build/`. | Validation refuses a fixture root resolving to live `.bonsai`, live `bonsai/`, repository root, or another broad path. |
 
@@ -44,7 +44,7 @@ the archaeological source and required directly by approved requirements, archit
 | `PROMO-CAND-06` | `.bonsai/developer_context.md` is human-owned repository context and ignored by Git. | REQ-13; specification **Repository-local Bonsai memory** and **Developer Context** | Keep | Preserve repository developer context verbatim when present; do not synthesize or normalize it during promotion. | Candidate retains the file content/ownership and does not place it in the shared standard. |
 | `PROMO-CAND-07` | v1 `.bonsai/tooling.md` may exist; approved v2 contracts retire that identity in favor of scoped `agent_context.md`. | REQ-13; specification **Agent Context**; approved core/project contracts | Adapt | Convert qualifying repository tooling memory to repository `agent_context.md`; merge only by current meaning and never keep both identities. | Fixture with tooling memory yields one non-secret v2 repository agent-context file and no `tooling.md`. |
 | `PROMO-CAND-08` | `.bonsai/maps/` currently contains only v1.4 mapping-standard/control artifacts; no generated repository code map exists. | REQ-10, REQ-13; approved mapping contract | Drop + conditional Adapt | Replace v1 map control files with v2 standard; preserve only separately identifiable runtime source-map data when present and validated, converting placement/identity as required. | Current candidate carries no v1 `map_prompt.md`, `map_system.md`, `repo_session.md`, or map templates under runtime map data. |
-| `PROMO-CAND-09` | `.bonsai/projects/task-tracker/` is checked-in v1.4 example memory; approved Step 3 classifies it only as possible validation material and forbids automatic conversion. | REQ-4, REQ-9, REQ-13; Phase 1 Step 3 approved contract | Drop from promoted runtime; disposition gate | Do not preserve it as v1 compatibility project or silently delete it. Before live promotion, human-approved source preparation must relocate/adapt it under `tests/fixtures/` or explicitly retire it. | Candidate construction blocks while the path remains unclassified under live `.bonsai`; no candidate contains v1 task-tracker execution names. |
+| `PROMO-CAND-09` | `.bonsai/projects/task-tracker/` is the repository's checked-in canonical Getting Started project, but its current execution memory uses v1.4 identities. | REQ-9, REQ-13, REQ-17; Architecture **Canonical Embedded Getting Started Project** | Adapt + Keep; disposition gate | Preserve the project in place as the single authoritative shipped Embedded example. Human-approved source preparation keeps its requirements/architecture, adapts its guide, and replaces—not renames—the legacy plan/state with a fresh v2 Getting Started checkpoint. | Candidate construction blocks until source preparation and isolated copied-project validation pass; the candidate preserves `.bonsai/projects/task-tracker/` with `README.md`, `requirements.md`, `architecture.md`, `agent_plan.md`, and `agent_state.md`, and no v1 execution identities. |
 | `PROMO-CAND-10` | Future repository-owned paths may exist beyond today's inventory. | REQ-12, REQ-13 | Missing | Preflight uses an explicit classification manifest/report for every live top-level/local-memory path and stops on unknowns. | An extra project/context/map path cannot be silently dropped or blindly copied. |
 
 ### Backup, swap, and rollback
@@ -102,7 +102,9 @@ Phase 5 validation preparation, every candidate-standard validation, and promoti
 - staged `repo/bonsai/` as a whole tree;
 - durable fixtures under `tests/fixtures/`;
 - durable expected artifacts under `tests/expected/` when exact comparison is justified;
-- copied source/project/runtime fixtures for the six required topologies.
+- copied source/project/runtime fixtures for the six required topologies;
+- read-only real Barcache source at `/mnt/c/mine/dev/ca/barcache` (`C:\mine\dev\ca\barcache`);
+- read-only real Tickerview source at `/mnt/c/mine/dev/ca/tickerview` (`C:\mine\dev\ca\tickerview`).
 
 ### Responsibilities
 
@@ -112,6 +114,10 @@ Phase 5 validation preparation, every candidate-standard validation, and promoti
 - support semantic assertions, tree/inventory assertions, and golden comparisons according to contract stability;
 - make cleanup/re-run deterministic;
 - validate Embedded, Bonsai Home, multi-project, multi-repository, external-source, and greenfield behavior;
+- generate distinct Barcache and Tickerview maps from actual source into an isolated/test Bonsai Home, then
+  rediscover and reuse them through normal v2 routing and controlled consuming-project fixtures;
+- prove map lifecycle operations affect only generated map-owned artifacts and preserve all external-repository
+  content, including unrelated or legacy Bonsai state;
 - keep destructive promotion/rollback tests entirely inside disposable fixture roots;
 - verify `build/` and `.bonsai-backups/` are ignored before generating those outputs in live-repository work.
 
@@ -121,6 +127,8 @@ Phase 5 validation preparation, every candidate-standard validation, and promoti
 - mutate live `.bonsai` during ordinary validation;
 - treat golden files as authority over requirements/specification/contracts;
 - require exact-text goldens when semantic behavior is the contract;
+- migrate, modify, delete, or activate repository-local Bonsai state found in Barcache or Tickerview;
+- create, synthesize, stub, simulate, name, or represent a controlled fixture as Investment App for Phase 5;
 - resolve destructive test paths from broad roots, unvalidated variables, or ambiguous symlinks;
 - accept a candidate merely because files exist.
 
@@ -151,6 +159,9 @@ Candidate construction and isolated promotion/rollback validators defined below.
 - generated file injected under `bonsai/` fails purity;
 - missing/dangling/stale standard reference fails integrity;
 - each required topology runs from isolated fixtures;
+- Barcache and Tickerview produce distinct reusable map identities in the isolated/test map store, normal v2 routing
+  rediscovers/reuses them through a controlled consuming-project fixture, and pre/post inventories prove both source
+  repositories remain unchanged;
 - repeated scenario run produces equivalent results;
 - destructive fixture accidentally aimed at live/broad path is refused.
 
@@ -174,6 +185,7 @@ Only after staged v2 validation passes and project state authorizes Phase 5 cand
 - read-only inventory of live `repo/.bonsai/` classified as old standard, repository memory, convertible memory,
   runtime map data, explicitly excluded material, or unknown;
 - approved preservation and conversion rules in this contract;
+- prepared canonical `.bonsai/projects/task-tracker/` with validated v2-only execution memory;
 - current `bonsai-dev` execution state at candidate-build time.
 
 ### Responsibilities
@@ -185,10 +197,11 @@ Only after staged v2 validation passes and project state authorizes Phase 5 cand
 5. convert qualifying repository tooling memory to `agent_context.md` when present;
 6. preserve human-owned developer context verbatim;
 7. preserve validated runtime source-map data only when it is distinguishable from v1 mapping-standard files;
-8. reject unknown live paths until their disposition is approved;
-9. validate candidate layout, references, ownership, memory completeness, source-control boundaries, and startup
+8. preserve the prepared canonical Task Tracker project as classified repository-shipped project memory;
+9. reject unknown live paths until their disposition is approved;
+10. validate candidate layout, references, ownership, memory completeness, source-control boundaries, and startup
    semantics;
-10. emit a concise candidate inventory/classification report outside staged distribution.
+11. emit a concise candidate inventory/classification report outside staged distribution.
 
 ### Must not
 
@@ -198,7 +211,7 @@ Only after staged v2 validation passes and project state authorizes Phase 5 cand
 - preserve obsolete v1 control files, aliases, or dual execution-memory names;
 - bulk rename stale execution history;
 - rewrite human-owned truth to modernize archaeological citations;
-- automatically convert or silently discard `task-tracker`;
+- relocate, duplicate, silently discard, or preserve unprepared legacy execution state for `task-tracker`;
 - proceed with any unclassified live path.
 
 ### Writes
@@ -220,7 +233,7 @@ The exact report serialization is implementation detail; its classifications and
 ### Human gates
 
 - unclassified live memory;
-- `task-tracker` fixture relocation/retirement;
+- in-place `task-tracker` guide/execution-memory adaptation and legacy-state retirement before source mutation;
 - any proposed loss or semantic change to human-owned memory;
 - any conversion ambiguity that changes current execution meaning.
 
@@ -231,6 +244,8 @@ The exact report serialization is implementation detail; its classifications and
 - tooling context present and converted;
 - unknown project blocks construction;
 - optional runtime map data is preserved while v1 map-control artifacts are not;
+- the canonical Task Tracker project is preserved after approved in-place preparation, copied for isolated
+  validation, and contains no legacy or duplicate execution-memory identity;
 - current state/plan/active phase plan convert with correct cross-references;
 - candidate contains v2 names only and starts in isolated Embedded mode;
 - live-tree inventory/content remains unchanged.
@@ -246,6 +261,8 @@ The exact report serialization is implementation detail; its classifications and
 | `.bonsai/projects/bonsai-dev/requirements.md` and layered requirements | Preserve human-owned truth unchanged |
 | `.bonsai/projects/bonsai-dev/architecture.md` and layered architecture | Preserve human-owned truth unchanged |
 | `.bonsai/projects/bonsai-dev/artifact_contracts/` | Preserve approved project design and archaeological evidence |
+| `.bonsai/projects/task-tracker/requirements.md` and `architecture.md` | Preserve canonical example human-owned truth unchanged |
+| Prepared `.bonsai/projects/task-tracker/README.md`, `agent_plan.md`, and `agent_state.md` | Preserve the approved v2 Getting Started guide and fresh v2 execution checkpoint; reject legacy `plan.md` / `state.md` |
 | `.bonsai/projects/bonsai-dev/icebox.md`, if present | Preserve human-triaged human-owned memory unchanged |
 | `.bonsai/projects/bonsai-dev/agent_context.md`, if present | Preserve current project-scoped agent context |
 | `.bonsai/projects/bonsai-dev/plan.md` | Convert current useful roadmap meaning to `agent_plan.md` |
@@ -261,11 +278,11 @@ The exact report serialization is implementation detail; its classifications and
 All v1.4 distribution files—including root prompts/guides, `skills/`, `templates/`, and mapping control/template
 files—are replaced by the validated staged v2 standard. They are not preservation inputs.
 
-### Require disposition before promotion
+### Require preparation or disposition before promotion
 
 | Live material | Required disposition |
 | --- | --- |
-| `.bonsai/projects/task-tracker/` | Relocate/adapt into `tests/fixtures/` or explicitly retire through human-approved source work; never copy as v1 project memory |
+| `.bonsai/projects/task-tracker/` | Complete the approved in-place v2 preparation and isolated copied-project validation; preserve the canonical path and reject legacy `plan.md` / `state.md` or any duplicate authoritative source |
 | Any other project or unknown top-level local path | Explicitly classify as preserve/convert, relocate, or retire before candidate validation can pass |
 | Ambiguous `.bonsai/maps/` content | Establish whether it is old standard or runtime map data; do not guess |
 
@@ -555,11 +572,11 @@ under ignored `build/` until normal cleanup, but neither is runtime authority.
 | Embedded standalone | Local `.bonsai/start.md` resolves embedded standard/project simply |
 | Bonsai Home | Valid home preferred while repository-local project/context remains local |
 | Multi-project repository | Deterministic listing/selection; concurrent session selection remains session-local |
-| Multi-repository project | `investment-app`, `barcache`, and `tickerview` maps/sources align and reuse context |
+| Multi-repository project | Real Barcache and Tickerview sources produce distinct reusable maps in an isolated/test Bonsai Home; a controlled consuming-project fixture rediscovers/selects both without representing Investment App; both source repositories and their legacy Bonsai state remain unchanged |
 | External source | Mapping succeeds without source project memory |
 | Greenfield | No repeated map pressure |
 | Candidate construction | Standard replacement plus exact memory preservation/conversion; live untouched |
-| Task-tracker disposition | No automatic v1 conversion or silent loss; approved fixture/retirement outcome |
+| Task-tracker disposition | Canonical in-place project preserved with unchanged human truth, adapted guide, fresh v2 execution memory, and validation from generated copies only |
 | Backup/restore | Archive verified and independently restorable before mutation |
 | Swap failures | Failure injection leaves verified old or new tree and clear recovery assets |
 | Promoted startup | v2 local bootstrap and converted state work in isolation |
@@ -578,7 +595,9 @@ These are owned, bounded Phase 5 implementation decisions rather than missing pr
    permanent framework or make the AI workflow conceptually depend on one script name.
 3. **Minimal transaction report format:** Preserve classifications/check results needed for safe execution and
    review, but do not establish a public schema without demonstrated reuse.
-4. **Current `task-tracker` disposition:** Before promotion implementation can be live-ready, human review must
-   approve fixture relocation/adaptation or explicit retirement. Automatic v1 project conversion is prohibited.
+4. **Current `task-tracker` source preparation:** The approved disposition preserves the canonical project in place.
+   Before promotion implementation can be live-ready, its guide and execution memory must be prepared and validated
+   exactly as `PROMO-CAND-09` requires; automatic legacy-state conversion and duplicate fixture authority remain
+   prohibited.
 
 No unresolved item authorizes live mutation, compatibility artifacts, failed checks, or manual-copy promotion.

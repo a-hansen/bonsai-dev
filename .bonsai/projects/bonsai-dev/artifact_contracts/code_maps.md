@@ -127,7 +127,7 @@ consolidated rather than classified as wording.
 | `MAP-V2-01` | No adequate v1 behavior | **Map store and source names**; **Map identity follows source identity** | Missing | `skills/code_maps.md` must resolve active store and name maps for source universes rather than projects. | Shared and Embedded fixtures store the same logical map under the correct active store and source name. |
 | `MAP-V2-02` | v1 fixed `.bonsai/maps/` layout | **Mapping context and map storage are separate** | Adapt | Source inspection/context follows the mapped source; durable output follows the active map store. | Mapping external source from another working directory does not write map data into that source by assumption. |
 | `MAP-V2-03` | `repo_session.md` supports conversation-only calibration | **External source without Bonsai project memory** | Adapt | Combine actual external source with optional calibration; project memory is not required. | External-source fixture creates a reusable named map without `.bonsai/projects/`. |
-| `MAP-V2-04` | v1 repository-local single map system | **Multi-Repository Source Universes** | Missing | Reuse one source map across several projects and select several relevant source maps for one project. | `investment-app`, `barcache`, and `tickerview` fixture proves reuse without per-project duplication. |
+| `MAP-V2-04` | v1 repository-local single map system | **Multi-Repository Source Universes** | Missing | Reuse one source map across several projects and select several relevant source maps for one project. | Real Barcache and Tickerview sources produce distinct reusable maps in an isolated/test Bonsai Home; a controlled consuming-project fixture rediscovers and selects both without per-project duplication or representing Investment App. |
 | `MAP-V2-05` | No adequate v1 behavior | **Agent Context / scopes** | Missing | Stable source locations and project-relevant map selection may be preserved through `skills/agent_context.md` at the narrowest reusable scope. | A rediscovered stable source location is reused later; active project selection is not stored as context. |
 | `MAP-V2-06` | v1 only create/update session flow | **Manage Code Maps** | Missing | The code-map skill owns Create, Inspect, Update/Rebuild, Remove, and Inspect Map/Source Identity actions. | Each lifecycle action is selectable; read-only inspection does not mutate; destructive removal/rebuild requires explicit authority. |
 | `MAP-V2-07` | No adequate v1 behavior | **Manage Code Maps / First-use behavior** | Missing | Substantial unmapped existing source may receive one contextual creation action; declined creation moves to secondary options; greenfield stays quiet. | Decline is not repeatedly surfaced; greenfield fixture receives no map pressure. |
@@ -410,7 +410,13 @@ no invented next objective.
 - external source without project memory;
 - project memory only, `map_repo.md` only, and both together;
 - one source map reused by several projects;
-- one project uses `investment-app`, `barcache`, and `tickerview` maps;
+- a controlled consuming-project fixture rediscovers and selects distinct Barcache and Tickerview maps without being
+  named or represented as Investment App;
+- actual map generation reads `/mnt/c/mine/dev/ca/barcache` (`C:\mine\dev\ca\barcache`) and
+  `/mnt/c/mine/dev/ca/tickerview` (`C:\mine\dev\ca\tickerview`) as external sources and writes only to the active
+  isolated/test Bonsai Home;
+- map lifecycle operations affect only generated map-owned artifacts, while both source repositories and any
+  repository-local legacy Bonsai state remain unchanged and are never treated as the active v2 project;
 - released-source and active-checkout identities do not silently cross;
 - a supplied released-source archive without project memory or Git metadata remains authoritative source input;
 - create/update/rebuild/remove preserve a supplied source archive colocated with map-owned artifacts, and transient

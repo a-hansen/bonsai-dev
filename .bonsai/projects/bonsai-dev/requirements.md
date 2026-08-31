@@ -230,10 +230,11 @@ If the platform cannot provide a truly atomic directory swap, the workflow must 
 
 The promotion process must distinguish the Bonsai standard from repository-owned memory.
 
-At minimum, the self-hosting project:
+At minimum, the self-hosting project and canonical Getting Started project:
 
 ```text
 .bonsai/projects/bonsai-dev/
+.bonsai/projects/task-tracker/
 ```
 
 must survive.
@@ -282,12 +283,49 @@ The completed refactor must be validated against the specification's required to
 
 - simple embedded repository;
 - Bonsai Home repository;
-- multi-repository project using `investment-app`, `barcache`, and `tickerview`;
+- multi-repository behavior using real external source repositories plus controlled consuming-project fixtures;
 - multi-project repository;
 - external source without Bonsai project memory;
 - greenfield repository.
 
 Validation must cover workflow behavior, not just file existence.
+
+Phase 5 must use the real Barcache and Tickerview repositories as read-only external-source inputs:
+
+| Source | WSL execution path | Windows path |
+| --- | --- | --- |
+| Barcache | `/mnt/c/mine/dev/ca/barcache` | `C:\mine\dev\ca\barcache` |
+| Tickerview | `/mnt/c/mine/dev/ca/tickerview` | `C:\mine\dev\ca\tickerview` |
+
+Validation must generate distinct reusable maps from those real sources into an isolated/test Bonsai Home, prove
+normal rediscovery and reuse through controlled consuming-project fixtures, and leave each source repository—including
+any repository-local Bonsai 1.4 content—unchanged. Barcache and Tickerview are external sources, not substitutes for
+the consuming project. Their legacy Bonsai state must not be migrated, modified, deleted, or selected as the active
+v2 project merely because it exists.
+
+Investment App has not yet been designed or implemented. It must not be created, synthesized, stubbed, simulated,
+or otherwise made a Phase 5 prerequisite. It remains a planned future real-world consuming project and out-of-band
+validation case after Bonsai v2 has been promoted and proven. Controlled Phase 5 fixtures may model consuming-project
+selection and multi-repository topology, but must not be named or represented as Investment App.
+
+### REQ-17 — Task Tracker remains the canonical shipped Embedded Getting Started project
+
+The Bonsai repository must ship one canonical Task Tracker Getting Started project at:
+
+```text
+.bonsai/projects/task-tracker/
+```
+
+After v2 promotion, a new user cloning the repository must be able to remain in Embedded mode, select
+`task-tracker`, and enter the normal v2 workflow through `.bonsai/start.md` without first configuring a reusable
+Bonsai Home.
+
+The canonical project retains its human-owned `requirements.md` and `architecture.md`, adapts its guide to the v2
+workflow, and uses only v2 `agent_plan.md` and `agent_state.md` execution-memory identities. Legacy v1.4 `plan.md`
+and `state.md` must not survive promotion.
+
+Validation must copy the canonical project into isolated generated scenarios. It must not create or maintain a
+second authoritative Task Tracker source under `tests/fixtures/` or another durable location.
 
 ## Constraints
 
@@ -327,4 +365,6 @@ This project is complete when:
 6. the current Bonsai has been archived and the validated v2 has been promoted into `.bonsai`;
 7. a fresh session successfully resumes `bonsai-dev` using the promoted v2 runtime;
 8. the temporary `bonsai/` staging tree has been removed;
-9. `.bonsai/` is again the single shippable and self-hosting Bonsai tree.
+9. `.bonsai/` is again the single shippable and self-hosting Bonsai tree;
+10. `.bonsai/projects/task-tracker/` remains the canonical shipped Embedded Getting Started project with v2-only
+    execution memory and passes isolated copied-project validation.

@@ -2,202 +2,148 @@
 
 ## Purpose
 
-Keep Bonsai's human-owned project truth aligned with the product and target architecture being built.
+Protect human-owned durable meaning when proposed, discovered, or completed work clarifies or changes project or
+Bonsai final truth. This skill classifies impact, obtains explicit authorization, applies only approved updates,
+reconciles downstream execution memory, and returns control to the workflow that invoked it.
 
-This skill handles cases where proposed, discovered, or completed work clarifies or changes approved
-requirements, architecture, or another explicitly designated human-owned final-truth document.
+Normal maintenance of `agent_plan.md`, `agent_state.md`, phase plans, maps, agent context, or icebox content is not
+by itself a final-truth change.
 
-Normal updates to `plan.md`, phase plans, and `state.md` are execution-memory maintenance and do not by
-themselves constitute a final-truth clarification or revision.
+## When to Load
 
-This skill is often subordinate to another workflow gate. Completing a clarification or revision does not
-silently end the gate that invoked it.
+Load this skill when a proposed or completed step may require a `Clarification` or `Revision` to requirements,
+architecture, the Bonsai specification, or another explicitly designated human-owned final-truth document.
 
 ## Required Inputs
 
-* Current approved human-owned project truth.
-* The approved execution basis for the work.
-* The proposed, completed, or discovered change.
-* The classified final-truth impact:
-    * `None`
-    * `Clarification`
-    * `Revision`
-* The invoking workflow or gate, when this skill was entered from another gate.
+- The invoking workflow and gate, when this is subordinate work.
+- The approved execution basis.
+- The proposed, discovered, or completed change.
+- Current affected human-owned final truth.
+- Relevant `agent_plan.md`, `agent_state.md`, and active phase plan needed to evaluate consequences.
 
-## Human-Owned Final-Truth Documents
+Do not infer durable intent from chat history, execution memory, maps, context, or current implementation behavior.
 
-Human-owned final truth describes the intended product and target system after successful implementation.
+## Authority and Ownership
 
-Common examples:
+Normal project final truth includes:
 
-* `requirements.md`
-* `architecture.md`
-* `requirements/requirements_<AREA>.md`
-* `architecture/architecture_<SUBSYSTEM>.md`
-* project-specific design or contract documents explicitly designated by the human as durable project truth
+- `requirements.md` and applicable `requirements/requirements_<AREA>.md` files;
+- `architecture.md` and applicable `architecture/architecture_<SUBSYSTEM>.md` files; and
+- project-specific contracts or design artifacts explicitly designated by the human as final truth.
 
-The following are not human-owned final truth:
+When Bonsai itself is the product, the active Bonsai Home's `specification.md` is human-owned framework final
+truth. Prompts, skills, templates, bootstrap files, README guidance, helper scripts, execution memory, and observed
+workflow behavior implement or describe that specification; they are not peer authorities and cannot silently
+redefine it. The specification keeps this authority whether it is staged, embedded, or installed in Bonsai Home.
 
-* `plan.md`
-* `plan/plan_phase_<N>.md`
-* `state.md`
-* `icebox.md`
-* framework instructions and skills
-* developer-local context
-* repository maps
-
-Those files may need maintenance as a consequence of an approved clarification or revision, but that
-maintenance is not itself the final-truth change.
+Agent plans, state, phase plans, maps, agent/developer context, and icebox content may inform work but do not
+authorize a final-truth change. Follow applicable ownership rules for every file; this skill does not turn an
+agent-owned artifact into human-owned truth or vice versa.
 
 ## Impact Classification
 
+Classify the actual durable-meaning impact, not the file type being edited.
+
 ### None
 
-Use `None` when approved human-owned final truth already covers the work.
-
-The agent may proceed without proposing a final-truth update.
-
-Normal execution-memory maintenance may still be required.
+Use `None` when approved human-owned final truth already covers the work. No final-truth update is required;
+ordinary execution-memory maintenance may still be necessary.
 
 ### Clarification
 
-Use `Clarification` when intended behavior and architecture are unchanged, but an approved human-owned
-final-truth document should be stated more precisely.
+Use `Clarification` only when intended behavior, constraints, boundaries, and architecture remain unchanged but
+approved final truth should state the existing intent more precisely. Examples include making an implied approved
+decision explicit, tightening ambiguous wording, or correcting wording that conflicts with other approved truth.
 
-Clarifications may include:
-
-* making an implicit approved decision explicit,
-* tightening genuinely ambiguous wording,
-* adding a missing constraint already implied by approved direction, or
-* correcting stale wording that no longer matches other approved human-owned project truth.
-
-A clarification must not be used to disguise a behavioral or architectural change.
+A clarification cannot conceal changed behavior or design. It requires explicit human authorization before the
+human-owned document is changed.
 
 ### Revision
 
-Use `Revision` when the work changes intended behavior, architecture, constraints, product boundaries,
-system boundaries, or another rebuild-relevant human-owned design decision.
-
-Revisions require approval before substantive implementation continues.
-
-The agent must not treat implementation as complete when unresolved revision-level human-owned final-truth
-changes remain.
+Use `Revision` when intended behavior, constraints, product or system boundaries, architecture, or another
+rebuild-relevant decision changes. Stop substantive implementation until the revision and affected documents are
+explicitly approved and updated. Implementation behavior alone never makes a revision authoritative.
 
 ## Procedure
 
-1. Identify the approved execution basis for the work.
-2. Identify the invoking workflow or gate, when one exists.
-3. Compare the proposed or completed work against current human-owned final truth.
-4. Classify the impact as `None`, `Clarification`, or `Revision`.
-5. Identify the affected human-owned final-truth documents.
-6. For `None`, report that no final-truth update is required.
-7. For `Clarification`, propose the exact human-owned document updates unless the human has already explicitly
-   authorized them.
-8. For `Revision`, stop substantive implementation and present the required human-owned final-truth update for
-   approval.
-9. After approved human-owned updates are made, reconcile execution memory as needed:
-    * `plan.md`
-    * active phase plan
-    * `state.md`
-10. Recompute the exact next step and execution readiness from the reconciled current truth.
-11. If this skill was invoked from another gate, return to that gate with the refreshed next step and readiness.
-12. If the approved update materially changes the workflow or creates a new required gate, present that new gate
-    instead of returning to the prior gate.
+1. Preserve the identity of the invoking workflow and gate.
+2. Identify the approved execution basis and compare the proposed or completed work with current final truth.
+3. Classify impact as `None`, `Clarification`, or `Revision`.
+4. Name every affected human-owned final-truth document, or explicitly report `None`.
+5. For `None`, report that no final-truth update is required and return to the invoking workflow.
+6. For `Clarification` or `Revision`, draft the exact proposed document changes for review without applying them.
+7. Load `skills/menu.md`, present the applicable approval gate, and stop.
+8. After explicit approval, apply only the reviewed changes.
+9. Re-read the affected truth and reconcile downstream execution memory.
+10. Recompute phase-plan validity, contract validity, exact next step, blockers, and execution readiness.
+11. Return to the invoking gate with refreshed choices unless the reconciliation created a new required gate.
 
-Do not stop merely because the final-truth files were successfully updated. A completed subordinate
-final-truth action must hand control back to its invoking workflow unless a new required gate supersedes it.
+If the affected document or intended durable meaning is unclear, stop instead of guessing a patch.
 
-## Approval Behavior
+## Human Gates
 
-For unresolved `Clarification`, present:
+For a clarification, supply these choices to `skills/menu.md`:
 
-1. Apply the clarification.
-2. Revise the clarification.
-3. Discuss before deciding.
-4. Leave human-owned final truth unchanged for now.
+1. Approve and apply the named clarification.
+2. Request revisions to the clarification.
+3. Discuss concerns before deciding.
+4. Leave human-owned final truth unchanged and return to the invoking gate.
 
-For unresolved `Revision`, present:
+For a revision, supply:
 
-1. Apply the proposed final-truth revision and continue only after approval.
-2. Revise the proposed final-truth update.
-3. Discuss before deciding.
-4. Return to the prior planning or execution gate.
+1. Approve and apply the named final-truth revision.
+2. Request revisions to the proposed update.
+3. Discuss concerns before deciding.
+4. Return to the prior planning or execution gate without changing final truth.
 
-Do not offer substantive implementation while a required `Revision` remains unresolved.
-
-When the human approves and the update is applied, use the Return-to-Invoking-Gate rule below rather than
-ending the workflow at the final-truth completion report.
-
-## Return-to-Invoking-Gate Rule
-
-Final-truth handling may be invoked from, for example:
-
-* a startup gate,
-* a handoff,
-* out-of-scope observation review,
-* a phase-plan review,
-* a contract review,
-* a material-deviation gate, or
-* another explicit correction or triage workflow.
-
-After the final-truth action completes:
-
-1. Reconcile current execution memory.
-2. Recompute the exact next step.
-3. Recompute execution readiness.
-4. Re-evaluate whether any required gate now exists.
-5. Return to the invoking gate with refreshed concrete choices if no new gate supersedes it.
-
-Example: if a handoff observation reveals stale wording in `requirements.md` and `architecture.md`, and the
-human explicitly chooses to correct those files immediately as a `Clarification`, apply the approved correction,
-reconcile state, recompute the next step and readiness, then return to the handoff menu. Do not stop simply because
-the clarification was completed.
+Do not offer substantive implementation while a required revision remains unresolved. Approval authorizes only
+the reviewed final-truth edits and their necessary execution-memory reconciliation; it does not silently authorize
+an invalidated implementation step.
 
 ## Execution-Memory Consequences
 
-An approved clarification or revision may require corresponding execution-memory updates.
+After an approved update, reconcile only memory whose current truth changed:
 
-Examples:
+- roadmap sequencing or phase state in `agent_plan.md`;
+- scope, mode, contract basis, steps, or approval status in an active phase plan;
+- blockers, exact next step, readiness, active files, and compact resume truth in `agent_state.md`.
 
-* roadmap sequencing may change in `plan.md`,
-* an active phase plan may need correction,
-* execution readiness may change in `state.md`,
-* the exact next step may change, or
-* an approved contract may become stale.
+An approved change may invalidate an active plan or contract. Mark it accurately and route to `Phase planning
+required`, `Awaiting human review`, or another applicable gate instead of preserving stale `Ready to execute`
+state. Remove superseded facts rather than appending a change history.
 
-These updates maintain workflow consistency. They do not expand the set of human-owned final-truth documents.
+These consequences maintain workflow consistency; they do not expand the set of final-truth documents.
+
+## Return to the Invoking Gate
+
+This skill is normally subordinate to startup, handoff, phase-plan review, contract review, dry run, observation
+triage, or a deviation/correction gate. Completing, declining, or cancelling final-truth work does not discard that
+parent gate.
+
+After the action:
+
+1. reconcile current execution memory;
+2. recompute exact next step and readiness;
+3. reload `skills/menu.md`; and
+4. return to the invoking gate with refreshed concrete choices.
+
+Present a new gate instead only when the approved update creates a planning, contract, design, blocker, or other
+required gate that supersedes the parent decision.
 
 ## Forbidden Changes
 
-* Do not silently change requirements or architecture.
-* Do not bury revision-level product or architecture changes in `state.md`, `plan.md`, or a phase plan.
-* Do not treat implementation behavior as approved human-owned project truth until the required final-truth
-  documents are updated and approved.
-* Do not treat an agent-maintained phase plan as product or architecture authority.
-* Do not use developer-local preferences as project truth.
-* Do not update framework skills as a substitute for updating project memory.
-* Do not let completion of this subordinate skill silently discard the parent workflow gate.
+- Do not silently edit human-owned final truth.
+- Do not use `Clarification` to hide a revision.
+- Do not bury product, architecture, or framework-specification changes in execution memory.
+- Do not treat implementation behavior, README wording, prompts, skills, templates, maps, plans, context, or
+  icebox content as authority over approved final truth.
+- Do not let final-truth completion erase its invoking gate.
+- Do not claim revised work complete while its required final-truth update remains unresolved.
 
-## Validation
+## Completion Checks
 
-Before completing this skill, verify:
+Before returning, verify that the classification and affected documents are explicit, required authorization was
+obtained, approved edits match the reviewed proposal, execution-memory consequences are current, and the invoking
+or superseding gate is identified.
 
-* The impact classification is stated.
-* Affected human-owned final-truth documents are identified or explicitly listed as `None`.
-* Required approvals are clear.
-* Execution-memory consequences have been reconciled when the update was applied.
-* `state.md` reflects the current exact next step and execution readiness after reconciliation.
-* The invoking gate is known when this skill was entered from another workflow.
-* The workflow returns to the invoking gate unless a new required gate supersedes it.
-
-## Stop Conditions
-
-Stop at this skill's own human gate when:
-
-* a revision-level final-truth update needs approval,
-* the affected human-owned document is unclear,
-* the proposed update would change project scope and has not been approved, or
-* the human chooses to discuss or revise before approval.
-
-After an approved final-truth action is completed, do not end the parent workflow. Return to the invoking gate
-unless the reconciled state requires a different gate.

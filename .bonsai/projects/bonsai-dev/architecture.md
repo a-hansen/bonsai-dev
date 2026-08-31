@@ -18,12 +18,18 @@ repo/
 ├── .bonsai/
 │   ├── ...                         # running Bonsai 1.4 standard
 │   └── projects/
-│       └── bonsai-dev/
+│       ├── bonsai-dev/
+│       │   ├── requirements.md
+│       │   ├── architecture.md
+│       │   ├── plan.md             # active v1.4 execution memory
+│       │   ├── state.md            # active v1.4 resume state
+│       │   └── artifact_contracts/
+│       └── task-tracker/            # canonical Getting Started project; adapted in place during Phase 5
+│           ├── README.md
 │           ├── requirements.md
 │           ├── architecture.md
-│           ├── plan.md             # active v1.4 execution memory
-│           ├── state.md            # active v1.4 resume state
-│           └── artifact_contracts/
+│           ├── plan.md              # legacy v1.4 identity retired during adaptation
+│           └── state.md             # legacy v1.4 identity retired during adaptation
 │
 ├── bonsai/                         # temporary staged Bonsai 2.0 distribution
 │   ├── specification.md
@@ -58,12 +64,18 @@ repo/
 │   ├── skills/
 │   ├── templates/
 │   └── projects/
-│       └── bonsai-dev/
+│       ├── bonsai-dev/
+│       │   ├── requirements.md
+│       │   ├── architecture.md
+│       │   ├── agent_plan.md
+│       │   ├── agent_state.md
+│       │   └── artifact_contracts/
+│       └── task-tracker/            # canonical shipped Embedded Getting Started project
+│           ├── README.md
 │           ├── requirements.md
 │           ├── architecture.md
 │           ├── agent_plan.md
-│           ├── agent_state.md
-│           └── artifact_contracts/
+│           └── agent_state.md
 │
 ├── tests/
 └── build/
@@ -249,6 +261,23 @@ The transition to those names occurs as part of the self-hosting promotion.
 
 This is a temporary bootstrap constraint, not v2 compatibility policy.
 
+## Canonical Embedded Getting Started Project
+
+The Bonsai repository keeps one authoritative Task Tracker example at:
+
+```text
+.bonsai/projects/task-tracker/
+```
+
+It is repository-shipped canonical project memory, not part of the shared standard rooted in staged `bonsai/`, and
+not a general v1 migration mechanism. During Phase 5 it is adapted in place: human-owned requirements and
+architecture remain unchanged, its guide adopts the v2 workflow, and fresh `agent_plan.md` / `agent_state.md`
+replace legacy `plan.md` / `state.md` execution state.
+
+Candidate construction preserves the prepared canonical project as classified repository memory. Validation copies
+it into isolated generated Embedded scenarios and never maintains a second authoritative Task Tracker tree under
+`tests/fixtures/`.
+
 ## Artifact Contract Layer
 
 Artifact contracts remain human-owned project design under:
@@ -390,9 +419,12 @@ At minimum preserve:
 
 ```text
 .bonsai/projects/bonsai-dev/
+.bonsai/projects/task-tracker/
 ```
 
-while converting its active execution-memory names from the v1.4 bootstrap format to the v2 format.
+The self-hosting project converts its active execution-memory names from the v1.4 bootstrap format to the v2
+format. The canonical Task Tracker project is preserved only after its separately approved in-place preparation has
+replaced legacy execution state with the intended fresh v2 Getting Started checkpoint.
 
 Repository-local developer/agent context must be preserved when applicable.
 

@@ -34,22 +34,24 @@ For the complete Bonsai workflow and reference documentation, see [.bonsai/READM
 
 The repository includes a small Task Tracker project so you can try the workflow before adapting it to your own codebase.
 
+The active release remains **v1.4.0** while Bonsai 2.0 is staged under `bonsai/`. The canonical Task Tracker project has been prepared for the staged v2 workflow, but v2 does not become the active `.bonsai/` runtime until validation and promotion are complete.
+
 See:
 
 [Task Tracker Example](.bonsai/projects/task-tracker/README.md)
 
 You can use it in two ways:
 
-* **Start from design:** use the supplied Task Tracker design prompt, choose your own language and tools, and let Bonsai turn the design session into project memory.
-* **Jump directly into implementation:** use the included reference project memory and start a coding-agent session against it.
+* **Start from design:** use the supplied Task Tracker design prompt and the staged `bonsai/prompts/create_project_memory.md` workflow.
+* **Preview the included v2 project:** inspect the included Java reference memory or use its generated-copy validation. It contains only v2 `agent_plan.md` and `agent_state.md` execution memory.
 
-To start the included project:
+After Bonsai 2.0 is promoted, start the included project with:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: task-tracker
+Read .bonsai/start.md and follow its instructions. Active project: task-tracker.
 ```
 
-That gives you the quickest look at what day-to-day Bonsai usage feels like.
+Until promotion, the repository's `.bonsai/` standard is still the v1.4 runtime; do not treat the staged v2 entry point as the active release.
 
 ---
 
