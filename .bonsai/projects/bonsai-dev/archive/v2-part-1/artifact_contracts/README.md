@@ -327,10 +327,10 @@ Phase 1.
 | `prompts/create_map_repo.md` | Adapt v1.4 repository calibration | Batch 4 / `code_maps.md` | Missing staged artifact; contract approved |
 | `skills/code_maps.md` | Integrate v1.4 map control plane | Batch 4 / `code_maps.md` | Missing staged artifact; contract approved |
 | map-data templates/procedures | Preserve useful v1.4 map structures under the v2 named-source store | Batch 4 / `code_maps.md` | Eight canonical template identities assigned; runtime ownership, optionality, layering, and validation complete |
-| validation definitions and output boundaries | Requirements/architecture/specification-only | Batch 5 / `promotion_validation.md` | Contract approved; implementation seam intentionally deferred |
-| promotion, rollback, preservation, and execution-memory conversion | Self-hosting requirements/architecture-only | Batch 5 / `promotion_validation.md` | Contract approved; exact host swap/helper packaging remains bounded |
-| fresh-session self-hosting proof and staging removal | Self-hosting requirements/architecture-only | Batch 5 / `promotion_validation.md` | Contract approved |
-| optional helper scripts | Specification leaves packaging open | Batch 5 / `promotion_validation.md` | Explicit bounded implementation decision; no required artifact inferred |
+| validation definitions and output boundaries | Requirements/architecture/specification-only | Batch 5 / `../archive/v2/artifact_contracts/promotion_validation.md` | Contract approved; implementation seam intentionally deferred |
+| promotion, rollback, preservation, and execution-memory conversion | Self-hosting requirements/architecture-only | Batch 5 / `../archive/v2/artifact_contracts/promotion_validation.md` | Contract approved; exact host swap/helper packaging remains bounded |
+| fresh-session self-hosting proof and staging removal | Self-hosting requirements/architecture-only | Batch 5 / `../archive/v2/artifact_contracts/promotion_validation.md` | Contract approved |
+| optional helper scripts | Specification leaves packaging open | Batch 5 / `../archive/v2/artifact_contracts/promotion_validation.md` | Explicit bounded implementation decision; no required artifact inferred |
 
 ## Cross-Contract Schema Closure
 
@@ -385,8 +385,8 @@ templates/symbol_index_template.tsv
 | Create Bonsai Home | `skills/bonsai_home.md` | `start.md` re-resolves identity after creation | Side-effecting workflow isolated; closed |
 | Code-map lifecycle and source alignment | `skills/code_maps.md` | Map prompt supplies optional human calibration; agent context stores reusable locations/selections | Control/data/context roles separated; closed |
 | Runtime map-data structure | `code_maps.md` grouped runtime contract | Map skill maintains; source remains authority | Canonical required/optional artifacts explicit; closed |
-| Validation and distribution purity | `promotion_validation.md` staged-boundary contract | Approved artifact contracts define expected behavior | No runtime artifact inferred prematurely; closed |
-| Candidate, backup, promotion, proof, and cleanup | `promotion_validation.md` state-machine contracts | Exact host driver/package deferred to Phase 5 | Behavior fixed; implementation seam bounded |
+| Validation and distribution purity | `../archive/v2/artifact_contracts/promotion_validation.md` staged-boundary contract | Approved artifact contracts define expected behavior | No runtime artifact inferred prematurely; closed |
+| Candidate, backup, promotion, proof, and cleanup | `../archive/v2/artifact_contracts/promotion_validation.md` state-machine contracts | Exact host driver/package deferred to Phase 5 | Behavior fixed; implementation seam bounded |
 
 No required responsibility has competing durable owners. Shared references above are delegation or boundary checks,
 not duplicated authority.
@@ -417,7 +417,7 @@ Later phases inherit this validation trace:
 | Phase 5 | Whole-tree purity/reference checks; six topology scenarios; candidate conversion; backup/restore; failure-tested swap; fresh-session proof; single-tree collapse |
 
 Exact scenarios and failure expectations remain in each owning contract's validation cases and in
-`promotion_validation.md` **Cross-Contract Validation Matrix**. This trace assigns later validation without choosing
+`../archive/v2/artifact_contracts/promotion_validation.md` **Cross-Contract Validation Matrix**. This trace assigns later validation without choosing
 a test framework, helper package, source-identity registry, or host-specific swap mechanism in Phase 1.
 
 ## Known Missing v2 Behavior
@@ -434,7 +434,7 @@ All known specification-required behavior without an adequate v1.4 owner is rout
 | integrated Manage Code Maps routing | `code_maps.md` — code-maps skill |
 | source-based map identity and map/source alignment | `code_maps.md` — code-maps skill and map-data candidates |
 | project-level relevant-map selection without project-owned map identity | `code_maps.md` — code-maps skill; agent-context integration in `core_workflows.md` |
-| staged validation, transactional promotion, rollback, memory conversion, and fresh-session proof | `promotion_validation.md` |
+| staged validation, transactional promotion, rollback, memory conversion, and fresh-session proof | `../archive/v2/artifact_contracts/promotion_validation.md` |
 
 No known required responsibility remains unrouted. Remaining unresolved detail concerns specification-deliberate
 minimal source-identity/discovery mechanics, host-specific promotion packaging, and the human disposition of the

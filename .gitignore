@@ -15,6 +15,7 @@ build/
 #bonsai
 .bonsai/developer_context.md
 .bonsai-backups/
+tests/
 
 # ai
 .codex
