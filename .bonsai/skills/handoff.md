@@ -52,24 +52,30 @@ agent-owned. Current working-tree contents remain the human's baseline; do not e
 4. For `Clarification` or `Revision`, name the affected human-owned documents and delegate to
    `skills/final_truth_update.md`. Do not silently edit final truth or claim revised work complete before the
    required update and approval. Return through the Handoff Gate Return rules afterward.
-5. When the work established or disproved qualifying durable operational knowledge, delegate its maintenance to
+5. Determine whether the completed work reaches the completion boundary of an authorized standard prompt, skill,
+   or template addition, removal, rename, or material responsibility change. When it does, delegate affected
+   category-guide reconciliation and validation to `skills/artifact_index.md` before claiming the lifecycle
+   change complete. For an intermediate step in an approved multi-step lifecycle change, preserve reconciliation
+   as required upcoming work and do not misrepresent the larger change as complete. Routine internal edits and
+   runtime map changes do not trigger this workflow.
+6. When the work established or disproved qualifying durable operational knowledge, delegate its maintenance to
    `skills/agent_context.md`. Do not dump troubleshooting history into context during handoff.
-6. Reconcile all agent-owned execution memory whose current truth changed:
+7. Reconcile all agent-owned execution memory whose current truth changed:
    - update `agent_plan.md` when roadmap, phase status, mode, or completion truth changed;
    - update the active phase plan when its step, pass, review, or completion truth changed;
    - update `agent_state.md` with one current execution condition, exact next step, readiness, and unresolved
      blockers;
    - when a phase completed, reconcile its phase plan, roadmap status, and state together; and
    - remove an expired dry-run baseline after completion, abandonment, material change, or redirection.
-7. Clean `agent_state.md` before reporting:
+8. Clean `agent_state.md` before reporting:
    - remove the completed next step and replace it with the actual next step;
    - remove blockers only when evidence shows they are resolved;
    - remove obsolete active files, stale commentary, expired review state, and superseded assumptions;
    - replace prior snapshot text with current resume truth rather than appending history; and
    - retain only information a later session needs to resume safely.
-8. Recompute execution readiness from reconciled durable state. A plan's existence alone is not authorization.
-9. Handle any unreviewed out-of-scope observations under the rules below.
-10. Present the completion summary and applicable handoff gate through `skills/menu.md`, then stop for the human's
+9. Recompute execution readiness from reconciled durable state. A plan's existence alone is not authorization.
+10. Handle any unreviewed out-of-scope observations under the rules below.
+11. Present the completion summary and applicable handoff gate through `skills/menu.md`, then stop for the human's
     choice.
 
 ## Out-of-Scope Observations

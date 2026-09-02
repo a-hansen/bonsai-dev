@@ -32,7 +32,7 @@ Normal project final truth includes:
 - `architecture.md` and applicable `architecture/architecture_<SUBSYSTEM>.md` files; and
 - project-specific contracts or design artifacts explicitly designated by the human as final truth.
 
-When Bonsai itself is the product, the active Bonsai Home's `specification.md` is human-owned framework final
+When Bonsai itself is the product, the active Bonsai Home's `../specification.md` is human-owned framework final
 truth. Prompts, skills, templates, bootstrap files, README guidance, helper scripts, execution memory, and observed
 workflow behavior implement or describe that specification; they are not peer authorities and cannot silently
 redefine it. The specification keeps this authority whether it is staged, embedded, or installed in Bonsai Home.

@@ -124,7 +124,7 @@ These groups are for review convenience, not runtime modules.
 The two human-owned standard artifacts are already present in the staged distribution. They remain part of the
 contract inventory even though Phase 1 does not rewrite them.
 
-### Artifact: `specification.md`
+### Artifact: `../../../../../specification.md`
 
 **Classification:** Missing as a v1.4 framework-authoring authority; approved v2 final truth
 
@@ -147,7 +147,7 @@ state, or change durable Bonsai meaning without explicit human approval.
 **Reads:** No other standard artifact as a peer authority. Approved self-hosting final truth may inform an explicitly
 authorized specification update.
 
-**Writes:** None during normal Bonsai workflows. Approved human changes update `specification.md` itself.
+**Writes:** None during normal Bonsai workflows. Approved human changes update `../../../../../specification.md` itself.
 
 **Delegates to:** Prompts, skills, templates, and optional helpers for procedural implementation.
 
@@ -174,7 +174,7 @@ second source of framework truth.
 **Loaded when:** A human needs setup or workflow guidance, or standard implementation/validation checks user-facing
 promises. It is not a mandatory implementation-startup read.
 
-**Inputs:** `specification.md` plus the canonical identities and externally visible behavior of approved standard
+**Inputs:** `../../../../../specification.md` plus the canonical identities and externally visible behavior of approved standard
 artifact contracts.
 
 **Responsibilities:** Present the canonical startup pointer; explain Embedded and Bonsai Home topologies, projects,
@@ -184,7 +184,7 @@ consistent with actual contracted workflows.
 **Must not:** Override the specification, promise behavior without an owning contract, reintroduce obsolete v1.4
 entry points or identities, require optional helpers, or become routine agent context.
 
-**Reads:** `specification.md` and the approved artifact-contract layer when being maintained or validated.
+**Reads:** `../../../../../specification.md` and the approved artifact-contract layer when being maintained or validated.
 
 **Writes:** None during normal workflows. Human-reviewed guide updates modify `README.md` itself.
 
@@ -192,7 +192,7 @@ entry points or identities, require optional helpers, or become routine agent co
 described by the guide.
 
 **Human gates:** A guide change that alters durable Bonsai meaning must first reconcile with and, when necessary,
-revise `specification.md`; ordinary wording corrections remain human-reviewed standard maintenance.
+revise `../../../../../specification.md`; ordinary wording corrections remain human-reviewed standard maintenance.
 
 **Preserve from existing version:** Preserve practical setup, project-memory, implementation, and mapping guidance
 that remains useful after v2 identity and workflow changes.
@@ -216,7 +216,7 @@ Each evidence record contains:
 | --- | --- |
 | Evidence ID | Stable batch-local identifier, such as `CORE-IMPLEMENTATION-01` |
 | Source evidence | Exact v1.4 artifact and heading or line range, plus a concise statement of the protected behavior; `None` for genuinely missing behavior |
-| Specification rule | Applicable active Bonsai `specification.md` section and the authoritative v2 rule |
+| Specification rule | Applicable active Bonsai `../../../../../specification.md` section and the authoritative v2 rule |
 | Classification | One of `Keep`, `Adapt`, `Drop`, or `Missing`; split a mixed source into separate records when its behaviors classify differently |
 | Rationale | Why the classification follows from the evidence and specification; every `Drop` requires an explicit specification-based reason |
 | Owning contract | Exact contract-group file and artifact/responsibility heading that owns the v2 behavior |
@@ -299,8 +299,8 @@ under **File Maintenance Discipline**.
 | `.bonsai/projects/task-tracker/` | Excluded: possible validation fixture | Not a standard artifact; its eventual fixture role is decided in Batch 5 and it is not converted automatically |
 
 The candidate files currently placed at `repo/bonsai/specification.md` and `repo/bonsai/README.md` are also not
-v1.4 archaeological artifacts. Their durable identities are `specification.md` and `README.md`.
-`specification.md` is governing human-owned final truth. The README is the current v2 human-facing guide and is
+v1.4 archaeological artifacts. Their durable identities are `../../../../../specification.md` and `README.md`.
+`../../../../../specification.md` is governing human-owned final truth. The README is the current v2 human-facing guide and is
 checked for cross-contract conformance in Step 6. Both are candidate distribution inputs and remain read-only in
 Phase 1.
 
@@ -308,7 +308,7 @@ Phase 1.
 
 | Target artifact or responsibility | Provenance | Batch / owner | Inventory state |
 | --- | --- | --- | --- |
-| `specification.md` | Approved v2 final truth | Governs all batches; Step 6 conformance | Present; not derived from archaeology |
+| `../../../../../specification.md` | Approved v2 final truth | Governs all batches; Step 6 conformance | Present; not derived from archaeology |
 | `README.md` | Approved human-facing v2 guidance | All groups; Step 6 cross-contract review | Present; read-only in Phase 1 |
 | `start.md` | Specification-only bootstrap boundary | Batch 2 / `core_workflows.md` | Missing artifact; contract approved |
 | `prompts/implementation.md` | Adapt v1.4 implementation kernel | Batch 2 / `core_workflows.md` | Missing staged artifact; contract approved |
@@ -339,7 +339,7 @@ it does not create runtime modules or allow one artifact to inherit unmentioned 
 
 | Standard artifact identity | Complete contract location | Validation trace |
 | --- | --- | --- |
-| `specification.md` | This file — **Human-Owned Standard Artifact Contracts** | Authority/conformance checks below; `PROMO-VAL-03` |
+| `../../../../../specification.md` | This file — **Human-Owned Standard Artifact Contracts** | Authority/conformance checks below; `PROMO-VAL-03` |
 | `README.md` | This file — **Human-Owned Standard Artifact Contracts** | Guide cross-check below; `MAP-GUIDE-01`; `PROMO-VAL-03` |
 | `start.md` | `core_workflows.md` — `start.md` | `CORE-START-01`–`04` |
 | `prompts/implementation.md` | `core_workflows.md` — implementation prompt | `CORE-IMPL-01`–`10` plus delegated ownership rows below |

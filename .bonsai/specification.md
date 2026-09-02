@@ -57,6 +57,69 @@ Detailed procedural mechanics may live in prompts and skills when repeating them
 
 ---
 
+# Framework Artifact Discovery
+
+`specification.md` is the normal starting point for understanding or designing changes to Bonsai.
+
+The specification defines Bonsai's authoritative behavior and identifies the major framework artifact categories that implement it. Detailed workflow mechanics remain in the applicable prompts, skills, and templates rather than being duplicated here.
+
+When additional implementation-facing context is needed, Bonsai supports progressive framework discovery:
+
+```text
+<bonsai-home>/specification.md
+        ↓
+category guide
+        ↓
+specific framework artifact
+```
+
+The standard category guides are:
+
+```text
+<bonsai-home>/skills/skills.md
+<bonsai-home>/prompts/prompts.md
+<bonsai-home>/templates/templates.md
+```
+
+Each category guide identifies the artifacts currently available in that category and gives enough responsibility information for a human or AI to determine which artifacts are relevant to the work being designed.
+
+Category guides are routing aids. They are not peer authorities with `specification.md` and must not duplicate detailed behavioral rules from the artifacts they reference.
+
+A category guide should normally change only when an artifact is:
+
+- added;
+- removed;
+- renamed; or
+- materially changed in responsibility.
+
+Ordinary internal changes to an artifact do not require restating those changes in its category guide.
+
+## Web UI design of Bonsai changes
+
+When designing a change to Bonsai in a Web UI AI session, the human should normally begin by supplying the current:
+
+```text
+<bonsai-home>/specification.md
+```
+
+along with the proposed change, problem, or enhancement.
+
+The design agent should use the specification to identify which framework artifact categories may contain relevant implementation detail.
+
+When more context is required, the agent should request the applicable category guide and then request specific prompts, skills, templates, or other artifacts as needed.
+
+The human should not need to know Bonsai's complete internal artifact set in advance, and a design session should not require loading the entire Bonsai standard merely to avoid missing a potentially relevant artifact.
+
+Unless the human is intentionally comparing versions, category guides and individual standard artifacts supplied to the design session should come from the same resolved Bonsai Home as the supplied `specification.md`.
+
+The standard artifacts do not need to live in the current source repository. In Bonsai Home mode they resolve from the active Bonsai Home. In Embedded Bonsai, the repository-local `.bonsai` directory is the Bonsai Home and the same identities resolve there.
+
+Code maps are not part of this category-guide mechanism. Relevant map or source context may be supplied separately by the human when a design discussion needs it.
+
+This progressive-discovery model preserves both sufficient design context and Bonsai's lazy-loading principle.
+
+---
+
 # Core Principles
 
 ## Durable truth is separate from working state
@@ -67,11 +130,9 @@ Plans and state describe how approved work is currently being executed.
 
 The implementation agent must not casually turn execution decisions into durable product or architectural truth.
 
-## Human-owned and agent-owned artifacts are visibly different
+## Human-owned and agent-owned memory are visibly different
 
-Human-owned artifacts use natural names.
-
-Agent-owned artifacts use the `agent_` prefix.
+For Bonsai project and context memory, human-owned artifacts use natural names and agent-owned artifacts use the `agent_` prefix.
 
 Examples:
 
@@ -86,9 +147,11 @@ agent_state.md
 agent_context.md
 ```
 
-The prefix means Bonsai is allowed to maintain or rewrite the artifact according to its lifecycle rules.
+The `agent_` prefix means Bonsai is allowed to maintain or rewrite that memory artifact according to its lifecycle rules.
 
 It does not mean the artifact is automatically loaded every session.
+
+This naming convention does not require every artifact an agent is authorized to modify to use the `agent_` prefix. Bonsai standard files such as prompts, skills, templates, category guides, bootstrap files, and code-map data use the identities defined by their framework roles and are maintained only under the authority of the applicable workflow and this specification.
 
 ## Human control should not require constant babysitting
 
@@ -213,10 +276,13 @@ $BONSAI_HOME/
 ├── specification.md
 ├── README.md
 ├── prompts/
+│   ├── prompts.md
 │   ├── implementation.md
 │   ├── create_project_memory.md
 │   └── create_map_repo.md
 ├── skills/
+│   ├── skills.md
+│   ├── artifact_index.md
 │   ├── menu.md
 │   ├── phase_execution.md
 │   ├── dry_run.md
@@ -225,14 +291,14 @@ $BONSAI_HOME/
 │   ├── agent_context.md
 │   └── code_maps.md
 ├── templates/
+│   ├── templates.md
 │   ├── plan_phase_template.md
 │   └── icebox_template.md
 ├── developer_context.md                 # Optional reusable human-owned context
 ├── agent_context.md                     # Optional reusable agent-owned context
 └── maps/
-    ├── barcache/
-    ├── tickerview/
-    └── investment-app/
+    ├── source-a/
+    └── source-b/
 ```
 
 The exact physical path is host and environment dependent.
@@ -339,7 +405,7 @@ Bonsai Home mode does not require copies of `specification.md`, standard prompts
 
 ## Developer-level reusable material
 
-An Bonsai Home may contain reusable context and maps that apply across repositories.
+A Bonsai Home may contain reusable context and maps that apply across repositories.
 
 Examples include:
 
@@ -518,9 +584,11 @@ Ownership determines who controls the durable meaning of an artifact.
 
 Ownership is separate from loading behavior.
 
+The ownership naming rules in this section apply to Bonsai project and context memory. Standard framework artifacts and code-map artifacts use their defined framework identities.
+
 ## Human-owned artifacts
 
-Human-owned artifacts use natural names.
+Human-owned project and context artifacts use natural names.
 
 Typical examples include:
 
@@ -537,7 +605,7 @@ An AI may draft or mechanically maintain a human-owned artifact when instructed,
 
 ## Agent-owned artifacts
 
-Agent-owned artifacts use the `agent_` prefix.
+Agent-owned project and context artifacts use the `agent_` prefix.
 
 Typical examples include:
 
@@ -551,6 +619,14 @@ plan/agent_plan_phase_<N>.md
 The agent actively maintains these when their current truth changes.
 
 They should describe current useful state, not preserve a historical diary.
+
+## Standard framework artifacts
+
+Prompts, skills, templates, category guides, bootstrap files, and helper scripts are Bonsai standard implementation artifacts.
+
+Their identities are defined by the framework rather than by the project-memory ownership prefix convention.
+
+An implementation agent may create, modify, rename, or remove them only when an authorized Bonsai change requires it and the resulting standard remains consistent with `specification.md`.
 
 ## Avoid hybrid ownership
 
@@ -744,8 +820,6 @@ Those facts belong in agent operational context when they qualify for preservati
 
 `agent_context.md` is agent-owned operational memory.
 
-It replaces the narrower Bonsai 1.x concept of tooling-only memory.
-
 Useful agent context may include:
 
 - reliable build or tool invocation knowledge;
@@ -814,8 +888,8 @@ For example:
 
 ```text
 Useful code maps:
-- barcache
-- tickerview
+- library-a
+- library-b
 ```
 
 The project-memory creation workflow may seed project-level `agent_context.md` from human-approved design information such as known external source or code-map usage. The implementation agent then maintains that file as current operational truth.
@@ -879,7 +953,8 @@ Examples include:
 - handoff;
 - final-truth reconciliation;
 - project management;
-- code-map management.
+- code-map management;
+- framework artifact-index maintenance.
 
 ## Facet-triggered context
 
@@ -927,10 +1002,8 @@ Bonsai should not force a design conversation into templates prematurely.
 When the design is mature enough to preserve, the human uses:
 
 ```text
-$BONSAI_HOME/prompts/create_project_memory.md
+<bonsai-home>/prompts/create_project_memory.md
 ```
-
-or the equivalent embedded path.
 
 The workflow synthesizes the discussion into durable Bonsai project memory.
 
@@ -966,8 +1039,8 @@ For example:
 
 ```text
 Useful code maps:
-- barcache
-- tickerview
+- library-a
+- library-b
 ```
 
 For a repository intentionally using named Bonsai projects, the human may explicitly request a named project instead of `main`.
@@ -998,7 +1071,8 @@ The implementation agent:
 8. reconciles completed work;
 9. maintains current execution memory;
 10. preserves qualifying operational discoveries;
-11. stops at the next natural gate.
+11. reconciles affected framework category guides when authorized standard artifacts are added, removed, renamed, or materially change responsibility;
+12. stops at the next natural gate.
 
 The implementation prompt is a stable router and invariant set.
 
@@ -1048,6 +1122,7 @@ Primary menus stay focused on the decision immediately required by the current w
 They should not accumulate every optional Bonsai capability merely because those capabilities exist.
 
 Actions should use concrete wording that identifies the real next step.
+
 
 ## See more options
 
@@ -1258,7 +1333,7 @@ They are navigation aids, not substitutes for source inspection and not project 
 
 Every map has a meaningful source identity.
 
-When an Bonsai Home is active, the map store is:
+When a Bonsai Home is active, the map store is:
 
 ```text
 $BONSAI_HOME/maps/
@@ -1276,17 +1351,17 @@ Examples:
 
 ```text
 maps/
-    barcache/
-    tickerview/
-    investment-app/
+    application/
+    library-a/
+    library-b/
 ```
 
 When version identity matters, the map identity may include a version or other distinguishing information:
 
 ```text
 maps/
-    barcache-1.0.0/
-    tickerview-1.2.0/
+    library-a-1.0.0/
+    library-b-1.2.0/
 ```
 
 The folder name does not need to carry every source-identity detail forever. The map entry document may preserve richer identity.
@@ -1298,9 +1373,9 @@ A map is named for the source universe it represents, not for the Bonsai project
 For a simple repository:
 
 ```text
-repository: investment-app
+repository: application
 project: main
-map: investment-app
+map: application
 ```
 
 For a large repository containing several Bonsai projects, several projects may consume one map of the same repository source.
@@ -1352,7 +1427,7 @@ map_repo.md
 A map store may therefore look like:
 
 ```text
-$BONSAI_HOME/maps/barcache/
+$BONSAI_HOME/maps/<source>/
     map_repo.md               # Optional human-approved mapping calibration
     code_map.md
     ...
@@ -1366,12 +1441,12 @@ Project memory and `map_repo.md` may both be used when both are available.
 
 The source context used to create a map and the location where the resulting map is stored are different concerns.
 
-When mapping `barcache`, Bonsai should operate against the actual `barcache` source and use `barcache` project memory when available.
+When mapping an external source, Bonsai should operate against the actual selected source and use that source's relevant project memory when available.
 
-If an Bonsai Home is active, the resulting reusable map still belongs under:
+If a Bonsai Home is active, the resulting reusable map still belongs under:
 
 ```text
-$BONSAI_HOME/maps/barcache/
+$BONSAI_HOME/maps/<source>/
 ```
 
 This produces the rule:
@@ -1394,7 +1469,7 @@ mapping workflow
 named source map
 ```
 
-This preserves the original Bonsai mapping use case while allowing project-aware maps when richer memory exists.
+This preserves the source-oriented mapping use case while allowing project-aware maps when richer memory exists.
 
 ## Map and source identity
 
@@ -1423,7 +1498,7 @@ A map set uses `code_map.md` as its normal entry document.
 
 The entry document identifies the map and routes the agent into more detailed map data when needed.
 
-The exact indexing and manifest format may evolve through real multi-repository use, but the source-identity boundary is required.
+The exact indexing and manifest format may evolve through real use, but the source-identity boundary is required.
 
 ---
 
@@ -1431,9 +1506,7 @@ The exact indexing and manifest format may evolve through real multi-repository 
 
 Code mapping is part of the main Bonsai workflow rather than a parallel Bonsai subsystem.
 
-The v2 standard should therefore route mapping through the same startup, menu, context-layering, agent-context, and source-identity model used by implementation.
-
-Legacy mapping prompts or procedures that assume a standalone `.bonsai/maps` workflow should be refactored accordingly.
+The Bonsai standard routes mapping through the same startup, menu, context-layering, agent-context, and source-identity model used by implementation.
 
 The integrated mapping workflow should:
 
@@ -1487,14 +1560,10 @@ A Bonsai project may depend on source outside its repository.
 Example:
 
 ```text
-investment-app
-    → barcache
-    → tickerview
+application
+    → library-a
+    → library-b
 ```
-
-`investment-app` is a planned future real-world consumer example after Bonsai v2 is promoted and proven. It is not
-a prerequisite for validating or shipping v2, and validation must not create, synthesize, stub, or simulate it merely
-to complete the v2 work.
 
 Each repository may have its own Bonsai project memory.
 
@@ -1502,9 +1571,9 @@ Maps for each source are reusable developer assets:
 
 ```text
 $BONSAI_HOME/maps/
-    investment-app/
-    tickerview/
-    barcache/
+    application/
+    library-a/
+    library-b/
 ```
 
 When a consuming project needs external source, Bonsai may use durable agent context, dependency information, map identity, and source inspection to locate the appropriate source and matching map.
@@ -1553,7 +1622,15 @@ Standard entry workflows live under:
 <bonsai-home>/prompts/
 ```
 
-The exact set should remain small.
+The category guide is:
+
+```text
+<bonsai-home>/prompts/prompts.md
+```
+
+It identifies the available prompts and their responsibilities for discovery purposes. It does not duplicate their detailed workflow rules.
+
+The exact prompt set should remain small.
 
 ## `prompts/implementation.md`
 
@@ -1583,8 +1660,17 @@ Its output is optional human-owned mapping guidance named `map_repo.md`.
 
 Detailed workflow behavior lives in triggered skills rather than being permanently loaded.
 
+The category guide is:
+
+```text
+<bonsai-home>/skills/skills.md
+```
+
+It identifies the available skills and their responsibilities for discovery purposes. It does not duplicate their detailed workflow rules.
+
 Typical skills include:
 
+- artifact index;
 - menu;
 - phase execution;
 - dry run;
@@ -1597,6 +1683,36 @@ Skills are Bonsai standard files.
 
 They are not project memory.
 
+## `skills/artifact_index.md`
+
+`skills/artifact_index.md` owns framework category-guide maintenance.
+
+It maintains:
+
+```text
+<bonsai-home>/skills/skills.md
+<bonsai-home>/prompts/prompts.md
+<bonsai-home>/templates/templates.md
+```
+
+when the corresponding framework artifact set changes.
+
+It should:
+
+- add newly introduced artifacts;
+- remove retired artifacts;
+- reconcile renamed artifacts;
+- update a routing description when an artifact's responsibility materially changes;
+- validate that guide references resolve;
+- detect relevant standard artifacts missing from their category guide;
+- keep guide descriptions concise and responsibility-oriented.
+
+It must not turn category guides into duplicate specifications or reproduce detailed procedural rules from individual artifacts.
+
+Category-guide reconciliation is part of completing an authorized framework-artifact lifecycle change.
+
+The skill does not own code-map discovery or map lifecycle indexing.
+
 ---
 
 # Framework Templates
@@ -1606,6 +1722,14 @@ Reusable artifact templates live under:
 ```text
 <bonsai-home>/templates/
 ```
+
+The category guide is:
+
+```text
+<bonsai-home>/templates/templates.md
+```
+
+It identifies the available templates and their intended consumers for discovery purposes. It does not duplicate the template contents or the workflow rules that consume them.
 
 Templates should exist only when Bonsai has an explicit workflow that consumes them.
 
@@ -1717,7 +1841,15 @@ Durable requirements, architecture, roadmap, and state are synthesized through t
 
 `specification.md` is human-owned Bonsai final truth.
 
-Prompts, skills, templates, bootstrap files, README guidance, and helper scripts must conform to it.
+Prompts, skills, templates, bootstrap files, README guidance, helper scripts, and category guides must conform to it.
+
+## Framework category guides
+
+When an authorized Bonsai change adds, removes, renames, or materially changes the responsibility of a standard prompt, skill, or template, the implementation agent must reconcile the corresponding category guide before the change is complete.
+
+Category guides are maintained through `skills/artifact_index.md`.
+
+They should remain concise routing artifacts and should not accumulate duplicated procedural truth.
 
 ## Human-owned project final truth
 
@@ -1819,87 +1951,17 @@ A normal Bonsai project may look like this:
 13. Stop before material final-truth revisions or unauthorized scope expansion.
 14. Let the human decide which out-of-scope observations deserve preservation.
 15. Reconcile execution memory after completed work.
-16. Record the exact next step and execution readiness.
-17. Continue in the current session or a fresh one at the human's discretion.
-18. Create named reusable maps for external repositories when they become part of the useful source universe.
-19. Keep durable truth, working state, operational context, and maps compact as the project evolves.
+16. Reconcile affected framework category guides when standard artifacts change.
+17. Record the exact next step and execution readiness.
+18. Continue in the current session or a fresh one at the human's discretion.
+19. Create named reusable maps for external repositories when they become part of the useful source universe.
+20. Keep durable truth, working state, operational context, framework discovery guides, and maps compact as the project evolves.
 
 ---
 
-# Bonsai 2.0 Validation Cases
+# Intentionally Open Design Boundaries
 
-Bonsai 2.0 should be validated against several concrete source topologies.
-
-## Standalone repository
-
-One repository, one `projects/main`, no relevant external source.
-
-This case must remain extremely simple.
-
-## Reusable multi-repository project
-
-```text
-controlled consuming-project fixture
-    → barcache
-    → tickerview
-```
-
-The consuming-project fixture models selection and topology only. It must not be named or represented as
-`investment-app`. Barcache and Tickerview remain external source repositories rather than substitutes for the
-consumer.
-
-This validates:
-
-- Bonsai Home;
-- reusable global and local context;
-- actual code-map generation from the real Barcache and Tickerview sources;
-- distinct reusable map identities stored in the active isolated/test Bonsai Home rather than either source;
-- project-aware map rediscovery and reuse through a controlled consuming-project fixture;
-- map lifecycle ownership that affects only map-owned artifacts;
-- preservation of all pre-existing external-repository content, including unrelated or legacy Bonsai state;
-- dependency source discovery;
-- durable source-location memory;
-- map/source identity;
-- reuse of maps across projects.
-
-Existing repository-local Bonsai 1.x content in an external source is not migration input, must not become the active
-v2 project merely because it exists, and must remain unmodified. Investment App remains future out-of-band
-real-world validation after v2 promotion and proof; it is not part of this validation case.
-
-## Large monorepository
-
-One repository contains many independent Bonsai projects and a large shared source universe.
-
-This validates:
-
-- named projects;
-- session-local project selection;
-- one source map serving several projects;
-- avoidance of duplicate per-project maps;
-- cheap project listing and switching.
-
-## External source without Bonsai memory
-
-A repository or released source tree has no Bonsai project memory.
-
-This validates:
-
-- Web UI mapping calibration;
-- mapping from actual source without project memory;
-- reusable named maps;
-- source identity independent of project memory.
-
-## Greenfield repository
-
-Little useful source exists yet.
-
-This validates that Bonsai does not pressure the human to create a code map when mapping would provide little value.
-
----
-
-# Design Boundaries Still Being Validated
-
-Bonsai 2.0 intentionally avoids over-specifying mechanisms that should be tested through real multi-repository use.
+Bonsai avoids over-specifying mechanisms before real use demonstrates that additional structure is necessary.
 
 ## Map manifest detail
 
@@ -1909,10 +1971,7 @@ The exact metadata stored in `code_map.md` or an adjacent manifest should remain
 
 Bonsai should use dependency information, source locations, map identity, and agent context to connect consuming projects with useful maps.
 
-The exact automatic discovery mechanics should be validated with real Barcache and Tickerview sources plus
-controlled consuming-project fixtures rather than replaced by a large registry in advance. Investment App may later
-provide additional out-of-band real-world evidence after v2 promotion and proof, but it is not a prerequisite for
-the v2 validation baseline.
+The exact automatic discovery mechanics should remain as small as practical and should not be replaced by a large registry without demonstrated need.
 
 ## Helper-script packaging
 
@@ -1922,9 +1981,9 @@ The AI-session workflow must remain usable without making the helper script the 
 
 ## Migration
 
-Migration from Bonsai 1.x is not part of the Bonsai 2.0 operating model defined here.
+Migration from earlier Bonsai versions is not part of the operating model defined here.
 
-Migration behavior should not distort the clean 2.0 design unless a separate migration requirement is explicitly adopted.
+Migration behavior should not distort the current design unless a separate migration requirement is explicitly adopted.
 
 ---
 
@@ -1933,10 +1992,22 @@ Migration behavior should not distort the clean 2.0 design unless a separate mig
 Bonsai has one human-owned specification:
 
 ```text
-specification.md
+<bonsai-home>/specification.md
 ```
 
 The remaining standard files implement it.
+
+For framework design, `specification.md` is the normal starting context. When deeper implementation context is needed, the human or design agent can progressively discover relevant standard artifacts through:
+
+```text
+<bonsai-home>/skills/skills.md
+<bonsai-home>/prompts/prompts.md
+<bonsai-home>/templates/templates.md
+```
+
+and then load only the specific artifacts needed for the design.
+
+The category guides are maintained through `skills/artifact_index.md` and are routing aids rather than peer authorities.
 
 The normal coding-agent entry point is repository-local:
 
@@ -1974,4 +2045,4 @@ When `BONSAI_HOME` is active, reusable maps live in its map store. Embedded mode
 
 Map creation may use existing Bonsai project memory, optional Web UI mapping calibration, or both, but actual source remains authoritative.
 
-This separation allows Bonsai to support simple repositories, monorepositories, multi-repository projects, reusable developer environments, and frequent fresh AI sessions without turning routine implementation into constant process management.
+This separation allows Bonsai to support simple repositories, monorepositories, multi-repository projects, reusable developer environments, progressive framework design context, and frequent fresh AI sessions without turning routine implementation into constant process management.

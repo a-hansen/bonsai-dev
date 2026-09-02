@@ -69,6 +69,7 @@ Load a workflow or facet only when current state or the human's request triggers
 | Exact-step completion or session handoff | `skills/handoff.md` |
 | Final-truth clarification or revision | `skills/final_truth_update.md` |
 | Relevant operational context or qualifying operational discovery | `skills/agent_context.md` |
+| Category-guide reconciliation for an authorized standard prompt, skill, or template addition, removal, rename, or material responsibility change | `skills/artifact_index.md` |
 | **Manage Code Maps**, an explicit code-map request, map-guided navigation or map/source alignment, or an accepted contextual mapping or maintenance action | `skills/code_maps.md` |
 | Explicit or contextually selected Create Bonsai Home | `skills/bonsai_home.md` |
 
@@ -80,6 +81,13 @@ inline workflow owned below; it has no separate skill.
 When agent context is triggered, load `skills/agent_context.md`; that skill owns its scoped loading, application,
 qualification, and maintenance. Agent context informs operations but does not override human-owned developer
 context, project final truth, or normal authorization boundaries.
+
+When authorized implementation adds, removes, renames, or materially changes the responsibility of a standard
+prompt, skill, or template, category-guide reconciliation becomes a required facet of completing that lifecycle
+change. Load `skills/artifact_index.md` when reconciliation is current or the change reaches its completion
+boundary. An approved multi-step change may wait until the affected artifact set is stable, but it must not be
+reported complete with inaccurate guides. Routine internal edits and runtime map changes do not trigger this
+workflow, and guide maintenance grants no authority to broaden the underlying change.
 
 Code-map editing is not routine implementation startup or an automatic consequence of source changes. During an
 authorized implementation facet, a substantial existing source without a useful map may receive one contextual
@@ -206,6 +214,8 @@ Do not claim an exact next step complete until `skills/handoff.md` has reconcile
 - current `agent_plan.md`, `agent_state.md`, and active phase plan as applicable;
 - resolved blockers, obsolete state, and the new exact next step;
 - qualifying operational discoveries through `skills/agent_context.md` when triggered;
+- affected framework category guides through `skills/artifact_index.md` when a qualifying standard-artifact
+  lifecycle change reaches its completion boundary;
 - out-of-scope observation handling and the applicable next gate.
 
 Completion reports name only files changed for the authorized step and checks actually performed. They do not

@@ -43,7 +43,7 @@ Complete all validation before writing anything.
 
 1. Confirm the current session is using the repository-local embedded standard. If a distinct valid Bonsai Home
    is already active, report that Create Bonsai Home is not applicable and return to the invoking gate.
-2. Confirm the embedded source contains readable `specification.md` and `prompts/implementation.md`. If it does
+2. Confirm the embedded source contains readable `../specification.md` and `prompts/implementation.md`. If it does
    not, stop: an invalid embedded source must not seed a reusable home.
 3. Read `BONSAI_HOME` from the environment. If it is undefined or blank, stop with no writes and tell the human
    to configure it in the environment before retrying. Do not offer a session-only path.
@@ -129,7 +129,7 @@ current or valid, and do not compensate by changing environment configuration or
 
 Before treating the configured home as session identity:
 
-1. confirm the target contains readable `specification.md` and `prompts/implementation.md`;
+1. confirm the target contains readable `../specification.md` and `prompts/implementation.md`;
 2. confirm every artifact in the copy set is present with the source content;
 3. confirm repository-local `start.md`, developer context, agent context, maps, and project memory were not moved,
    copied, or modified by this workflow; and
