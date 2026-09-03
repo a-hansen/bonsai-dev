@@ -3,21 +3,26 @@
 ## Purpose
 
 Provide an optional, compact, read-only preview of one approved exact next step. A dry run helps human steering
-when explicitly requested or when the human accepts a context-specific suggestion prompted by unusual risk or
-ambiguity.
+before execution without becoming a required gate or granting implementation authorization.
 
-It is not a routine Bonsai gate, design artifact, implementation walkthrough, or substitute for planning,
-contract, final-truth, or execution authorization.
+It is not a design artifact, implementation walkthrough, or substitute for planning, contract, final-truth, or
+execution authorization.
 
 ## When to Load
 
-Load this skill only when:
+Load this skill only after the human selects Dry Run, whether that selection came from:
 
-- the human requests Dry Run; or
-- the human accepts a Dry Run suggestion made for a specific unusual risk or ambiguity.
+- an explicit human request;
+- the ordinary Dry Run action under **See more options**; or
+- a Dry Run action that the invoking workflow promoted into the primary menu because previewing the exact next
+  step would materially reduce mechanical execution risk.
 
-Dry Run normally belongs under **See more options**. Do not add or recommend it routinely at startup, planning,
-contract, or handoff gates.
+Dry Run applicability and promotion are decided by the invoking workflow before this skill is loaded.
+`skills/menu.md` presents the supplied ordinary or promoted action. This skill must not independently advertise,
+recommend, or promote itself.
+
+If no approved basis or exact next step exists, return to the applicable owning gate as described below rather
+than turning Dry Run into a way around design, planning, review, final-truth, contract, or blocker requirements.
 
 ## Required Inputs
 

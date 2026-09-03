@@ -1320,9 +1320,11 @@ Single-pass work must not be labeled Pass B.
 
 # Dry Runs
 
-Dry runs are optional, read-only previews.
+Dry runs are optional, read-only previews of one approved exact next step.
 
-They may be useful when execution carries unusual risk or ambiguity.
+When a human gate offers authorization of an approved exact next step for execution, Dry Run is an applicable
+optional action. During ordinary work it belongs under **See more options** rather than consuming space in the
+primary gate.
 
 A dry run may identify:
 
@@ -1333,11 +1335,35 @@ A dry run may identify:
 - likely scope concerns;
 - anticipated final-truth impact.
 
-Dry runs are deliberately secondary.
+Dry Run is not applicable merely because Bonsai is at a human gate. If the current state still requires design,
+phase planning, artifact approval, contract review, final-truth resolution, blocker resolution, or another human
+decision before an exact next step has an approved execution basis, that required gate remains authoritative.
 
-They should not appear as a routine mandatory step in ordinary Bonsai work.
+Before presenting an executable gate, the invoking workflow evaluates whether previewing the mechanics of the
+exact next step would materially reduce execution risk. When it would, Dry Run is promoted from **See more
+options** into the primary menu and the menu explains the concrete reason for the promotion.
 
-During normal work, Dry Run is generally available through **See more options** rather than consuming space in the primary gate.
+Signals that may justify promotion include:
+
+- destructive or difficult-to-reverse operations;
+- bulk moves, deletes, replacements, or generated writes;
+- migrations or durable-format conversions;
+- mutation spanning multiple repositories or source universes;
+- writes to external state or outside the normal repository workspace;
+- runtime, self-hosting, environment, deployment, or promotion operations;
+- unusually difficult rollback; or
+- material uncertainty about the operation's actual write or touch set.
+
+Promotion is based on execution mechanics, not semantic importance. A step is not promoted merely because the
+feature is important, the phase is large, the architecture is significant, or the work requires careful human
+judgment.
+
+The invoking workflow owns Dry Run applicability and promotion. `skills/menu.md` owns presentation of the supplied
+secondary or promoted action. `skills/dry_run.md` owns the preview only after the human selects Dry Run; it does
+not decide whether to advertise or promote itself.
+
+Promotion does not make Dry Run mandatory and does not grant execution authorization. After a dry run completes,
+Bonsai returns to the invoking gate unless the preview exposes a different required gate.
 
 ---
 
@@ -2037,7 +2063,9 @@ A normal Bonsai project may look like this:
 9. Use contract-first execution only when a durable contract actually merits separate review.
 10. Load maps, deep truth, developer context, agent context, and specialized skills only when needed.
 11. Preserve durable operational discoveries in agent context rather than rediscovering them.
-12. Keep primary menus focused and use **See more options** for project management, map management, and Dry Run.
+12. Keep primary menus focused and use **See more options** for project management, map management, and ordinary
+    Dry Run; promote Dry Run only when previewing the exact next step would materially reduce mechanical execution
+    risk.
 13. Stop before material final-truth revisions or unauthorized scope expansion.
 14. Let the human decide which out-of-scope observations deserve preservation.
 15. Reconcile execution memory after completed work.

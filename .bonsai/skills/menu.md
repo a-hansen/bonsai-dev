@@ -14,6 +14,8 @@ The invoking workflow supplies:
 - the gate being presented;
 - the concrete choices currently available;
 - the secondary actions that are applicable and available;
+- any normally secondary action promoted into the primary menu and, when relevant, the concrete reason for that
+  promotion;
 - whether the host already supplies a free-form choice; and
 - when relevant, whether this is the first continuation boundary of a newly entered session with no substantive
   work yet performed.
@@ -55,8 +57,26 @@ Possible secondary actions include Manage Projects, Manage Code Maps, Create Bon
 and maintenance. This is not a fixed list to display. Include only actions supplied by the invoking workflow; do
 not turn the submenu into a catalog of every Bonsai capability.
 
-A normally secondary action may appear directly in the primary menu when it is necessary or directly relevant to
-the current decision. Do not duplicate it under **See more options** when promoted.
+A normally secondary action may appear directly in the primary menu when the invoking workflow says it is
+necessary or directly relevant to the current decision. Do not duplicate it under **See more options** when
+promoted. This skill presents the supplied promotion; it does not independently infer that an action should be
+promoted.
+
+### Dry Run presentation
+
+When the invoking workflow supplies Dry Run as an ordinary applicable secondary action, keep it under **See more
+options**.
+
+When the invoking workflow promotes Dry Run because previewing the current exact next step would materially reduce
+mechanical execution risk:
+
+- place Dry Run directly in the primary menu;
+- present the supplied concrete reason concisely with the choice or immediately before the choices;
+- do not duplicate Dry Run under **See more options**; and
+- do not describe Dry Run as required, recommended by default, or an approval gate.
+
+The invoking workflow owns the execution-risk assessment. This skill must not promote Dry Run merely because the
+work sounds important, large, complex, or architecturally significant.
 
 Naming an action in a menu does not implement or authorize its workflow. Do not present an unavailable subordinate
 workflow as executable, and do not report it as completed merely because it was selected.

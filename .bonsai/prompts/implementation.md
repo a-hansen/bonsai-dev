@@ -80,7 +80,7 @@ Load a workflow or facet only when current state or the human's request triggers
 | --- | --- |
 | Any human gate or contextual secondary menu | `skills/menu.md` |
 | Phase planning, mode resolution, phase-plan correction, an exact step governed by an active phase plan or approved phase contract, Pass A, or contract review | `skills/phase_execution.md` |
-| Explicit or contextually selected dry run | `skills/dry_run.md` |
+| Human-selected Dry Run, whether explicitly requested, secondary, or promoted | `skills/dry_run.md` |
 | Exact-step completion or session handoff | `skills/handoff.md` |
 | Final-truth clarification or revision | `skills/final_truth_update.md` |
 | Relevant operational context or qualifying operational discovery | `skills/agent_context.md` |
@@ -147,6 +147,28 @@ Preserve the complete natural-language startup request. Interpret it normally af
 require a formal command grammar. A directly requested secondary workflow may be promoted at the current gate.
 Unrecognized prose remains part of the human request rather than being discarded.
 
+## Dry Run Availability and Promotion
+
+When the current gate offers authorization of one approved exact next step for execution, supply Dry Run as an
+applicable optional action to `skills/menu.md`. By default, supply it as a secondary action under **See more
+options**. Do not load `skills/dry_run.md` merely to advertise the action; load it only if the human selects Dry
+Run.
+
+Before rendering that executable gate, assess whether previewing the mechanics of the exact next step would
+materially reduce execution risk. Promote Dry Run into the primary menu when concrete execution characteristics
+support that conclusion, including destructive or difficult-to-reverse operations, bulk mutation, migrations,
+multi-repository mutation, external-state or out-of-workspace writes, runtime or environment replacement,
+deployment or promotion operations, unusually difficult rollback, or material uncertainty about the actual
+write or touch set.
+
+When Dry Run is promoted, provide `skills/menu.md` with a concise concrete reason grounded in those execution
+mechanics. Do not promote it merely because the work is important, large, architecturally significant, or
+otherwise deserving of careful human judgment. Promotion remains optional and does not become an approval gate.
+
+Do not offer Dry Run as a bypass when design, phase planning, artifact approval, contract review, final-truth
+resolution, blocker resolution, or another human decision is still required before the exact next step has an
+approved execution basis.
+
 ## Startup Summary and Gate
 
 Report concisely:
@@ -166,11 +188,12 @@ Load `skills/menu.md` and present the gate owned by the current execution condit
 agent-performable exact next action is established and no independent human decision gate is active, the normal
 choices may authorize that action, correct or discuss it, or exit for now. This includes `Phase planning required`
 when the exact next action is to perform the planning work; the resulting plan or execution-basis approval remains
-a separate mandatory gate. Put only applicable secondary workflows behind **See more options**. Render **See more
-options** as the standalone navigation choice defined by `skills/menu.md`; do not inline or summarize its
-secondary actions in the primary menu. `Complete`, a concrete blocker or inconsistency, `Design required`,
-`Awaiting human review`, or any other state that currently requires a human decision must not offer substantive
-action as a bypass.
+a separate mandatory gate. For an approved executable exact next step, apply the Dry Run availability and
+promotion rules above before supplying actions to `skills/menu.md`. Put only applicable secondary workflows behind
+**See more options**. Render **See more options** as the standalone navigation choice defined by `skills/menu.md`;
+do not inline or summarize its secondary actions in the primary menu. `Complete`, a concrete blocker or
+inconsistency, `Design required`, `Awaiting human review`, or any other state that currently requires a human
+decision must not offer substantive action as a bypass.
 
 Normally stop after the startup gate. When the preserved startup request explicitly authorizes execution of the
 exact next action without stopping at the startup gate, treat that request as the human authorization for that one
