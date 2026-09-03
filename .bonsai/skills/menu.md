@@ -39,6 +39,35 @@ The invoking workflow supplies:
    explicitly requests it. This is session-local presentation context and must not be persisted in project memory.
 7. After presenting a gate, stop for the human's choice. Rendering a menu does not authorize an action.
 
+## Exit for Now
+
+**Exit for now** has one consistent session-boundary meaning across Bonsai gates.
+
+When the human selects it:
+
+1. do not authorize, approve, discard, execute, or otherwise resolve the action or gate being left;
+2. do not change durable state merely to record that the human exited;
+3. present the ordinary canonical startup pointer, never the auto-execute continuation prompt;
+4. using the current resolved session identity and deterministic startup-resolution rules, omit the project
+   qualifier when startup will resolve the same active project without human selection;
+5. otherwise append only `Active project: <project>.` using the active project directory name; and
+6. stop.
+
+The copyable pointer must therefore be exactly one of:
+
+```text
+Read .bonsai/start.md and follow its instructions.
+```
+
+```text
+Read .bonsai/start.md and follow its instructions. Active project: <project>.
+```
+
+Starting a new host session remains the human's action. The ordinary pointer carries no execution authorization.
+Determining whether the project qualifier is needed may use cheap project-directory enumeration, but must not load
+or modify project memory merely to format the pointer. A later session reconstructs canonical durable state and
+reaches the applicable gate or execution condition normally.
+
 ## See More Options
 
 Put less-frequent actions under **See more options**. Include that choice only when at least one secondary action is

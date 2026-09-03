@@ -105,7 +105,7 @@ For `None` or `Clarification`, supply these choices to `skills/menu.md`:
 1. Approve this preview and return to the invoking gate.
 2. Request revisions to the preview.
 3. Discard the preview and return to the invoking gate.
-4. Stop here.
+4. Exit for now.
 
 Approval records any warranted baseline but does not execute the work. The refreshed invoking gate remains the
 place where the human authorizes the exact next step. If a clarification is required before execution, delegate to
@@ -116,7 +116,7 @@ For `Revision`, do not offer implementation approval. Supply:
 1. Draft proposed updates to the affected final-truth documents for review.
 2. Request revisions to the preview.
 3. Discard the preview and return to the invoking gate.
-4. Stop here.
+4. Exit for now.
 
 If option 1 is selected, delegate to `skills/final_truth_update.md`. After that subordinate workflow completes,
 return through its invoking-gate rules unless a new mandatory gate supersedes the dry-run review.

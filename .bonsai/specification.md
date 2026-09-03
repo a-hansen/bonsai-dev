@@ -1873,6 +1873,15 @@ When project selection should be explicit:
 Read .bonsai/start.md and follow its instructions. Active project: <project>.
 ```
 
+When the human chooses **Exit for now** at any Bonsai gate, preserve the current durable execution condition and
+present the ordinary startup pointer. Use the project-qualified form only when startup without it would not
+deterministically resolve the same active project.
+
+**Exit for now** carries no auto-execution authorization and does not approve, discard, execute, or otherwise
+resolve the action or gate being left. Choosing it must not alter durable state merely to record that the human
+exited. A later session reconstructs canonical durable state and resumes through the normal applicable gate or
+execution condition.
+
 When the human chooses fresh-session continuation with automatic execution of the exact next action, use:
 
 ```text

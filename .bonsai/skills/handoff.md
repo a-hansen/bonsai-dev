@@ -215,8 +215,8 @@ That startup authorization applies to one action only and does not authorize wha
 
 ## Fresh-Session Continuation
 
-Print a fresh-session prompt only after the human chooses fresh-session continuation or explicitly requests a
-prompt. Starting the new host session remains the human's action.
+Print a fresh-session prompt after the human chooses fresh-session continuation, chooses **Exit for now**, or
+explicitly requests a prompt. Starting the new host session remains the human's action.
 
 First determine whether startup without an explicit project would deterministically resolve the same active
 project under `start.md`:
@@ -240,8 +240,8 @@ authorize subsequent actions. If startup reconstruction instead finds a blocker,
 approval or review, design requirement, or no safe exact next action, stop at that applicable gate rather than
 forcing execution.
 
-When the human explicitly asks for an ordinary fresh-session startup pointer without auto-execution, use the
-ordinary canonical pointer instead:
+When the human chooses **Exit for now**, or explicitly asks for an ordinary fresh-session startup pointer without
+auto-execution, use the ordinary canonical pointer instead:
 
 ```text
 Read .bonsai/start.md and follow its instructions.
