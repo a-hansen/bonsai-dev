@@ -29,16 +29,18 @@ Before substantive work:
 
 1. Read `<project-home>/agent_state.md` when present.
 2. Read `<project-home>/agent_plan.md` when present. Compare all overlapping roadmap-level truth, including active
-   phase, execution mode, phase-plan identity and status, pass, approval state, readiness, and exact-next-step
-   authority.
+   phase, all roadmap phase statuses, execution mode, phase-plan identity and status, pass, approval state,
+   readiness, and exact-next-step authority.
 3. Read the active phase plan only when state names one or it is required to establish a planning, contract, or
    review gate.
-4. Determine execution readiness and the exact next step from the minimum loaded state. Do not recursively scan
+4. Before accepting body-of-work completion, verify that the loaded approved roadmap contains no pending, active,
+   or otherwise unfinished phase that still belongs to the current body of work.
+5. Determine execution readiness and the exact next step from the minimum loaded state. Do not recursively scan
    project memory or use unrelated files to repair missing execution memory.
-5. Load relevant requirements, architecture, deeper final truth, source guidance, developer context, agent
+6. Load relevant requirements, architecture, deeper final truth, source guidance, developer context, agent
    context, maps, or skills only when the exact next step, startup request, impact assessment, or a detected
    inconsistency requires that facet.
-6. Classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`.
+7. Classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`.
 
 Startup orientation is read-only. Do not repair memory, create project artifacts, or begin the next step before
 the applicable gate.
@@ -50,10 +52,16 @@ the applicable gate.
 - A reviewed artifact awaiting approval is `Awaiting human review`.
 - A concrete conflict among loaded state, plan, or phase-plan truth is `Blocked`; report the conflicting fields
   instead of choosing one interpretation.
+- A durable state that claims `Complete` while `agent_plan.md` still contains a pending, active, or otherwise
+  unfinished phase belonging to the current body of work is inconsistent and therefore `Blocked`.
+- A durable state with no active phase while the roadmap contains an identifiable unfinished next phase is also
+  inconsistent unless a recorded blocker or required gate explains why that phase cannot be activated. Do not
+  silently repair either inconsistency during startup orientation.
 - Any other required execution-memory file that is missing or insufficient becomes an explicit blocker or named
   readiness gate. Do not reconstruct it from chat history, directory contents, maps, or context files.
 - `Ready to execute` requires one exact next step with an approved basis and no remaining required gate.
-- `Complete` means no implementation step remains.
+- `Complete` requires roadmap exhaustion for the current body of work: no unfinished approved roadmap phase
+  remains and no implementation step remains.
 
 The presence of a plan alone is not execution authorization.
 
@@ -213,6 +221,8 @@ Do not claim an exact next step complete until `skills/handoff.md` has reconcile
 - actual final-truth impact;
 - current `agent_plan.md`, `agent_state.md`, and active phase plan as applicable;
 - resolved blockers, obsolete state, and the new exact next step;
+- when a phase completed, the remaining approved roadmap and either the next applicable phase/gate or confirmed
+  roadmap exhaustion for the current body of work;
 - qualifying operational discoveries through `skills/agent_context.md` when triggered;
 - affected framework category guides through `skills/artifact_index.md` when a qualifying standard-artifact
   lifecycle change reaches its completion boundary;

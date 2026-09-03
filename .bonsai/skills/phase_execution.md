@@ -204,12 +204,43 @@ contract review before weakening, removing, contradicting, or materially changin
 
 Before Pass B completes, enable every approved expectation and make all approved contract tests pass.
 
+## Phase Completion Transition
+
+Completing a phase closes that phase only. It does not by itself complete the current body of work.
+
+When a phase reaches its approved definition of done:
+
+1. mark that phase complete in its applicable phase plan and roadmap truth;
+2. inspect the approved roadmap for pending, active, or otherwise unfinished phases that still belong to the
+   current body of work;
+3. if unfinished roadmap work remains, identify and activate the next applicable phase and derive that phase's
+   actual gate:
+   - use `Phase planning required` when a required detailed plan must still be drafted or corrected;
+   - use `Awaiting human review` when a required plan, contract, or other review artifact already awaits approval;
+   - use `Blocked` when a concrete inconsistency or impediment prevents safe activation or planning;
+   - use `Ready to execute` only when the next phase has one authorized exact next step and no required gate
+     remains;
+4. record the next phase, applicable plan/pass state, readiness, and exact next step consistently across
+   `agent_plan.md`, `agent_state.md`, and the applicable phase plan; and
+5. only when no unfinished approved roadmap work remains in the current body of work may Bonsai clear the current
+   phase as part of body-of-work completion and set `Execution Readiness: Complete`.
+
+Activating the next phase records lifecycle truth; it does not authorize substantive execution. The applicable
+planning, review, continuation, or blocker gate still controls what may happen next.
+
+Do not persist `Current Phase: None` as a completion shortcut while an identifiable unfinished roadmap phase
+remains. If roadmap state is too inconsistent to identify the next applicable phase safely, preserve the conflict
+as `Blocked` rather than treating the body of work as complete.
+
 ## Execution-Memory Reconciliation
 
 Keep `agent_plan.md`, `agent_state.md`, and the active phase plan consistent whenever phase, mode, plan status,
 pass, review state, blocker state, readiness, or exact-next-step truth changes. Remove superseded state instead of
 appending history. Correct stale plans before further implementation and compress completed phase detail when it
 no longer helps resumption.
+
+When a phase completes, apply the Phase Completion Transition before deriving readiness. A completed phase with
+later unfinished roadmap work must leave the body of work in a non-`Complete` state.
 
 At an exact-step or gate completion boundary, delegate to `skills/handoff.md` before claiming completion.
 

@@ -789,6 +789,36 @@ Useful reasons include:
 
 A phase plan should not exist merely because a phase touches several files.
 
+## Phase completion and body-of-work completion
+
+A phase is one execution unit within the approved roadmap. Completing a phase completes that phase only.
+
+After a phase completes, Bonsai must reconcile the approved roadmap before deriving the next execution condition.
+
+If the roadmap still contains a pending, active, or otherwise unfinished phase that belongs to the current body of
+work, Bonsai must continue the body of work. It must establish the next applicable phase and then derive the
+appropriate planning, review, blocker, or execution gate for that phase.
+
+Conceptually:
+
+```text
+phase completes
+    ↓
+unfinished approved roadmap work remains in this body of work?
+    yes → activate or plan the next applicable phase
+    no  → body of work completes
+```
+
+`Current Phase: None` does not by itself mean that the body of work is complete.
+
+`Execution Readiness: Complete` is valid only when the approved roadmap contains no unfinished implementation work
+that still belongs to the current body of work. Completing a phase, pass, contract, exact step, or phase plan is
+not sufficient evidence of body-of-work completion.
+
+A handoff must therefore distinguish phase completion from roadmap exhaustion. A fresh session must also reject
+durable execution memory that claims `Complete` while the loaded approved roadmap still contains unfinished work
+for the same body of work.
+
 ---
 
 # Developer Context
@@ -1069,10 +1099,12 @@ The implementation agent:
 6. stops at a structured startup gate;
 7. executes only the human-authorized next step;
 8. reconciles completed work;
-9. maintains current execution memory;
-10. preserves qualifying operational discoveries;
-11. reconciles affected framework category guides when authorized standard artifacts are added, removed, renamed, or materially change responsibility;
-12. stops at the next natural gate.
+9. when a phase completes, reconciles the approved roadmap and either establishes the next applicable phase and
+   gate or, only when no unfinished work remains in the current body of work, records body-of-work completion;
+10. maintains current execution memory;
+11. preserves qualifying operational discoveries;
+12. reconciles affected framework category guides when authorized standard artifacts are added, removed, renamed, or materially change responsibility;
+13. stops at the next natural gate.
 
 The implementation prompt is a stable router and invariant set.
 
@@ -1093,7 +1125,7 @@ Typical execution-readiness values include:
 | `Awaiting human review` | A required plan, contract, or other artifact is waiting for approval. |
 | `Ready to execute` | The exact next step has an approved basis and no required gate remains. |
 | `Blocked` | A concrete blocker prevents safe execution. |
-| `Complete` | No further implementation work is currently required. |
+| `Complete` | The approved roadmap contains no unfinished implementation work in the current body of work, and no further implementation step remains. |
 
 The existence of a plan does not imply implementation authorization.
 

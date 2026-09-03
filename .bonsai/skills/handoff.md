@@ -65,7 +65,12 @@ agent-owned. Current working-tree contents remain the human's baseline; do not e
    - update the active phase plan when its step, pass, review, or completion truth changed;
    - update `agent_state.md` with one current execution condition, exact next step, readiness, and unresolved
      blockers;
-   - when a phase completed, reconcile its phase plan, roadmap status, and state together; and
+   - when a phase completed, first mark that phase complete and inspect the approved roadmap for any pending,
+     active, or otherwise unfinished phase that still belongs to the current body of work;
+   - when unfinished roadmap work remains, identify and activate the next applicable phase, then derive and record
+     its planning, review, blocker, or execution gate instead of recording body-of-work completion;
+   - when no unfinished approved roadmap work remains, record body-of-work completion and only then permit
+     `Execution Readiness: Complete`; and
    - remove an expired dry-run baseline after completion, abandonment, material change, or redirection.
 8. Clean `agent_state.md` before reporting:
    - remove the completed next step and replace it with the actual next step;
@@ -74,6 +79,9 @@ agent-owned. Current working-tree contents remain the human's baseline; do not e
    - replace prior snapshot text with current resume truth rather than appending history; and
    - retain only information a later session needs to resume safely.
 9. Recompute execution readiness from reconciled durable state. A plan's existence alone is not authorization.
+   `Complete` is valid only when the approved roadmap is exhausted for the current body of work. If an
+   identifiable unfinished roadmap phase remains, the handoff must establish that phase's applicable next gate
+   and must not surface body-of-work completion.
 10. Handle any unreviewed out-of-scope observations under the rules below.
 11. Present the completion summary and applicable handoff gate through `skills/menu.md`, then stop for the human's
     choice.
@@ -178,8 +186,10 @@ Current-session and fresh-session continuation are peers. Do not recommend one o
 Run routinely.
 
 When readiness is `Complete`, `Blocked`, `Design required`, `Phase planning required`, or `Awaiting human review`,
-omit both executable continuation choices. Present the concrete applicable gate or non-execution choices. A fresh
-session never bypasses a blocker, design requirement, planning requirement, or review gate.
+omit both executable continuation choices. `Complete` may be supplied here only after completion reconciliation
+has confirmed roadmap exhaustion for the current body of work. Present the concrete applicable gate or
+non-execution choices. A fresh session never bypasses a blocker, design requirement, planning requirement, or
+review gate.
 
 If the next action owns a named mandatory gate, present that gate instead of a normal continuation menu.
 
