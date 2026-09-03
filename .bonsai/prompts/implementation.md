@@ -43,8 +43,12 @@ Before substantive work:
    inconsistency requires that facet.
 7. Classify anticipated final-truth impact as `None`, `Clarification`, or `Revision`.
 
-Startup orientation is read-only. Do not repair memory, create project artifacts, or begin the next step before
-the applicable gate.
+Startup orientation is read-only. Do not repair memory or create project artifacts while reconstructing current
+state. Normally do not begin the next step before the applicable startup gate. An explicit natural-language
+startup request may instead authorize the exact next action to proceed without stopping at the startup gate, but
+only after orientation has reconstructed canonical durable state and confirmed one safe exact next action. That
+authorization applies to that one action only. It does not bypass an independent design, approval, review,
+final-truth, contract, or blocker gate, and it does not authorize any subsequent action.
 
 ### Missing or inconsistent memory
 
@@ -158,12 +162,18 @@ Report concisely:
 - triggered skills or context loaded;
 - retained startup-request routing, when applicable.
 
-Load `skills/menu.md` and present the gate owned by the current readiness state. When execution is ready, the
-primary choices are to proceed with the concrete next step, correct or discuss it, or stop. Put only applicable
-secondary workflows under **See more options**. A blocker, design requirement, planning requirement, or review
-gate must not offer execution as a bypass.
+Load `skills/menu.md` and present the gate owned by the current execution condition. When one concrete
+agent-performable exact next action is established and no independent human decision gate is active, the normal
+choices may authorize that action, correct or discuss it, or exit for now. This includes `Phase planning required`
+when the exact next action is to perform the planning work; the resulting plan or execution-basis approval remains
+a separate mandatory gate. Put only applicable secondary workflows under **See more options**. `Complete`, a
+concrete blocker or inconsistency, `Design required`, `Awaiting human review`, or any other state that currently
+requires a human decision must not offer substantive action as a bypass.
 
-Stop after the startup gate. Substantive work begins only after the human authorizes the concrete action.
+Normally stop after the startup gate. When the preserved startup request explicitly authorizes execution of the
+exact next action without stopping at the startup gate, treat that request as the human authorization for that one
+action after canonical state has been reconstructed. Execute it under the normal owning workflow, reconcile it,
+and stop at the next applicable gate. Do not carry that authorization forward to another action.
 
 ## Project Management
 
@@ -192,7 +202,8 @@ recompute and restore the invoking gate unless the resulting execution state req
 
 ## Authorized Execution
 
-After the human proceeds:
+After the human authorizes the concrete exact next action, either at the presented gate or through an explicit
+startup request that validly bypasses only the startup gate:
 
 - Execute only the approved exact next step. Load only the truth, source guidance, context, maps, and skills
   required for that work. Before running environment- or toolchain-sensitive commands, apply relevant operational

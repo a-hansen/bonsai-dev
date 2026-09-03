@@ -176,12 +176,18 @@ Do not bury either field in a paragraph or refer indirectly to a "recorded next 
 
 Load `skills/menu.md` and supply concrete choices derived from the reconciled fields.
 
-When the next step is executable and no observations await review, normally supply:
+When one concrete agent-performable exact next action is established and no observations await review, normally
+supply:
 
 1. Continue with `<actual next step>` in the current session.
-2. Continue with `<actual next step>` in a fresh session.
+2. Continue with `<actual next step>` in a fresh session and automatically execute it.
 3. Review or change the next step.
-4. Do not continue right now.
+4. Exit for now.
+
+An agent-performable next action is not limited to `Ready to execute` implementation. It also includes a concrete
+planning action under `Phase planning required`, such as planning a newly activated later phase, when no human
+approval or other independent decision is required before that planning work can begin. The planning result still
+stops at its required approval gate.
 
 When the current session was itself entered through fresh-session continuation and no substantive work has
 occurred since that entry, omit the fresh-session continuation choice rather than immediately suggesting another
@@ -189,43 +195,67 @@ new session. Keep this as session-local interaction context; do not persist it i
 human explicitly asks for a fresh-session prompt, provide it. After substantive work or a later natural handoff,
 current-session and fresh-session continuation may again be peer choices.
 
-When the next step is executable and observations await review, insert a choice to review the `<N>` observations
-before the stop choice. Do not include Dry Run routinely.
+When an agent-performable exact next action exists and observations await review, insert a choice to review the
+`<N>` observations before **Exit for now**. Do not include Dry Run routinely.
 
-When readiness is `Complete`, `Blocked`, `Design required`, `Phase planning required`, or `Awaiting human review`,
-omit both executable continuation choices. `Complete` may be supplied here only after completion reconciliation
-has confirmed roadmap exhaustion for the current body of work. Present the concrete applicable gate or
-non-execution choices. A fresh session never bypasses a blocker, design requirement, planning requirement, or
-review gate.
+When readiness is `Complete`, `Blocked`, `Design required`, or `Awaiting human review`, omit substantive
+continuation choices. `Complete` may be supplied here only after completion reconciliation has confirmed roadmap
+exhaustion for the current body of work. `Phase planning required` does not by itself suppress continuation: use
+the standard continuation menu when its exact next action is agent-performable planning, and use a specialized
+gate when a human decision is currently required. A fresh session never bypasses a blocker, design requirement,
+approval, review, final-truth, contract, or other mandatory human gate.
 
-If the next action owns a named mandatory gate, present that gate instead of a normal continuation menu.
+If the next action owns a named mandatory human-decision gate, present that gate instead of a normal continuation
+menu.
 
-Only an explicit current-session continuation choice authorizes the next step to begin.
+An explicit current-session continuation choice authorizes the concrete exact next action to begin immediately in
+the current session. An explicit fresh-session auto-execute choice authorizes a new session to reconstruct
+canonical durable state and execute the exact next action it establishes without stopping at the startup gate.
+That startup authorization applies to one action only and does not authorize whatever action follows it.
 
 ## Fresh-Session Continuation
 
-Print a fresh-session prompt only after the human chooses fresh-session continuation or explicitly requests the
+Print a fresh-session prompt only after the human chooses fresh-session continuation or explicitly requests a
 prompt. Starting the new host session remains the human's action.
 
 First determine whether startup without an explicit project would deterministically resolve the same active
 project under `start.md`:
 
-- if yes, use only the canonical pointer;
+- if yes, omit the project qualifier;
 - if no, append only `Active project: <project>.` using the active project directory name.
 
-The copyable prompt must be exactly one of:
+When the human chooses the standard fresh-session continuation option, the copyable prompt must be exactly one of:
+
+```text
+Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate.
+```
+
+```text
+Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate. Active project: <project>.
+```
+
+The prompt authorizes only the one exact next action established after startup reconstructs canonical durable
+state. It does not carry the rendered next-step text across sessions, create durable authorization state, or
+authorize subsequent actions. If startup reconstruction instead finds a blocker, inconsistency, required human
+approval or review, design requirement, or no safe exact next action, stop at that applicable gate rather than
+forcing execution.
+
+When the human explicitly asks for an ordinary fresh-session startup pointer without auto-execution, use the
+ordinary canonical pointer instead:
 
 ```text
 Read .bonsai/start.md and follow its instructions.
 ```
 
+or, when project selection must be explicit:
+
 ```text
 Read .bonsai/start.md and follow its instructions. Active project: <project>.
 ```
 
-Do not append the project path, phase, pass, readiness, next step, approval state, dry-run state, workflow name,
-gate instructions, required skills, blockers, or a prior-session summary. Put resume-critical facts in
-`agent_state.md` before presenting the pointer.
+Do not append the project path, phase, pass, readiness, rendered next step, approval state, dry-run state, workflow
+name, required skills, blockers, or a prior-session summary. Put resume-critical facts in `agent_state.md` before
+presenting the pointer.
 
 After the self-check, tell the human to start a new session with the pointer and stop. Do not claim that Bonsai
 started, reset, or ended a session.
@@ -239,6 +269,7 @@ Stop at the applicable gate when:
 - execution memory conflicts or cannot state one safe next step;
 - a subordinate action creates a new mandatory gate;
 - the completion summary and handoff menu have been presented; or
-- the human chooses fresh-session continuation, review, change, discussion, or no continuation.
+- the human chooses fresh-session continuation, review, change, discussion, or **Exit for now**.
 
-Do not begin the next step until the human explicitly chooses current-session continuation.
+Do not begin the next step until the human explicitly authorizes it through the current-session continuation
+choice or through a valid fresh-session startup request generated by the fresh-session auto-execute choice.

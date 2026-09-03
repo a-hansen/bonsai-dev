@@ -1106,8 +1106,10 @@ The implementation agent:
 3. loads additional project truth, plans, maps, context, or skills only when required;
 4. identifies blockers or inconsistencies;
 5. classifies anticipated final-truth impact;
-6. stops at a structured startup gate;
-7. executes only the human-authorized next step;
+6. stops at a structured startup gate unless an explicit startup request authorizes the one exact next action to
+   proceed without stopping at that gate after canonical state reconstruction;
+7. executes only that human-authorized exact next action and does not carry startup authorization into a subsequent
+   action;
 8. reconciles completed work;
 9. when a phase completes, reconciles the approved roadmap and either establishes the next applicable phase and
    its planning or already-approved-plan gate, or, only when no unfinished work remains in the current body of
@@ -1215,21 +1217,28 @@ Other (type your answer)
 
 ## Startup gate
 
-Before substantive work begins, the implementation agent summarizes current execution condition and stops.
+Before substantive work begins, the implementation agent summarizes the current execution condition and normally
+stops.
 
 The normal gate offers actions equivalent to:
 
 1. Proceed with the identified next step.
 2. Correct or discuss the identified next step.
-3. Stop here.
+3. Exit for now.
 
 Secondary actions remain accessible through **See more options** when applicable.
+
+A natural-language startup request may explicitly authorize the one exact next action to proceed without stopping
+at the startup gate. The implementation agent must still reconstruct canonical durable state first and execute
+only the exact next action that state establishes. This exception bypasses only the startup presentation gate. It
+does not bypass an independent design, approval, review, final-truth, contract, or blocker gate, and it does not
+authorize any subsequent action.
 
 ## Phase-planning gate
 
 Every new project reviews the initial Phase 1 detailed plan before Phase 1 implementation begins.
 
-Every later phase enters a phase-planning gate before substantive execution unless an already-approved detailed plan for that phase remains applicable. The gate determines whether the phase needs a detailed phase plan or can use a lightweight roadmap-level execution basis. Either outcome requires human approval before `Ready to execute`. A roadmap phase description alone is not an approved execution basis.
+Every later phase enters phase planning before substantive execution unless an already-approved detailed plan for that phase remains applicable. When a completed phase activates the next phase and the concrete next action is to perform that planning work, Bonsai first uses the normal continuation mechanism so the human can choose whether that action occurs in the current or a fresh session. The planning work then determines whether the phase needs a detailed phase plan or can use a lightweight roadmap-level execution basis, and either result stops for human approval before `Ready to execute`. A roadmap phase description alone is not an approved execution basis.
 
 ## Contract gate
 
@@ -1793,20 +1802,30 @@ Bonsai cannot:
 
 Those are human actions.
 
-At a natural handoff, Bonsai records the exact next step and execution readiness before presenting continuation choices.
+At a natural handoff, Bonsai records the exact next step and execution readiness before presenting continuation
+choices.
 
-When execution is ready, the human may normally choose to continue:
+When one concrete agent-performable exact next action is established and no independent human-decision gate is
+active, the human may normally choose to continue:
 
-- in the current session;
-- in a fresh session;
+- with that action in the current session;
+- in a fresh session that automatically executes that one exact next action after startup reconstructs canonical
+  durable state;
 - after reviewing or changing the next step;
-- not at all right now.
+- or not at all right now, presented as **Exit for now**.
 
-Neither current-session nor fresh-session continuation is inherently preferred when both are contextually useful. A session that has just been entered through fresh-session continuation should not immediately offer another fresh-session continuation choice before substantive work has occurred. This is session-local interaction context, not durable project memory. Fresh-session continuation may appear again at a later natural boundary after substantive work or when the human explicitly requests it.
+This continuation model is not limited to `Ready to execute` implementation. It may also apply when readiness is
+`Phase planning required` and the concrete next action is to perform the planning work. Planning output still
+stops at its required approval gate. `Complete`, blockers, design requirements, approvals, reviews, final-truth
+decisions, contracts, and other mandatory human gates are not bypassed by fresh-session continuation.
 
-A fresh session does not bypass a blocker, review gate, or design requirement.
+Neither current-session nor fresh-session continuation is inherently preferred when both are contextually useful.
+A session that has just been entered through fresh-session continuation should not immediately offer another
+fresh-session continuation choice before substantive work has occurred. This is session-local interaction
+context, not durable project memory. Fresh-session continuation may appear again at a later natural boundary
+after substantive work or when the human explicitly requests it.
 
-The canonical fresh-session prompt is:
+The ordinary fresh-session startup pointer is:
 
 ```text
 Read .bonsai/start.md and follow its instructions.
@@ -1818,7 +1837,25 @@ When project selection should be explicit:
 Read .bonsai/start.md and follow its instructions. Active project: <project>.
 ```
 
-Phase, pass, approval state, next step, dry-run state, and other volatile information belong in project memory rather than the fresh-session prompt.
+When the human chooses fresh-session continuation with automatic execution of the exact next action, use:
+
+```text
+Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate.
+```
+
+When project selection should be explicit, append only:
+
+```text
+Active project: <project>.
+```
+
+The auto-execute request carries no rendered phase, pass, readiness, approval state, or next-step text. The new
+session reconstructs canonical durable state and executes the one exact next action it establishes. That startup
+authorization does not persist in project memory and does not authorize a subsequent action. If reconstruction
+finds a mandatory human gate or no safe exact next action, Bonsai stops there instead.
+
+Phase, pass, approval state, next step, dry-run state, and other volatile information belong in project memory
+rather than the fresh-session prompt.
 
 ---
 
@@ -1994,10 +2031,10 @@ A normal Bonsai project may look like this:
 13. Stop before material final-truth revisions or unauthorized scope expansion.
 14. Let the human decide which out-of-scope observations deserve preservation.
 15. Reconcile execution memory after completed work.
-16. When a phase completes and roadmap work remains, activate the next phase and pass through its planning gate unless an applicable approved detailed plan already exists.
+16. When a phase completes and roadmap work remains, activate the next phase, establish its concrete planning or already-approved-plan action, and use the normal continuation mechanism when no human decision is currently required.
 17. Reconcile affected framework category guides when standard artifacts change.
 18. Record the exact next step and execution readiness.
-19. Continue in the current session or a fresh one at the human's discretion when both choices are contextually useful.
+19. Continue the exact next action in the current session or choose a fresh session that automatically executes that one action, when both choices are contextually useful.
 20. Create named reusable maps for external repositories when they become part of the useful source universe.
 21. Keep durable truth, working state, operational context, framework discovery guides, and maps compact as the project evolves.
 

@@ -26,12 +26,16 @@ The invoking workflow supplies:
    choices.
 4. Say **Approve** for a reviewed artifact or contract. Say **Proceed**, **Continue**, or another accurate action
    verb for an action the human is authorizing.
-5. When both current-session and fresh-session continuation are contextually useful, do not make them unequal
-   recommendations. They are peer choices. Do not include fresh-session continuation merely by default. If the
-   current session was itself entered through fresh-session continuation and no substantive work has occurred
+5. When a primary choice means only that the human is leaving the current gate without taking the offered action,
+   label it **Exit for now**. Do not vary that meaning among `Stop`, `Stop here`, `Do not continue`, or
+   `Do not continue right now`.
+6. When both current-session and fresh-session continuation are contextually useful, do not make them unequal
+   recommendations. They are peer choices. The fresh-session choice should state that the exact next action will
+   execute automatically in the fresh session. Do not include fresh-session continuation merely by default. If
+   the current session was itself entered through fresh-session continuation and no substantive work has occurred
    since that entry, omit another fresh-session choice at the first resulting continuation gate unless the human
    explicitly requests it. This is session-local presentation context and must not be persisted in project memory.
-6. After presenting a gate, stop for the human's choice. Rendering a menu does not authorize an action.
+7. After presenting a gate, stop for the human's choice. Rendering a menu does not authorize an action.
 
 ## See More Options
 

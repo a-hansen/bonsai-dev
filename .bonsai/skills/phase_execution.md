@@ -269,8 +269,12 @@ When a phase reaches its approved definition of done:
 5. only when no unfinished approved roadmap work remains in the current body of work may Bonsai clear the current
    phase as part of body-of-work completion and set `Execution Readiness: Complete`.
 
-Activating the next phase records lifecycle truth; it does not authorize substantive execution. The applicable
-planning, review, continuation, or blocker gate still controls what may happen next.
+Activating the next phase records lifecycle truth; it does not authorize substantive execution. After the next
+phase and exact next action are established, route by the action actually required. When the exact next action is
+agent-performable and no independent human decision is currently required, return to the Continuation Gate even
+when readiness is `Phase planning required`. This includes planning a newly activated later phase. If the current
+state instead requires approval, review, final-truth action, design input, or blocker resolution, present that
+specialized gate. Planning work performed through continuation must still stop at its resulting approval gate.
 
 Do not persist `Current Phase: None` as a completion shortcut while an identifiable unfinished roadmap phase
 remains. If roadmap state is too inconsistent to identify the next applicable phase safely, preserve the conflict
@@ -290,13 +294,15 @@ At an exact-step or gate completion boundary, delegate to `skills/handoff.md` be
 
 ## Continuation Gate
 
-When an approval leaves an executable next step, load `skills/menu.md`. Normally present current-session and
-fresh-session continuation as peers:
+When the current workflow leaves one concrete agent-performable exact next action and no independent human-decision
+gate is active, load `skills/menu.md`. This includes an approved executable step and a concrete phase-planning
+action established after a phase boundary. Normally present current-session and fresh-session continuation as
+peers:
 
 1. Continue with the concrete next step in the current session.
-2. Continue with the concrete next step in a fresh session.
+2. Continue with the concrete next step in a fresh session and automatically execute it.
 3. Review or change the next step.
-4. Do not continue right now.
+4. Exit for now.
 
 If the current session was itself entered through fresh-session continuation and no substantive work has occurred
 since that entry, omit the fresh-session continuation choice at this first resulting continuation boundary unless
@@ -306,11 +312,14 @@ Record all resume-critical truth before presenting this gate. If fresh-session c
 the session remains a human action. Provide:
 
 ```text
-Read .bonsai/start.md and follow its instructions.
+Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate.
 ```
 
 Add `Active project: <project>` only when startup identity rules would not otherwise resolve the same project.
-Then stop. A fresh session never bypasses planning, review, final-truth, or blocker gates.
+The startup request authorizes one exact next action after canonical state reconstruction and does not authorize a
+subsequent action. It may authorize the planning action itself when planning is the established next action, but a
+fresh session never bypasses a required planning approval, review, final-truth, contract, design, or blocker gate.
+Then stop.
 
 ## Stop Conditions
 
