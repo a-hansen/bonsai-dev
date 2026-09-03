@@ -23,10 +23,14 @@ Resolve deterministic facts with host tools when available.
      environment configuration, or persist a guessed location.
 3. **Active project:** Resolve only immediate child directories of `<repository-home>/.bonsai/projects/`.
    - If the human explicitly named a project, use it only when that project directory exists. Otherwise stop and
-     ask the human to correct the project or choose an available one.
+     ask the human to correct the project or choose an available one. When multiple existing projects are offered
+     as alternatives, present them in stable lexical order as numbered choices and accept the corresponding number
+     as the selection.
    - Otherwise, use `main` when `projects/main/` exists.
    - Otherwise, if exactly one project directory exists, use it.
-   - Otherwise, if several project directories exist, list them and ask the human to choose one.
+   - Otherwise, if several project directories exist, enumerate them in stable lexical order, present them as
+     numbered choices, and ask the human to choose by number. Accept the corresponding number as the project
+     selection; do not require the human to retype the project name.
    - Otherwise stop and surface project creation or project design as the required next action. Do not create
      project memory or invent durable design during bootstrap.
 

@@ -184,10 +184,12 @@ filesystem tools for deterministic operations and resolve only immediate directo
 `<repository-home>/.bonsai/projects/`.
 
 - **List Projects:** List immediate project directory names in stable lexical order. Do not infer a mutable
-  current-project pointer.
-- **Switch Project:** Require an existing listed project, change active project only in current-session context,
-  then rerun read-only startup orientation for that project. Do not write the selection to repository or project
-  memory.
+  current-project pointer. A listing that does not request a project selection does not need numbering.
+- **Switch Project:** Enumerate existing project directories in stable lexical order. When asking the human to
+  choose among multiple projects, present them as numbered choices and accept the corresponding number as the
+  selection; do not require the human to retype the project name. Require the selected project to exist, change
+  active project only in current-session context, then rerun read-only startup orientation for that project. Do
+  not write the selection to repository or project memory.
 - **Create Project:** Require a human-supplied, unused single directory name. Reject an empty name, `.`/`..`, an
   absolute path, a drive prefix, path separators, control characters, or any target outside the repository project
   area. Preflight the exact target, present that project name for explicit confirmation, and stop before mutation.

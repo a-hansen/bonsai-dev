@@ -550,12 +550,17 @@ Large repositories may contain several independent Bonsai projects:
 
 An explicit project supplied by the human is authoritative for that session.
 
+Whenever Bonsai asks the human to choose one project from multiple existing projects, present the available project
+directories in stable lexical order as numbered choices and accept the corresponding number as the selection. This
+applies both to bootstrap project selection and to in-session project switching. A project listing that does not
+request a selection does not need to be numbered.
+
 If no project is explicit, project selection should be resolved cheaply:
 
 1. if `projects/main` exists, use it;
 2. otherwise enumerate project directories;
 3. if exactly one project exists, use it;
-4. if several projects exist, present a human selection;
+4. if several projects exist, present the stable numbered human selection;
 5. if no project exists, surface project creation or design as the next required action.
 
 Project selection must not overwrite another concurrent session's project selection.
