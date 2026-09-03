@@ -1175,6 +1175,11 @@ Less-frequent actions normally live under:
 
 **See more options**
 
+**See more options** is a navigation action. It must be presented independently of the secondary actions it
+contains. Selecting it opens a contextual secondary menu. Bonsai must not collapse, summarize, annotate, preview,
+or inline secondary actions into the **See more options** choice, including when only one secondary action is
+available.
+
 Depending on context, this may include:
 
 - Manage Projects;

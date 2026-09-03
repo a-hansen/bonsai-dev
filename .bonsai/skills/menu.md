@@ -42,6 +42,15 @@ The invoking workflow supplies:
 Put less-frequent actions under **See more options**. Include that choice only when at least one secondary action is
 applicable and available in the current context.
 
+**See more options** is a navigation choice, not a description or summary of its child actions. Render it as a
+standalone primary-menu choice. Do not append, preview, summarize, or inline secondary-action names into its label,
+including when exactly one secondary action is available.
+
+When the human selects **See more options**, retain the invoking gate and present a separate contextual secondary
+menu containing only the secondary actions supplied by the invoking workflow. A single available secondary action
+still uses this submenu; do not collapse the submenu into the primary menu. The secondary menu must provide a way
+to return to the invoking gate without taking a secondary action.
+
 Possible secondary actions include Manage Projects, Manage Code Maps, Create Bonsai Home, Dry Run, diagnostics,
 and maintenance. This is not a fixed list to display. Include only actions supplied by the invoking workflow; do
 not turn the submenu into a catalog of every Bonsai capability.
@@ -64,7 +73,10 @@ question; this skill does not manufacture a generic catch-all choice.
 
 The invoking workflow remains the owner of the parent gate and any authorization or durable-memory changes.
 
-When the human selects a secondary action:
+When the human selects **See more options**, retain the identity of the invoking gate while presenting its contextual
+secondary actions.
+
+When the human then selects a secondary action:
 
 1. retain the identity of the invoking gate;
 2. delegate only to the selected available workflow;
