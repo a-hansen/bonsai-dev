@@ -44,6 +44,23 @@ Apply an entry only when it remains consistent with current evidence, approved p
 developer context, and the authorized scope. Agent context never overrides those authorities and grants no new
 authorization.
 
+## Applying Existing Operational Context
+
+When this skill is triggered for an operational facet, applicable context governs the concrete working choice
+within the authority boundaries above. Agent-owned execution memory may record an intended build, test, run, or
+inspection command, but its literal syntax does not override applicable environment context. Resolve the command
+through current operational context when doing so preserves the authorized operation and success condition.
+
+For example, if agent-owned planning memory records `python -m unittest -q` while applicable context establishes
+that this environment uses `python3`, execute `python3 -m unittest -q`. This is operational resolution, not a
+phase-plan change, roadmap change, or final-truth change. Human-owned instructions that intentionally require an
+exact literal command remain authoritative.
+
+Consuming an existing correct rule is read-only. Do not rewrite, normalize, reorder, touch, or restate an
+`agent_context.md` merely because its guidance was used. Applying an existing rule is not a newly discovered fact.
+Maintain context only when qualifying operational truth is newly learned, materially corrected, consolidated, or
+shown to be obsolete.
+
 ## Qualification Rule
 
 Preserve a learned fact only when all of these are substantially true:
@@ -93,7 +110,9 @@ learned operational memory maintained by the agent.
 ## Maintenance
 
 The agent may create, update, consolidate, correct, or prune an applicable `agent_context.md` without a separate
-human gate when maintaining qualifying operational truth.
+human gate when maintaining qualifying operational truth. Do not perform a write merely because the file was
+loaded or successfully applied. If existing guidance already states the required current rule, leave the file
+unchanged.
 
 When writing:
 

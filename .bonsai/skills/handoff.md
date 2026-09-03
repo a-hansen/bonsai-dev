@@ -67,8 +67,11 @@ agent-owned. Current working-tree contents remain the human's baseline; do not e
      blockers;
    - when a phase completed, first mark that phase complete and inspect the approved roadmap for any pending,
      active, or otherwise unfinished phase that still belongs to the current body of work;
-   - when unfinished roadmap work remains, identify and activate the next applicable phase, then derive and record
-     its planning, review, blocker, or execution gate instead of recording body-of-work completion;
+   - when unfinished roadmap work remains, identify and activate the next applicable phase; unless an applicable
+     already-approved detailed plan for that phase exists, record `Phase planning required` and make planning that
+     phase the next action rather than deriving execution authority from roadmap text;
+   - when an applicable already-approved detailed plan exists, derive the next review, blocker, or execution gate
+     from that approved plan;
    - when no unfinished approved roadmap work remains, record body-of-work completion and only then permit
      `Execution Readiness: Complete`; and
    - remove an expired dry-run baseline after completion, abandonment, material change, or redirection.
@@ -78,7 +81,8 @@ agent-owned. Current working-tree contents remain the human's baseline; do not e
    - remove obsolete active files, stale commentary, expired review state, and superseded assumptions;
    - replace prior snapshot text with current resume truth rather than appending history; and
    - retain only information a later session needs to resume safely.
-9. Recompute execution readiness from reconciled durable state. A plan's existence alone is not authorization.
+9. Recompute execution readiness from reconciled durable state. A plan's existence alone is not authorization,
+   and roadmap-level phase or next-step text is not an approved execution basis for a newly activated later phase.
    `Complete` is valid only when the approved roadmap is exhausted for the current body of work. If an
    identifiable unfinished roadmap phase remains, the handoff must establish that phase's applicable next gate
    and must not surface body-of-work completion.
@@ -172,18 +176,21 @@ Do not bury either field in a paragraph or refer indirectly to a "recorded next 
 
 Load `skills/menu.md` and supply concrete choices derived from the reconciled fields.
 
-When the next step is executable and no observations await review:
+When the next step is executable and no observations await review, normally supply:
 
 1. Continue with `<actual next step>` in the current session.
 2. Continue with `<actual next step>` in a fresh session.
 3. Review or change the next step.
 4. Do not continue right now.
 
-When the next step is executable and observations await review, insert a choice to review the `<N>` observations
-before the stop choice.
+When the current session was itself entered through fresh-session continuation and no substantive work has
+occurred since that entry, omit the fresh-session continuation choice rather than immediately suggesting another
+new session. Keep this as session-local interaction context; do not persist it in project execution memory. If the
+human explicitly asks for a fresh-session prompt, provide it. After substantive work or a later natural handoff,
+current-session and fresh-session continuation may again be peer choices.
 
-Current-session and fresh-session continuation are peers. Do not recommend one over the other. Do not include Dry
-Run routinely.
+When the next step is executable and observations await review, insert a choice to review the `<N>` observations
+before the stop choice. Do not include Dry Run routinely.
 
 When readiness is `Complete`, `Blocked`, `Design required`, `Phase planning required`, or `Awaiting human review`,
 omit both executable continuation choices. `Complete` may be supplied here only after completion reconciliation

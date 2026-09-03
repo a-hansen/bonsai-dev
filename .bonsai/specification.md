@@ -157,8 +157,8 @@ This naming convention does not require every artifact an agent is authorized to
 
 Bonsai uses explicit gates at meaningful boundaries:
 
-- Phase 1 plan approval;
-- later phase-plan approval when a detailed plan is warranted;
+- Phase 1 detailed-plan approval;
+- later phase planning approval, using a detailed phase plan only when one is warranted;
 - durable contract review;
 - final-truth clarification or revision;
 - material execution deviations.
@@ -719,8 +719,9 @@ It records:
 - phase status;
 - active phase;
 - execution mode;
+- phase-planning state and approved execution-basis type;
 - phase-plan presence;
-- phase-plan approval state;
+- phase-plan approval state when a detailed plan exists;
 - roadmap-level deferrals;
 - completed roadmap work.
 
@@ -737,9 +738,10 @@ It records only information that could materially change what the next implement
 Typical contents include:
 
 - current phase;
-- active phase plan;
-- phase-plan approval state;
-- current phase pass;
+- phase-planning state and approved execution-basis type;
+- active phase plan, when one exists;
+- phase-plan approval state, when a detailed plan exists;
+- current phase pass, only for two-pass contract-first execution;
 - execution mode;
 - execution readiness;
 - current objective;
@@ -776,18 +778,20 @@ plan/agent_plan_phase_<N>.md
 
 Phase 1 is intentionally special.
 
-Every newly synthesized Bonsai project begins implementation by drafting and reviewing its Phase 1 plan before substantive implementation begins.
+Every newly synthesized Bonsai project begins implementation by drafting and reviewing its Phase 1 detailed plan before substantive implementation begins.
 
-Later phase plans are created only when the phase genuinely benefits from them.
+Every later phase also passes through phase planning before substantive execution unless an already-approved detailed plan for that phase remains applicable. Phase planning establishes the approved execution basis for the newly current phase. A roadmap description or literal next-step text in agent-owned roadmap memory is not, by itself, execution authorization.
 
-Useful reasons include:
+Later phase planning may remain lightweight. Create a detailed phase plan only when the phase genuinely benefits from one. Otherwise, phase planning may approve a concise roadmap-level execution basis containing the phase objective, execution mode, concrete next step, validation or success condition, and any constraints needed for safe execution.
+
+Useful reasons for a detailed later phase plan include:
 
 - ordered sequencing too detailed for `agent_plan.md`;
 - contract-first two-pass execution;
 - multiple meaningful review gates;
 - explicit constraints that must stay visible through execution.
 
-A phase plan should not exist merely because a phase touches several files.
+A phase plan should not exist merely because a phase touches several files. Lightweight planning still requires a human planning gate before the phase becomes `Ready to execute`.
 
 ## Phase completion and body-of-work completion
 
@@ -797,7 +801,9 @@ After a phase completes, Bonsai must reconcile the approved roadmap before deriv
 
 If the roadmap still contains a pending, active, or otherwise unfinished phase that belongs to the current body of
 work, Bonsai must continue the body of work. It must establish the next applicable phase and then derive the
-appropriate planning, review, blocker, or execution gate for that phase.
+appropriate planning, review, blocker, or execution gate for that phase. A newly activated later phase normally
+enters `Phase planning required`; it may become immediately executable only when an already-approved detailed
+plan for that phase remains applicable and supplies an authorized exact next step.
 
 Conceptually:
 
@@ -805,7 +811,7 @@ Conceptually:
 phase completes
     ↓
 unfinished approved roadmap work remains in this body of work?
-    yes → activate or plan the next applicable phase
+    yes → activate the next applicable phase and enter its planning or existing approved-plan gate
     no  → body of work completes
 ```
 
@@ -862,6 +868,10 @@ Useful agent context may include:
 - stable operational facts discovered through actual repository work.
 
 Agent context should preserve current actionable knowledge, not troubleshooting history.
+
+Applicable agent context governs concrete operational choices within its authorized scope. Agent-owned plans and state record operational intent, but a literal command stored there is not immutable environment syntax. When applicable operational context says that the current environment uses a different invocation for the same authorized operation, use the context-resolved invocation. For example, an agent-owned validation step recorded with `python` may execute with `python3` when applicable agent context establishes `python3` as the working interpreter. That operational resolution does not revise project final truth.
+
+Using an existing correct agent-context rule is read-only consumption. Do not rewrite, normalize, or restate `agent_context.md` merely because its guidance was applied. Maintain the file only when qualifying operational truth is newly learned, materially corrected, consolidated, or no longer valid.
 
 Prefer:
 
@@ -1100,7 +1110,8 @@ The implementation agent:
 7. executes only the human-authorized next step;
 8. reconciles completed work;
 9. when a phase completes, reconciles the approved roadmap and either establishes the next applicable phase and
-   gate or, only when no unfinished work remains in the current body of work, records body-of-work completion;
+   its planning or already-approved-plan gate, or, only when no unfinished work remains in the current body of
+   work, records body-of-work completion;
 10. maintains current execution memory;
 11. preserves qualifying operational discoveries;
 12. reconciles affected framework category guides when authorized standard artifacts are added, removed, renamed, or materially change responsibility;
@@ -1121,7 +1132,7 @@ Typical execution-readiness values include:
 | Value | Meaning |
 | --- | --- |
 | `Design required` | Product or architecture decisions must be resolved first. |
-| `Phase planning required` | Durable design exists, but execution planning is incomplete. |
+| `Phase planning required` | The current phase does not yet have an approved execution basis, including the required planning decision about whether a detailed phase plan is warranted. |
 | `Awaiting human review` | A required plan, contract, or other artifact is waiting for approval. |
 | `Ready to execute` | The exact next step has an approved basis and no required gate remains. |
 | `Blocked` | A concrete blocker prevents safe execution. |
@@ -1214,11 +1225,11 @@ The normal gate offers actions equivalent to:
 
 Secondary actions remain accessible through **See more options** when applicable.
 
-## Phase-plan gate
+## Phase-planning gate
 
-Every new project reviews the initial Phase 1 plan before Phase 1 implementation begins.
+Every new project reviews the initial Phase 1 detailed plan before Phase 1 implementation begins.
 
-Later phase-plan gates exist only when a detailed phase plan is warranted.
+Every later phase enters a phase-planning gate before substantive execution unless an already-approved detailed plan for that phase remains applicable. The gate determines whether the phase needs a detailed phase plan or can use a lightweight roadmap-level execution basis. Either outcome requires human approval before `Ready to execute`. A roadmap phase description alone is not an approved execution basis.
 
 ## Contract gate
 
@@ -1784,14 +1795,14 @@ Those are human actions.
 
 At a natural handoff, Bonsai records the exact next step and execution readiness before presenting continuation choices.
 
-When execution is ready, the human may choose to continue:
+When execution is ready, the human may normally choose to continue:
 
 - in the current session;
 - in a fresh session;
 - after reviewing or changing the next step;
 - not at all right now.
 
-Neither current-session nor fresh-session continuation is inherently preferred.
+Neither current-session nor fresh-session continuation is inherently preferred when both are contextually useful. A session that has just been entered through fresh-session continuation should not immediately offer another fresh-session continuation choice before substantive work has occurred. This is session-local interaction context, not durable project memory. Fresh-session continuation may appear again at a later natural boundary after substantive work or when the human explicitly requests it.
 
 A fresh session does not bypass a blocker, review gate, or design requirement.
 
@@ -1983,11 +1994,12 @@ A normal Bonsai project may look like this:
 13. Stop before material final-truth revisions or unauthorized scope expansion.
 14. Let the human decide which out-of-scope observations deserve preservation.
 15. Reconcile execution memory after completed work.
-16. Reconcile affected framework category guides when standard artifacts change.
-17. Record the exact next step and execution readiness.
-18. Continue in the current session or a fresh one at the human's discretion.
-19. Create named reusable maps for external repositories when they become part of the useful source universe.
-20. Keep durable truth, working state, operational context, framework discovery guides, and maps compact as the project evolves.
+16. When a phase completes and roadmap work remains, activate the next phase and pass through its planning gate unless an applicable approved detailed plan already exists.
+17. Reconcile affected framework category guides when standard artifacts change.
+18. Record the exact next step and execution readiness.
+19. Continue in the current session or a fresh one at the human's discretion when both choices are contextually useful.
+20. Create named reusable maps for external repositories when they become part of the useful source universe.
+21. Keep durable truth, working state, operational context, framework discovery guides, and maps compact as the project evolves.
 
 ---
 

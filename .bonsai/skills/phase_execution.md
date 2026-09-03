@@ -13,7 +13,7 @@ create product architecture or implementation abstractions.
 Load this skill when:
 
 - a new project's Phase 1 plan must be drafted or corrected;
-- a later phase genuinely needs detailed planning;
+- a later phase becomes current and requires phase planning;
 - phase execution mode is unresolved;
 - an exact step is governed by an active phase plan or approved phase contract;
 - Pass A or contract review is active; or
@@ -36,7 +36,9 @@ project truth from chat history, unrelated project files, maps, or context.
 ## Execution Terminology and Readiness
 
 Use `Single-pass Implementation` for ordinary implementation. Reserve `Pass A (Contract)`, `Contract Review`, and
-`Pass B (Implementation)` for an actual two-pass contract-first phase. Never call single-pass work Pass B.
+`Pass B (Implementation)` for an actual two-pass contract-first phase. Never call single-pass work Pass B. A
+single-pass phase has no user-facing pass designation: omit pass fields or labels rather than displaying a
+placeholder value.
 
 Use the readiness vocabulary defined by the implementation kernel:
 
@@ -81,7 +83,17 @@ If a required approved boundary is unclear, classify the issue as phase-plan cor
 clarification, final-truth revision, or an out-of-scope observation. Delegate clarification and revision to
 `skills/final_truth_update.md` before proceeding.
 
-## Create and Maintain Phase Plans
+## Phase Planning and Detailed Phase Plans
+
+Every phase must have an approved execution basis before substantive execution begins. Phase 1 always uses a
+detailed phase plan. A later phase normally enters `Phase planning required` when it becomes current unless an
+already-approved detailed plan for that phase remains applicable. The roadmap description, phase title, or a
+literal next-step command in agent-owned roadmap memory is not sufficient execution authorization.
+
+Later phase planning first determines whether a detailed plan is warranted. When it is not, propose a lightweight
+roadmap-level execution basis containing the phase objective, execution mode, concrete exact next step, validation
+or success condition, and any approved constraints needed for safe execution. Stop for human approval before
+recording `Ready to execute`. Do not create a phase-plan file merely to represent lightweight planning.
 
 Detailed phase plans are agent-owned execution memory, not product or architecture truth. Create
 `plan/agent_plan_phase_<N>.md` from `templates/plan_phase_template.md`; instantiate every field and remove all
@@ -98,6 +110,9 @@ This mandatory initial gate reviews execution intent. It does not by itself just
 
 ### Later Phases
 
+Every newly current later phase passes through planning unless an already-approved detailed plan for that phase
+remains applicable. Planning may conclude that no detailed plan is needed.
+
 Create a later detailed plan only when it materially improves execution and resumption, such as when the phase:
 
 - needs ordered sequencing too detailed for `agent_plan.md`;
@@ -106,14 +121,19 @@ Create a later detailed plan only when it materially improves execution and resu
 - has approved constraints that must remain visible across several bounded steps.
 
 Do not create one merely because the phase touches multiple files or is internally complex. When no detailed plan
-is warranted, keep roadmap/state concise and record the approved exact step directly.
+is warranted, present the lightweight execution basis for human approval, then keep roadmap/state concise and
+record the approved exact step directly. Approval of roadmap-level project design does not pre-approve this later
+phase execution basis.
 
 ### Missing, Stale, or Inconsistent Plans
 
 - A missing Phase 1 plan makes drafting it the exact next step.
-- A missing later plan that is genuinely required makes drafting it the exact next step.
+- A newly current later phase without an applicable already-approved detailed plan makes phase planning the exact
+  next step.
+- If that planning determines a detailed later plan is required, drafting it becomes the exact next step.
 - An incomplete, stale, or inconsistent active plan must be corrected before substantive execution.
-- An unresolved mode must be resolved before the phase becomes executable.
+- An unresolved mode or unapproved lightweight execution basis must be resolved before the phase becomes
+  executable.
 
 After drafting or materially correcting a required plan, reconcile roadmap and state, then stop for approval. Do
 not duplicate detailed sequencing into `agent_plan.md`.
@@ -134,6 +154,21 @@ must contain only its implementation structure; a two-pass plan must contain Pas
 For a code contract, plan Pass A around the smallest useful native source surface plus tests or examples that
 materially clarify behavior. Require the source and contract-test surface to compile before review. Behavioral
 tests may intentionally fail or remain disabled until Pass B when the plan states that clearly.
+
+## Lightweight Phase Planning Gate
+
+When later-phase planning determines that no detailed phase plan is warranted, report the proposed lightweight
+execution basis and load `skills/menu.md`. Supply these primary choices:
+
+1. Approve the named phase execution basis.
+2. Request revisions to the proposed execution basis.
+3. Discuss concerns before deciding.
+4. Require a detailed phase plan instead.
+
+Stop for the human choice. Approval authorizes the lightweight execution basis, not immediate execution. On
+approval, reconcile `agent_plan.md` and `agent_state.md`, persist that the current phase has an approved lightweight
+execution basis, record the concrete exact next step and `Ready to execute`, omit any pass designation for
+single-pass work, and stop at the Continuation Gate.
 
 ## Phase Plan Approval Gate
 
@@ -157,7 +192,8 @@ Stop for the human choice. Approval authorizes the plan, not immediate execution
 
 1. set the plan status to `Approved`;
 2. reconcile `agent_plan.md`, `agent_state.md`, and the phase plan;
-3. record the concrete exact next step, pass, and `Ready to execute` state; and
+3. record the concrete exact next step and `Ready to execute` state; record a pass only for actual two-pass
+   contract-first execution, and omit pass designation for single-pass work; and
 4. stop at the Continuation Gate before beginning the newly approved work.
 
 ## Pass A and Contract Review
@@ -193,6 +229,9 @@ readiness appropriately, and stop at the Continuation Gate. Do not begin Pass B 
 During single-pass implementation or Pass B:
 
 - execute only the approved exact step and scope;
+- apply relevant operational context before choosing environment- or toolchain-sensitive command syntax; a
+  literal command in agent-owned execution memory expresses the intended operation and does not override an
+  applicable context rule for invoking that same operation;
 - preserve approved final truth, contracts, and applicable boundaries;
 - follow project conventions and only the source guidance and context relevant to the work; and
 - stop if implementation requires an unapproved contract or final-truth change.
@@ -215,11 +254,16 @@ When a phase reaches its approved definition of done:
    current body of work;
 3. if unfinished roadmap work remains, identify and activate the next applicable phase and derive that phase's
    actual gate:
-   - use `Phase planning required` when a required detailed plan must still be drafted or corrected;
-   - use `Awaiting human review` when a required plan, contract, or other review artifact already awaits approval;
+   - use `Phase planning required` by default for a newly activated later phase that does not already have an
+     applicable approved detailed phase plan; planning then decides whether to create a detailed plan or approve a
+     lightweight execution basis;
+   - use `Awaiting human review` when a required detailed plan, contract, or other review artifact already awaits
+     approval;
    - use `Blocked` when a concrete inconsistency or impediment prevents safe activation or planning;
-   - use `Ready to execute` only when the next phase has one authorized exact next step and no required gate
-     remains;
+   - use `Ready to execute` immediately after phase activation only when an applicable already-approved detailed
+     plan supplies one authorized exact next step and no required gate remains;
+   - never derive execution authorization for the newly activated phase solely from roadmap-level phase text or a
+     literal next-step command in agent-owned planning memory;
 4. record the next phase, applicable plan/pass state, readiness, and exact next step consistently across
    `agent_plan.md`, `agent_state.md`, and the applicable phase plan; and
 5. only when no unfinished approved roadmap work remains in the current body of work may Bonsai clear the current
@@ -246,13 +290,17 @@ At an exact-step or gate completion boundary, delegate to `skills/handoff.md` be
 
 ## Continuation Gate
 
-When an approval leaves an executable next step, load `skills/menu.md` and present current-session and
+When an approval leaves an executable next step, load `skills/menu.md`. Normally present current-session and
 fresh-session continuation as peers:
 
 1. Continue with the concrete next step in the current session.
 2. Continue with the concrete next step in a fresh session.
 3. Review or change the next step.
 4. Do not continue right now.
+
+If the current session was itself entered through fresh-session continuation and no substantive work has occurred
+since that entry, omit the fresh-session continuation choice at this first resulting continuation boundary unless
+the human explicitly requests it. Keep this fact session-local rather than writing it to project memory.
 
 Record all resume-critical truth before presenting this gate. If fresh-session continuation is selected, starting
 the session remains a human action. Provide:

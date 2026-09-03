@@ -14,7 +14,9 @@ The invoking workflow supplies:
 - the gate being presented;
 - the concrete choices currently available;
 - the secondary actions that are applicable and available;
-- whether the host already supplies a free-form choice.
+- whether the host already supplies a free-form choice; and
+- when relevant, whether this is the first continuation boundary of a newly entered session with no substantive
+  work yet performed.
 
 ## Primary Menu
 
@@ -24,7 +26,11 @@ The invoking workflow supplies:
    choices.
 4. Say **Approve** for a reviewed artifact or contract. Say **Proceed**, **Continue**, or another accurate action
    verb for an action the human is authorizing.
-5. Do not make current-session and fresh-session continuation unequal recommendations. They are peer choices.
+5. When both current-session and fresh-session continuation are contextually useful, do not make them unequal
+   recommendations. They are peer choices. Do not include fresh-session continuation merely by default. If the
+   current session was itself entered through fresh-session continuation and no substantive work has occurred
+   since that entry, omit another fresh-session choice at the first resulting continuation gate unless the human
+   explicitly requests it. This is session-local presentation context and must not be persisted in project memory.
 6. After presenting a gate, stop for the human's choice. Rendering a menu does not authorize an action.
 
 ## See More Options

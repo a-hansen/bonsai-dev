@@ -29,10 +29,11 @@ Before substantive work:
 
 1. Read `<project-home>/agent_state.md` when present.
 2. Read `<project-home>/agent_plan.md` when present. Compare all overlapping roadmap-level truth, including active
-   phase, all roadmap phase statuses, execution mode, phase-plan identity and status, pass, approval state,
-   readiness, and exact-next-step authority.
+   phase, all roadmap phase statuses, execution mode, phase-planning and execution-basis approval state,
+   phase-plan identity and status when applicable, pass when applicable, readiness, and exact-next-step authority.
 3. Read the active phase plan only when state names one or it is required to establish a planning, contract, or
-   review gate.
+   review gate. For a later phase that has just become current, treat roadmap text alone as insufficient execution
+   authority; absent an applicable already-approved detailed phase plan, the phase requires planning.
 4. Before accepting body-of-work completion, verify that the loaded approved roadmap contains no pending, active,
    or otherwise unfinished phase that still belongs to the current body of work.
 5. Determine execution readiness and the exact next step from the minimum loaded state. Do not recursively scan
@@ -48,7 +49,9 @@ the applicable gate.
 ### Missing or inconsistent memory
 
 - A new or empty project directory with no usable durable design is `Design required`.
-- Durable project design without the required initial Phase 1 execution plan is `Phase planning required`.
+- Durable project design without the required initial Phase 1 execution plan is `Phase planning required`. A
+  later current phase is also `Phase planning required` when it lacks an applicable approved execution basis;
+  roadmap-level phase or next-step text alone does not satisfy that gate.
 - A reviewed artifact awaiting approval is `Awaiting human review`.
 - A concrete conflict among loaded state, plan, or phase-plan truth is `Blocked`; report the conflicting fields
   instead of choosing one interpretation.
@@ -88,7 +91,10 @@ inline workflow owned below; it has no separate skill.
 
 When agent context is triggered, load `skills/agent_context.md`; that skill owns its scoped loading, application,
 qualification, and maintenance. Agent context informs operations but does not override human-owned developer
-context, project final truth, or normal authorization boundaries.
+context, project final truth, or normal authorization boundaries. When applicable context specifies how the
+current environment invokes an authorized operation, resolve concrete commands through that context rather than
+treating literal command text in agent-owned planning memory as immutable. Applying an existing correct rule is
+read-only consumption and does not itself justify rewriting agent context or entering a final-truth workflow.
 
 When authorized implementation adds, removes, renames, or materially changes the responsibility of a standard
 prompt, skill, or template, category-guide reconciliation becomes a required facet of completing that lifecycle
@@ -142,7 +148,7 @@ Unrecognized prose remains part of the human request rather than being discarded
 Report concisely:
 
 - active project;
-- current phase and pass, when known;
+- current phase, and pass only for actual two-pass contract-first execution;
 - execution mode;
 - phase-plan status, when applicable;
 - execution readiness;
@@ -189,7 +195,10 @@ recompute and restore the invoking gate unless the resulting execution state req
 After the human proceeds:
 
 - Execute only the approved exact next step. Load only the truth, source guidance, context, maps, and skills
-  required for that work.
+  required for that work. Before running environment- or toolchain-sensitive commands, apply relevant operational
+  context. A context-resolved invocation that preserves the approved operation or check does not change the exact
+  step, require phase-plan correction, or create final-truth impact merely because its literal command differs
+  from agent-owned planning memory.
 - Treat current working-tree contents as the human's intended baseline. Do not require a clean tree, revert or
   normalize unrelated work, or report unrelated pre-existing changes unless they prevent safe completion.
 - Follow project conventions. Require source, maps, or other evidence for non-obvious framework or platform
@@ -221,8 +230,8 @@ Do not claim an exact next step complete until `skills/handoff.md` has reconcile
 - actual final-truth impact;
 - current `agent_plan.md`, `agent_state.md`, and active phase plan as applicable;
 - resolved blockers, obsolete state, and the new exact next step;
-- when a phase completed, the remaining approved roadmap and either the next applicable phase/gate or confirmed
-  roadmap exhaustion for the current body of work;
+- when a phase completed, the remaining approved roadmap and either the next applicable phase with its planning
+  or already-approved-plan gate, or confirmed roadmap exhaustion for the current body of work;
 - qualifying operational discoveries through `skills/agent_context.md` when triggered;
 - affected framework category guides through `skills/artifact_index.md` when a qualifying standard-artifact
   lifecycle change reaches its completion boundary;
