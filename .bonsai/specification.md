@@ -279,7 +279,7 @@ $BONSAI_HOME/
 │   ├── prompts.md
 │   ├── implementation.md
 │   ├── create_project_memory.md
-│   └── create_map_repo.md
+│   └── create_map_calibration.md
 ├── skills/
 │   ├── skills.md
 │   ├── artifact_index.md
@@ -1050,25 +1050,28 @@ When the design is mature enough to preserve, the human uses:
 <bonsai-home>/prompts/create_project_memory.md
 ```
 
-The workflow synthesizes the discussion into durable Bonsai project memory.
+The workflow synthesizes the discussion into durable Bonsai project memory. For an initial synthesis, it also
+packages the repository-local Bonsai startup anchor so the result can be extracted directly at repository root.
 
-For a normal single-project repository, the default output is a zip whose project memory is rooted at:
+Before initial synthesis, the workflow resolves the project name. If the human already supplied one, use it after
+validation. Otherwise ask what the Bonsai project should be called and suggest `main` as the conventional default.
+`main` remains the normal simple-project convention, but it is a human-visible default rather than a silently
+chosen project identity.
+
+The initial output is a zip suitable for extraction at repository root. It normally contains:
 
 ```text
-.bonsai/projects/main/
+.bonsai/
+    start.md
+    projects/
+        <project>/
+            requirements.md
+            architecture.md
+            agent_plan.md
+            agent_state.md
 ```
 
-The zip normally contains:
-
-```text
-.bonsai/projects/main/
-    requirements.md
-    architecture.md
-    agent_plan.md
-    agent_state.md
-```
-
-It may also contain:
+It may also contain project-local:
 
 ```text
 agent_context.md
@@ -1077,6 +1080,13 @@ architecture/architecture_<SUBSYSTEM>.md
 ```
 
 when the design genuinely warrants them.
+
+The generated `.bonsai/start.md` is the canonical repository-local bootstrap for the Bonsai version that owns the
+workflow. Including it enables the repository-local Bonsai entry point. It does not make the repository an
+Embedded Bonsai installation unless the repository separately contains a complete valid Bonsai standard.
+
+For an existing-project design update, the workflow preserves the existing project identity when unambiguous and
+packages only materially affected project files. It does not routinely include or replace `.bonsai/start.md`.
 
 If the human has identified external source or code maps during design, the workflow may seed project-level `agent_context.md` with that approved operational information.
 
@@ -1087,8 +1097,6 @@ Useful code maps:
 - library-a
 - library-b
 ```
-
-For a repository intentionally using named Bonsai projects, the human may explicitly request a named project instead of `main`.
 
 The project-memory workflow does not generate the initial detailed Phase 1 plan.
 
@@ -1506,40 +1514,56 @@ The human may use the Bonsai Web UI mapping-session prompt to describe:
 - patterns worth recognizing;
 - source areas that can be treated lightly.
 
-That calibration produces an optional human-owned mapping artifact conventionally named:
+That calibration produces an optional human-owned mapping artifact named:
 
 ```text
-map_repo.md
+map_calibration.md
 ```
 
-A map store may therefore look like:
+The Web UI calibration workflow packages the artifact for extraction at the calibrated source repository root:
 
 ```text
-$BONSAI_HOME/maps/<source>/
-    map_repo.md               # Optional human-approved mapping calibration
-    code_map.md
-    ...
+.bonsai/maps/<source>/map_calibration.md
 ```
 
-`map_repo.md` is mapping guidance. It is not product truth or architecture truth.
+The package creates only the mapping directory and calibration file. It does not include `.bonsai/start.md`,
+project memory, generated code-map artifacts, or source. Adding this package does not by itself make the source
+repository a Bonsai project or Embedded Bonsai installation.
 
-Project memory and `map_repo.md` may both be used when both are available.
+`map_calibration.md` is mapping guidance. It is not product truth, architecture truth, source evidence, or map
+identity.
+
+Project memory and `map_calibration.md` may both be used when both are available.
 
 ## Mapping context and map storage are separate
 
-The source context used to create a map and the location where the resulting map is stored are different concerns.
+The source context used to create a map, the repository-local location of human calibration, and the location where
+the resulting generated map is stored are different concerns.
 
-When mapping an external source, Bonsai should operate against the actual selected source and use that source's relevant project memory when available.
+When the selected source is a repository checkout, the mapping workflow may use source-local calibration from:
 
-If a Bonsai Home is active, the resulting reusable map still belongs under:
+```text
+<source-repository>/.bonsai/maps/<source>/map_calibration.md
+```
+
+This source-local calibration remains human-owned input. Bonsai must not move, rewrite, or copy it into the active
+map store merely because mapping uses it.
+
+When mapping an external source, Bonsai should operate against the actual selected source and use that source's
+relevant project memory and source-local calibration when available.
+
+If a Bonsai Home is active, the resulting reusable generated map still belongs under:
 
 ```text
 $BONSAI_HOME/maps/<source>/
 ```
 
+In Embedded Bonsai, the source-local calibration location and active map store may be the same directory.
+
 This produces the rule:
 
-> Map creation uses the context of the source being mapped. Map storage uses the active Bonsai map store.
+> Map creation uses the context of the source being mapped. Human calibration may remain source-local. Generated
+> map storage uses the active Bonsai map store.
 
 ## External source without Bonsai project memory
 
@@ -1550,7 +1574,7 @@ The workflow is:
 ```text
 actual source
     +
-optional Web UI map_repo.md
+optional source-local .bonsai/maps/<source>/map_calibration.md
     ↓
 mapping workflow
     ↓
@@ -1602,7 +1626,7 @@ The integrated mapping workflow should:
 - use the active Bonsai map store;
 - identify the source being mapped independently from the active Bonsai project;
 - use relevant project memory when available;
-- use optional `map_repo.md` calibration when available;
+- use optional source-local `map_calibration.md` calibration when available;
 - use actual source as authoritative;
 - preserve stable source locations or mapping rules in appropriate agent context;
 - return to the invoking Bonsai gate when the subordinate mapping workflow completes.
@@ -1728,19 +1752,28 @@ It receives Bonsai Home, repository home, and active project from `start.md`, th
 
 ## `prompts/create_project_memory.md`
 
-Web UI project-memory creation workflow.
+Web UI project-memory creation and repository-bootstrap packaging workflow.
 
-It turns a mature design conversation into a zip containing durable Bonsai project memory, normally rooted at `.bonsai/projects/main/`.
+It turns a mature design conversation into durable Bonsai project memory and, for initial synthesis, a
+repository-root zip containing the canonical local `.bonsai/start.md` anchor plus the selected project under
+`.bonsai/projects/<project>/`. When no project name has already been supplied, it asks for one and suggests `main`
+as the conventional default.
 
 It may also seed project-level `agent_context.md` with human-approved operational context such as known external code maps.
 
-## `prompts/create_map_repo.md`
+## `prompts/create_map_calibration.md`
 
-Web UI code-map calibration workflow.
+Web UI code-map calibration and packaging workflow.
 
-It allows the human to provide source-specific mapping priorities when project memory is absent or when additional mapping emphasis is useful.
+It allows the human to provide source-specific mapping priorities when project memory is absent or when additional
+mapping emphasis is useful. When synthesis is requested, it produces a repository-root ZIP containing only:
 
-Its output is optional human-owned mapping guidance named `map_repo.md`.
+```text
+.bonsai/maps/<source>/map_calibration.md
+```
+
+The calibration remains human-owned mapping guidance and is consumed as source-specific input by the later code-map
+workflow.
 
 ---
 
@@ -1951,13 +1984,16 @@ For a simple repository, the conventional initial structure is:
         main/
 ```
 
-A helper script may create this structure.
+The normal Web UI project-memory synthesis workflow may create this repository-local structure and the initial
+project memory together as one zip for extraction at repository root. It asks for the project name when one has
+not already been supplied and suggests `main` as the conventional default.
 
-It may also be created manually from the Bonsai distribution.
+A helper script may also create the local bootstrap structure, and it may be created manually from the Bonsai
+distribution. Creating only the repository-local anchor and project memory does not create an Embedded Bonsai
+standard.
 
-Enabling the repository does not perform product design.
-
-Durable requirements, architecture, roadmap, and state are synthesized through the Web UI design workflow.
+Enabling the repository does not itself approve or invent product design. Durable requirements, architecture,
+roadmap, and state are synthesized from the mature Web UI design conversation.
 
 ---
 
@@ -2060,12 +2096,12 @@ Discard or replace:
 
 # Typical Working Rhythm
 
-A normal Bonsai project may look like this:
+A normal new Bonsai project may look like this:
 
-1. Enable Bonsai in the repository with `.bonsai/start.md`.
-2. Explore product and architecture design in a Web UI AI.
-3. Use `prompts/create_project_memory.md` to synthesize durable project memory.
-4. Save the resulting memory under `.bonsai/projects/main/` or a named project.
+1. Explore product and architecture design in a Web UI AI.
+2. Use `prompts/create_project_memory.md` when the design is mature enough to preserve.
+3. Select the Bonsai project name, normally accepting the suggested `main` default for a simple repository.
+4. Extract the resulting zip at repository root, creating `.bonsai/start.md` and the selected project memory.
 5. Start implementation with `Read .bonsai/start.md and follow its instructions.`
 6. Let bootstrap resolve Bonsai Home, repository home, and active project.
 7. Draft and review the initial Phase 1 plan.

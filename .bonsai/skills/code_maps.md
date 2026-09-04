@@ -28,11 +28,11 @@ Use these authorities in order:
 
 1. actual selected source, including its build files, tests, examples, and representative uses;
 2. approved project final truth and archaeological analysis as attention and interpretation context;
-3. optional human-owned `map_repo.md` as source-specific calibration;
+3. optional human-owned `map_calibration.md` as source-specific calibration;
 4. existing map data as navigation memory that must remain aligned with source.
 
-Project memory and `map_repo.md` may guide where to look, but they do not prove source behavior or determine map
-identity. When they disagree with observed source, source wins and the mismatch remains visible until corrected.
+Project memory and `map_calibration.md` may guide where to look, but they do not prove source behavior or determine
+map identity. When they disagree with observed source, source wins and the mismatch remains visible until corrected.
 
 Do not require a Bonsai project for source mapping. Do not create project memory merely to map an external source.
 Do not put active project, phase, pass, approval, requirement-tracking, icebox, or session status into map data.
@@ -45,7 +45,17 @@ Resolve the active map store from the session identity supplied by `start.md`:
 - for Embedded Bonsai without a configured external home: `<repository-home>/.bonsai/maps/`.
 
 Resolve that store independently from the source location. Mapping source in another repository, directory, or
-archive does not place output beside that source by default.
+archive does not place generated output beside that source by default.
+
+Human-owned calibration is an input, not generated runtime map data. When the selected source is a repository
+checkout, look for source-local calibration at:
+
+```text
+<source-repository>/.bonsai/maps/<source>/map_calibration.md
+```
+
+In Embedded Bonsai this source-local location may also be physically inside the active map store. Never move, copy,
+normalize, or rewrite calibration merely because generated map artifacts are stored elsewhere.
 
 Several projects may reuse one named source map, and one project may select several relevant source maps. Do not
 duplicate a map per consuming project or treat the active project's name as the map identity.
@@ -54,7 +64,6 @@ Each named source map may contain:
 
 ```text
 <map-store>/<source>/
-    map_repo.md                       # Optional, human-owned calibration
     code_map.md                       # Required entry for a usable map
     map_state.md                      # Optional active mapping continuation
     namespace_router.tsv              # Optional fuller namespace routing
@@ -65,13 +74,13 @@ Each named source map may contain:
     subsystems/<subsystem>/api_ext.md # Optional extension mechanics
 ```
 
-Write runtime map data only beneath the resolved active map store. Never instantiate a template back into the
-Bonsai standard, write generated map data into a staged distribution, or treat a standard template as runtime map
-state.
+Write generated runtime map data only beneath the resolved active map store. Never instantiate a template back into
+the Bonsai standard, write generated map data into a staged distribution, or treat a standard template as runtime
+map state.
 
 The named source directory is a storage boundary, not a blanket ownership boundary. Map lifecycle operations own
-only agent-owned map artifacts they actually create or manage. They never own `map_repo.md`, a supplied source
-archive, source checkout, or another colocated file merely because it is under that directory.
+only agent-owned map artifacts they actually create or manage. They never own `map_calibration.md`, a supplied
+source archive, source checkout, or another colocated file merely because it is under that directory.
 
 ## Resolve the Mapping Context
 
@@ -89,8 +98,11 @@ Before proposing substantive mapping work, resolve only enough context to make t
    map name when several identities or snapshots are plausible.
 6. Inspect only the named map entry or directory metadata needed to determine whether the map exists, whether its
    identity aligns, and which files are map-owned. A colocated non-map file does not prove a map exists.
-7. Read relevant project memory or `map_repo.md` only when it can materially calibrate the selected action.
-8. Load `skills/agent_context.md` only when stable source locations, relevant map selection, or another qualifying
+7. Resolve source-specific calibration only when it can materially improve the selected action. For a repository
+   checkout, check `<source-repository>/.bonsai/maps/<source>/map_calibration.md`. Use another calibration location
+   only when the human explicitly supplied it for the selected source.
+8. Read relevant project memory only when it can materially calibrate the selected action.
+9. Load `skills/agent_context.md` only when stable source locations, relevant map selection, or another qualifying
    operational rule may need to be applied or maintained.
 
 If the source location, map store, map identity, source snapshot, or ownership boundary remains materially
@@ -123,8 +135,8 @@ Before substantive source inspection or any mutation, present:
 - **Source:** logical name, type, location, and available snapshot identity;
 - **Map identity:** selected named source map;
 - **Map store / target:** resolved store and proposed map-owned target set;
-- **Scope:** repository orientation, one named subsystem, API mechanics, calibration, maintenance, cleanup, or
-  another concrete bound;
+- **Scope:** repository orientation, one named subsystem, API mechanics, maintenance, cleanup, or another
+  concrete bound;
 - **Alignment:** `Aligned`, `Mismatch`, `Insufficient evidence`, or `Not applicable for new map`;
 - **Inputs:** actual source plus any project or human calibration that will be consulted;
 - **Proposed next step:** one concrete action and why it is next;
@@ -160,10 +172,11 @@ After the proposal is approved:
 
 1. Inspect actual source for orientation before deep mapping. Use build structure, representative source, tests,
    examples, and call sites only as needed for the approved scope.
-2. Treat relevant project truth and optional `map_repo.md` as calibration, not source proof. Preserve material
-   disagreements as uncertainty.
+2. Treat relevant project truth and applicable `map_calibration.md` as calibration, not source proof. Preserve
+   material disagreements as uncertainty.
 3. Resolve the exact map-owned files to create. Preserve every pre-existing human-owned or otherwise unowned file,
-   including supplied source artifacts colocated with the target map.
+   including any calibration or supplied source artifact physically colocated with the target map. Treat
+   source-local calibration outside the active map store as read-only input.
 4. Instantiate only justified artifacts from `<bonsai-home>/templates/`:
    - `code_map_template.md` for the required entry;
    - `map_state_template.md` only when active continuation benefits;
@@ -230,7 +243,8 @@ action was previously selected.
 Before that gate:
 
 1. resolve and display every existing agent-owned target that would be replaced or removed;
-2. display every known preserved item, including `map_repo.md`, supplied source inputs, and other unowned files;
+2. display every known preserved item in the target map, including `map_calibration.md`, supplied source inputs, and
+   other unowned files;
 3. show the source snapshot, map identity, rebuild scope, proposed replacement artifacts, and validation plan; and
 4. stop for explicit approval, revision, discussion, or cancellation.
 
@@ -404,7 +418,7 @@ Before reporting an approved mapping scope complete:
 6. verify relative links and optional-artifact references match files that actually exist;
 7. validate every materially edited TSV header, literal-tab separator, fixed column count, and one-line row;
 8. verify only approved map-owned targets changed;
-9. verify supplied source, `map_repo.md`, and other unowned files remain unchanged;
+9. verify supplied source, every consulted `map_calibration.md`, and other unowned files remain unchanged;
 10. verify no transient inspection became durable map data;
 11. reconcile concise `map_state.md` or remove it when no longer useful; and
 12. maintain only qualifying agent context through `skills/agent_context.md`.
@@ -418,7 +432,7 @@ At completion, cancellation, or a declined contextual offer:
 1. report the action, source, map identity, bounded result, changed map-owned files, checks actually performed,
    preserved unowned files, remaining uncertainty, and whether qualifying agent context changed;
 2. reconcile `map_state.md` and any qualifying agent context;
-3. do not silently revise human-owned `map_repo.md`, project final truth, or project execution memory;
+3. do not silently revise human-owned `map_calibration.md`, project final truth, or project execution memory;
 4. return control to the workflow that invoked code mapping;
 5. let the owning workflow reconcile its own project execution state; and
 6. load `skills/menu.md` and re-present the refreshed invoking gate unless mapping created a new required blocker,

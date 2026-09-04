@@ -2,9 +2,10 @@
 
 ## Purpose
 
-Turn a mature Web UI design conversation into durable, independently usable Bonsai project memory. Preserve the
-human's approved product and architecture decisions, honest unresolved questions, and a minimal implementation
-roadmap without turning the conversation into a transcript or beginning implementation.
+Turn a mature Web UI design conversation into durable, independently usable Bonsai project memory and, for an
+initial synthesis, a repository-root Bonsai bootstrap package. Preserve the human's approved product and
+architecture decisions, honest unresolved questions, and a minimal implementation roadmap without turning the
+conversation into a transcript or beginning implementation.
 
 Keep design conversational until synthesis is requested. Do not force the human to fill templates during
 exploration.
@@ -14,41 +15,53 @@ exploration.
 Use this workflow when the human says the current design is mature enough to preserve. Synthesize from:
 
 - the complete current design conversation;
-- explicitly supplied source, design, or existing project-memory artifacts;
-- an explicitly requested Bonsai project name, when present; otherwise
-- the conventional project name `main`.
+- explicitly supplied source, design, or existing project-memory artifacts; and
+- the Bonsai project name resolved below.
 
 This is primarily a Web UI artifact-producing workflow. It does not invoke the coding-agent implementation
 workflow or modify a repository directly.
 
 ## Choose the Project Root Safely
 
-For normal single-project repositories, use exactly:
+For initial synthesis, resolve the project name before generating artifacts:
+
+- If the human already supplied a project name, use it after validation.
+- Otherwise ask what the Bonsai project should be called and suggest `main` as the conventional default.
+- Treat acceptance of the suggested default as selection of `main`; do not require the human to invent another
+  name merely because named projects are supported.
+
+For an existing-project design update, preserve the supplied existing project identity when it is unambiguous; do
+not ask the human to rename or reselect it merely because the workflow is being rerun.
+
+The selected project name must be one non-empty directory segment: not `.` or `..`, not absolute, and containing
+no `/`, `\`, drive prefix, traversal, or control characters. Ask for a corrected name when unsafe; do not
+sanitize it silently. Do not create `main` as an alias when another safe name was selected.
+
+The selected project root is:
 
 ```text
-.bonsai/projects/main/
+.bonsai/projects/<project>/
 ```
-
-Use a different project name only when the human explicitly requests one. A named project must be one non-empty
-directory segment: not `.` or `..`, not absolute, and containing no `/`, `\`, drive prefix, traversal, or control
-characters. Ask for a corrected name when unsafe; do not sanitize it silently. Do not create `main` as an alias
-when another safe name was explicitly selected.
 
 ## Initial Synthesis and Existing-Project Updates
 
 ### Initial synthesis
 
-Produce a complete archive containing these four instantiated core files:
+Produce one repository-root archive containing the canonical local Bonsai bootstrap plus the four instantiated core
+project files:
 
 ```text
-.bonsai/projects/<project>/
-    requirements.md
-    architecture.md
-    agent_plan.md
-    agent_state.md
+.bonsai/
+    start.md
+    projects/
+        <project>/
+            requirements.md
+            architecture.md
+            agent_plan.md
+            agent_state.md
 ```
 
-Add only genuinely warranted optional files:
+Add only genuinely warranted optional project files under `.bonsai/projects/<project>/`:
 
 ```text
 agent_context.md
@@ -56,7 +69,9 @@ requirements/requirements_<AREA>.md
 architecture/architecture_<SUBSYSTEM>.md
 ```
 
-Simple projects should contain only the four core files.
+Simple projects should contain only `start.md` and the four core project files. The archive enables the
+repository-local Bonsai entry point; it does not make the repository an Embedded Bonsai installation unless the
+repository separately contains a complete valid Bonsai standard.
 
 ### Existing-project design update
 
@@ -72,7 +87,92 @@ When the human supplies existing Bonsai project memory and requests a design upd
 
 Package update files at their existing project-root-relative paths. If the approved change requires deleting or
 renaming an existing file, state that action explicitly for human review; omission from an update archive does not
-silently authorize deletion.
+silently authorize deletion. Do not include `.bonsai/start.md` in an existing-project design update.
+
+## Canonical Initial Bootstrap
+
+For initial synthesis, create `.bonsai/start.md` exactly from the canonical bootstrap below. Do not specialize it
+for the selected project, inline Bonsai Home, or otherwise adapt it to the current design conversation.
+
+````markdown
+# Bonsai Startup
+
+This file is the repository-local Bonsai bootstrap. Keep startup read-only and small.
+
+It is not a Bonsai Home entry point. Normal startup must begin from the target repository's local `.bonsai/start.md` anchor.
+
+## Session Inputs
+
+Retain the human's complete startup request as natural language. An explicit active-project request is session
+identity; any remaining request is passed through unchanged after identity resolution. Do not require or invent a
+startup command syntax.
+
+## Bootstrap Location Guard
+
+Before deriving repository home, verify that the startup request is using this file as the target repository's local
+`.bonsai/start.md` bootstrap. `BONSAI_HOME` supplies the Bonsai standard after repository identity is established; it
+must not be used as a substitute repository anchor.
+
+If the human explicitly directed startup through `$BONSAI_HOME/start.md`, or through an equivalent resolved path to
+the reusable Bonsai Home copy of `start.md`, stop before deriving repository home. Do not ask for confirmation and do
+not treat the parent of `BONSAI_HOME` as a repository. Explain that Bonsai startup must begin from the target
+repository and provide the canonical instruction:
+
+```text
+Read .bonsai/start.md and follow its instructions.
+```
+
+An embedded Bonsai installation remains valid because its `start.md` is the repository-local `.bonsai/start.md`
+anchor. The guard rejects using a reusable Bonsai Home as the repository anchor; it does not reject a repository-local
+embedded standard merely because that same `.bonsai` directory also serves as Bonsai Home.
+
+## Resolve Identity
+
+Resolve deterministic facts with host tools when available.
+
+1. **Repository home:** Treat the parent of the `.bonsai` directory containing this file as repository home. Do
+   not infer repository home from the process working directory when the two differ.
+2. **Bonsai Home:** A directory is a valid Bonsai standard for bootstrap when it contains readable
+   `specification.md` and `prompts/implementation.md` files.
+   - If `BONSAI_HOME` is defined and identifies a valid standard, use it.
+   - Otherwise, if the repository-local `.bonsai` directory is a valid embedded standard, use it.
+   - Otherwise stop and ask the human to configure or identify Bonsai Home. Report a defined but invalid
+     `BONSAI_HOME`; do not search broadly for another installation, substitute a one-session path for the missing
+     environment configuration, or persist a guessed location.
+3. **Active project:** Resolve only immediate child directories of `<repository-home>/.bonsai/projects/`.
+   - If the human explicitly named a project, use it only when that project directory exists. Otherwise stop and
+     ask the human to correct the project or choose an available one. When multiple existing projects are offered
+     as alternatives, present them in stable lexical order as numbered choices and accept the corresponding number
+     as the selection.
+   - Otherwise, use `main` when `projects/main/` exists.
+   - Otherwise, if exactly one project directory exists, use it.
+   - Otherwise, if several project directories exist, enumerate them in stable lexical order, present them as
+     numbered choices, and ask the human to choose by number. Accept the corresponding number as the project
+     selection; do not require the human to retype the project name.
+   - Otherwise stop and surface project creation or project design as the required next action. Do not create
+     project memory or invent durable design during bootstrap.
+
+Keep repository home, Bonsai Home, active project, and the retained startup request as current-session context
+only. Do not write a current-project pointer or store session identity in developer context, agent context, or
+project memory.
+
+## Hand Off
+
+After all identity values are resolved:
+
+1. read `<bonsai-home>/prompts/implementation.md`;
+2. provide it the resolved Bonsai Home, repository home, active project, and retained natural-language startup
+   request;
+3. follow it as the implementation kernel.
+
+Do not load requirements, architecture, maps, developer context, agent context, or specialized skills in this
+bootstrap. Do not execute requested project, Bonsai Home, code-map, or implementation workflows here; preserve
+the request for the implementation kernel, which must report any unavailable delegated workflow without claiming
+success.
+````
+
+The bootstrap is standard framework content, not project final truth. If the canonical bootstrap changes in the
+Bonsai standard, this workflow must be updated to keep the generated repository anchor identical.
 
 ## Blocking Clarifications Before Synthesis
 
@@ -177,20 +277,28 @@ execute`. The implementation workflow drafts and reviews the detailed Phase 1 pl
 Create one zip archive suitable for extraction at repository root.
 
 - Every archive entry starts under `.bonsai/`; do not add a wrapper directory above it.
-- Every file is under `.bonsai/projects/<project>/`.
-- For initial synthesis, include all four required core files and every referenced optional file.
-- For an existing-project update, include only materially affected files unless full regeneration was requested.
+- For initial synthesis, include `.bonsai/start.md`, all four required core files under
+  `.bonsai/projects/<project>/`, and every referenced optional project file.
+- For an existing-project update, include only materially affected project files unless full regeneration was
+  requested. Do not include `.bonsai/start.md`.
 - Include no `developer_context.md`, implementation source, detailed phase plan, logs, or generated test output.
 - Use ordinary UTF-8 Markdown files with stable relative links.
-- Inspect the archive manifest before presenting it. Verify safe paths, required files, ownership metadata,
-  cross-document links, roadmap/state agreement, and absence of placeholders.
+- Inspect the archive manifest before presenting it. For initial synthesis, verify that `.bonsai/start.md` is
+  present and exactly matches the canonical bootstrap in this workflow. For all archives, verify safe paths,
+  required project files, ownership metadata, cross-document links, roadmap/state agreement, and absence of
+  placeholders.
+
+The initial-synthesis archive intentionally maps onto repository-local `.bonsai` paths. If the human has indicated
+that the target repository already contains `.bonsai/start.md` or the selected project path, surface the potential
+overwrite before presenting the archive. Do not silently rename the project, alter the bootstrap, or claim that
+extraction is non-destructive.
 
 If the host cannot create and attach a real zip, report that limitation. Do not claim an archive exists and do not
 substitute a long manual-copy protocol unless the human explicitly requests a fallback.
 
 Present the archive with a compact manifest, the selected project root, unresolved foundational questions if any,
-execution readiness, and a clear reminder that the human must review the generated final truth before adoption.
-Do not add conversational filler or begin implementation.
+execution readiness, and a clear instruction to extract the archive at repository root. Remind the human to review
+the generated final truth before adoption. Do not add conversational filler or begin implementation.
 
 ## Inline Output Schemas
 

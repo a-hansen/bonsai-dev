@@ -3,7 +3,7 @@
 ## Purpose
 
 Turn a Web UI conversation about a source repository into optional, human-owned mapping calibration named
-`map_repo.md`. Preserve repository-owner judgment that source inspection alone may not reveal reliably, including
+`map_calibration.md`. Preserve repository-owner judgment that source inspection alone may not reveal reliably, including
 mapping priorities, representative usage, misleading areas, scope boundaries, and material uncertainty.
 
 This artifact guides later code-map creation. It is not product truth, architecture truth, source evidence, or map
@@ -102,45 +102,54 @@ broadening scope.
 
 ## Synthesis Trigger
 
-Do not generate `map_repo.md` until the human asks directly or gives a clear synthesis cue such as:
+Do not synthesize `map_calibration.md` until the human asks directly or gives a clear synthesis cue such as:
 
-- "generate map_repo";
-- "give me the map calibration";
-- "create the repository mapping file"; or
+- "generate the map calibration";
+- "create map_calibration";
+- "create the mapping calibration package"; or
 - "synthesize this".
 
 Until then, remain in discussion mode.
 
-Before synthesis, establish the logical source name when possible so the human can place the artifact under the
-applicable named source map. If the source name remains materially ambiguous, ask for it or preserve the ambiguity
-as an open question; do not derive map identity silently from a consuming Bonsai project.
+Before synthesis, establish the logical source name because it determines the packaged path. If the human already
+supplied a valid logical source name, use it without asking again. A packaged source name must be a single safe
+directory name: non-blank, not `.` or `..`, and containing no `/` or `\` path separator. If the source name remains
+materially ambiguous or invalid, ask the human to resolve it. Do not derive map identity silently from a consuming
+Bonsai project.
 
 ## Final Output Protocol
 
-When synthesis is requested, generate exactly one Markdown code block containing the complete `map_repo.md`.
-Include no commentary before or after the code block.
-
-The human reviews the result and, if accepted, places it at:
+When synthesis is requested, create exactly one ZIP suitable for extraction at the calibrated source repository
+root. The ZIP must contain exactly:
 
 ```text
-<active-map-store>/<source-name>/map_repo.md
+.bonsai/
+    maps/
+        <source-name>/
+            map_calibration.md
 ```
 
-where the active map store is `$BONSAI_HOME/maps/` in Bonsai Home mode or `repo/.bonsai/maps/` in Embedded mode.
-The conversation does not write or place the file automatically.
+Do not include `.bonsai/start.md`, project memory, `code_map.md`, `map_state.md`, subsystem maps, lookup tables,
+source files, or any other artifact. This package adds source-specific human calibration only. It does not create a
+code map and does not by itself make the source repository a Bonsai project or Embedded Bonsai installation.
 
-Use the inline schema below as the complete structural basis. Fill it densely where evidence supports it. Remove
-placeholder examples, duplicate skeleton entries, and sections that would contain only filler. Retain material open
-questions, scope ambiguity, and an otherwise-empty section only when omitting it would hide an important concern.
+The Web UI conversation does not inspect or modify the repository automatically. The human reviews the generated
+package and, if accepted, extracts it at the calibrated source repository root. Provide the ZIP as the output
+artifact and do not duplicate the complete calibration inline.
+
+Use the inline schema below as the complete structural basis for the packaged `map_calibration.md`. Fill it densely
+where evidence supports it. Remove placeholder examples, duplicate skeleton entries, and sections that would contain
+only filler. Retain material open questions, scope ambiguity, and an otherwise-empty section only when omitting it
+would hide an important concern.
 
 Write for future mapping agents using compact bullets, exact paths when known, repository-native terms, short
 priority reasons, and explicit evidence status. Avoid filler, marketing, onboarding prose, repeated ideas, generic
 engineering advice, and unsupported architectural interpretation.
 
-## Inline `map_repo.md` Schema
+## Inline `map_calibration.md` Schema
 
 ````markdown
-# Bonsai Map Repository Addendum
+# Bonsai Map Calibration
 
 **[Meta: Human-owned | Source-Specific Mapping Calibration | Priority and Evidence Guidance]**
 
