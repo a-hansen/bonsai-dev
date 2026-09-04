@@ -1874,8 +1874,9 @@ Read .bonsai/start.md and follow its instructions. Active project: <project>.
 ```
 
 When the human chooses **Exit for now** at any Bonsai gate, preserve the current durable execution condition and
-present the ordinary startup pointer. Use the project-qualified form only when startup without it would not
-deterministically resolve the same active project.
+present the ordinary startup pointer as a resume instruction introduced by wording equivalent to
+`You can resume later with:`. Use the project-qualified form only when startup without it would not deterministically
+resolve the same active project. The canonical startup pointer itself remains unchanged.
 
 **Exit for now** carries no auto-execution authorization and does not approve, discard, execute, or otherwise
 resolve the action or gate being left. Choosing it must not alter durable state merely to record that the human

@@ -240,8 +240,13 @@ authorize subsequent actions. If startup reconstruction instead finds a blocker,
 approval or review, design requirement, or no safe exact next action, stop at that applicable gate rather than
 forcing execution.
 
-When the human chooses **Exit for now**, or explicitly asks for an ordinary fresh-session startup pointer without
-auto-execution, use the ordinary canonical pointer instead:
+When the human chooses **Exit for now**, introduce the ordinary canonical pointer with:
+
+```text
+You can resume later with:
+```
+
+Then use the ordinary canonical pointer:
 
 ```text
 Read .bonsai/start.md and follow its instructions.
@@ -253,12 +258,16 @@ or, when project selection must be explicit:
 Read .bonsai/start.md and follow its instructions. Active project: <project>.
 ```
 
+When the human explicitly asks for an ordinary fresh-session startup pointer without auto-execution, use the same
+ordinary canonical pointer without requiring the **Exit for now** lead-in.
+
 Do not append the project path, phase, pass, readiness, rendered next step, approval state, dry-run state, workflow
 name, required skills, blockers, or a prior-session summary. Put resume-critical facts in `agent_state.md` before
 presenting the pointer.
 
-After the self-check, tell the human to start a new session with the pointer and stop. Do not claim that Bonsai
-started, reset, or ended a session.
+For fresh-session continuation, tell the human to start a new session with the pointer and stop. For **Exit for
+now**, present the resume lead-in and pointer, then stop. Do not claim that Bonsai started, reset, or ended a
+session.
 
 ## Stop Conditions
 

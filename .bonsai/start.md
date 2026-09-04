@@ -2,11 +2,32 @@
 
 This file is the repository-local Bonsai bootstrap. Keep startup read-only and small.
 
+It is not a Bonsai Home entry point. Normal startup must begin from the target repository's local `.bonsai/start.md` anchor.
+
 ## Session Inputs
 
 Retain the human's complete startup request as natural language. An explicit active-project request is session
 identity; any remaining request is passed through unchanged after identity resolution. Do not require or invent a
 startup command syntax.
+
+## Bootstrap Location Guard
+
+Before deriving repository home, verify that the startup request is using this file as the target repository's local
+`.bonsai/start.md` bootstrap. `BONSAI_HOME` supplies the Bonsai standard after repository identity is established; it
+must not be used as a substitute repository anchor.
+
+If the human explicitly directed startup through `$BONSAI_HOME/start.md`, or through an equivalent resolved path to
+the reusable Bonsai Home copy of `start.md`, stop before deriving repository home. Do not ask for confirmation and do
+not treat the parent of `BONSAI_HOME` as a repository. Explain that Bonsai startup must begin from the target
+repository and provide the canonical instruction:
+
+```text
+Read .bonsai/start.md and follow its instructions.
+```
+
+An embedded Bonsai installation remains valid because its `start.md` is the repository-local `.bonsai/start.md`
+anchor. The guard rejects using a reusable Bonsai Home as the repository anchor; it does not reject a repository-local
+embedded standard merely because that same `.bonsai` directory also serves as Bonsai Home.
 
 ## Resolve Identity
 

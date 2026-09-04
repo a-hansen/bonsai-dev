@@ -47,13 +47,14 @@ When the human selects it:
 
 1. do not authorize, approve, discard, execute, or otherwise resolve the action or gate being left;
 2. do not change durable state merely to record that the human exited;
-3. present the ordinary canonical startup pointer, never the auto-execute continuation prompt;
+3. present the ordinary canonical startup pointer, never the auto-execute continuation prompt, and introduce it
+   with `You can resume later with:`;
 4. using the current resolved session identity and deterministic startup-resolution rules, omit the project
    qualifier when startup will resolve the same active project without human selection;
 5. otherwise append only `Active project: <project>.` using the active project directory name; and
 6. stop.
 
-The copyable pointer must therefore be exactly one of:
+The lead-in is presentation text, not part of the pointer. The copyable pointer must therefore be exactly one of:
 
 ```text
 Read .bonsai/start.md and follow its instructions.
