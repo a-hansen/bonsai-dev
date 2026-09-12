@@ -34,12 +34,14 @@ Use these authorities in order:
 Project memory and `map_calibration.md` may guide where to look, but they do not prove source behavior or determine
 map identity. When they disagree with observed source, source wins and the mismatch remains visible until corrected.
 
-Do not require a Bonsai project for source mapping. Do not create project memory merely to map an external source.
+Do not require a Bonsai project or active project for source mapping. **Manage Code Maps** may be entered directly
+from the repository entry gate before any project is selected. Do not create project memory merely to map source.
 Do not put active project, phase, pass, approval, requirement-tracking, icebox, or session status into map data.
 
 ## Runtime Map Model
 
-Resolve the active map store from the session identity supplied by `start.md`:
+Resolve the active map store from Bonsai Home and repository identity supplied by `start.md`; active project is
+not required:
 
 - when a configured Bonsai Home is active: `<bonsai-home>/maps/`;
 - for Embedded Bonsai without a configured external home: `<repository-home>/.bonsai/maps/`.
@@ -86,7 +88,8 @@ source archive, source checkout, or another colocated file merely because it is 
 
 Before proposing substantive mapping work, resolve only enough context to make the action and gate trustworthy:
 
-1. Retain the invoking Bonsai workflow or gate so this subordinate workflow can return to it.
+1. Retain the invoking Bonsai workflow or gate so this subordinate workflow can return to it. The invoking gate
+   may be the repository entry gate with no active project.
 2. Resolve the active map store without creating or modifying it.
 3. Resolve the requested lifecycle action. If none was supplied, present the action menu below.
 4. Identify the actual source independently from the active project:
@@ -101,7 +104,8 @@ Before proposing substantive mapping work, resolve only enough context to make t
 7. Resolve source-specific calibration only when it can materially improve the selected action. For a repository
    checkout, check `<source-repository>/.bonsai/maps/<source>/map_calibration.md`. Use another calibration location
    only when the human explicitly supplied it for the selected source.
-8. Read relevant project memory only when it can materially calibrate the selected action.
+8. Read relevant project memory only when an active project exists and that memory can materially calibrate the
+   selected action. Absence of active project is not an ambiguity or blocker for mapping.
 9. Load `skills/agent_context.md` only when stable source locations, relevant map selection, or another qualifying
    operational rule may need to be applied or maintained.
 
@@ -434,9 +438,10 @@ At completion, cancellation, or a declined contextual offer:
 2. reconcile `map_state.md` and any qualifying agent context;
 3. do not silently revise human-owned `map_calibration.md`, project final truth, or project execution memory;
 4. return control to the workflow that invoked code mapping;
-5. let the owning workflow reconcile its own project execution state; and
-6. load `skills/menu.md` and re-present the refreshed invoking gate unless mapping created a new required blocker,
-   design, final-truth, or review gate.
+5. when an active project exists, let the owning workflow reconcile its project execution state; when none exists,
+   do not manufacture project state;
+6. load `skills/menu.md` and re-present the refreshed invoking gate, including the repository entry gate when that
+   was the invoker, unless mapping created a new required blocker, design, final-truth, or review gate.
 
 Do not silently end the parent workflow because mapping completed or was cancelled. Do not select a new mapping
 scope automatically. Stop at the refreshed gate for the human's direction.

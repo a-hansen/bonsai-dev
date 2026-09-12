@@ -2,11 +2,12 @@
 
 ## Purpose
 
-Act as the stable implementation kernel after `start.md` has resolved Bonsai Home, repository home, active
-project, and any natural-language startup request. Determine the minimum current execution condition, route only
-triggered workflows and context, and preserve human gates.
+Act as the stable implementation kernel after `start.md` has resolved Bonsai Home, repository home, any explicitly
+requested active project, available project candidates, and the natural-language startup request. When no project
+is active, own the repository entry gate and repository-level routing before project orientation. Determine the
+minimum current execution condition, route only triggered workflows and context, and preserve human gates.
 
-Bootstrap identity is an input. Do not rediscover or persist it here.
+Bootstrap identity and project candidates are inputs. Do not persist them here.
 
 ## Authority and Ownership
 
@@ -21,11 +22,49 @@ Bootstrap identity is an input. Do not rediscover or persist it here.
 - Bonsai workflow does not prescribe software interfaces, abstractions, dependency rules, construction patterns,
   or test philosophy. Follow approved project truth and relevant repository guidance.
 
+## Repository Entry Routing
+
+When active project is unresolved, do not classify the session as `Design required` and do not inspect project
+memory. The session is at the repository entry gate.
+
+If the retained startup request explicitly asks for **Manage Code Maps** or a specific code-map lifecycle action,
+delegate directly to `skills/code_maps.md` with no active project. Treat the repository entry gate as the invoking
+gate so cancellation or completion can return there.
+
+Otherwise, load `skills/menu.md` and present a primary repository entry menu headed by wording equivalent to
+`Choose what you want to work with:`.
+
+Supply these choices:
+
+1. each available immediate project directory in stable lexical order, as its own numbered primary choice;
+2. **Manage Code Maps** as the next peer primary choice;
+3. **Exit for now**; and
+4. **See more options** only when at least one additional repository-level secondary action is applicable, normally
+   including **Manage Projects** and, when applicable, **Create Bonsai Home**.
+
+Do not put **Manage Code Maps** behind **See more options** at this repository entry gate. Its purpose here is to
+allow source-oriented work before any project is selected or designed.
+
+When the human selects a project, require that the directory still exists, establish it as active project in
+current-session context only, and continue with read-only startup orientation below. Do not persist the selection.
+
+When the human selects **Manage Code Maps**, delegate to `skills/code_maps.md` with active project unset and retain
+the repository entry gate as the invoking gate.
+
+When no project directories exist, omit project choices. **Manage Code Maps** remains available and **Manage
+Projects** may remain a secondary action so the human can create a project without making project creation a
+prerequisite for repository-level mapping.
+
+An explicit startup request that requires project execution but supplies no active project does not authorize
+Bonsai to guess a project. Present the repository entry gate first.
+
 ## Read-Only Startup Orientation
+
+This section applies only after active project has been established.
 
 Let `<project-home>` be `<repository-home>/.bonsai/projects/<active-project>`.
 
-Before substantive work:
+Before substantive project work:
 
 1. Read `<project-home>/agent_state.md` when present.
 2. Read `<project-home>/agent_plan.md` when present. Compare all overlapping roadmap-level truth, including active
@@ -74,7 +113,8 @@ The presence of a plan alone is not execution authorization.
 
 ## Lazy Routing
 
-Load a workflow or facet only when current state or the human's request triggers it. Known delegation points are:
+Load a workflow or facet only when current state or the human's request triggers it. Repository entry routing may
+delegate before any active project exists. Known delegation points are:
 
 | Trigger | Delegate |
 | --- | --- |
@@ -107,7 +147,8 @@ boundary. An approved multi-step change may wait until the affected artifact set
 reported complete with inaccurate guides. Routine internal edits and runtime map changes do not trigger this
 workflow, and guide maintenance grants no authority to broaden the underlying change.
 
-Code-map editing is not routine implementation startup or an automatic consequence of source changes. During an
+Code-map editing is not routine project implementation startup or an automatic consequence of source changes.
+**Manage Code Maps** is nevertheless a first-class repository entry action and does not require an active project. During an
 authorized implementation facet, a substantial existing source without a useful map may receive one contextual
 creation action. If the human declines, keep creation under applicable secondary options instead of interrupting
 again in the same context; do not pressure greenfield work. Surface bounded maintenance only for an explicit
@@ -171,6 +212,9 @@ approved execution basis.
 
 ## Startup Summary and Gate
 
+This project execution summary applies only after active project has been selected. Repository entry uses the
+repository entry gate above and does not manufacture project execution readiness.
+
 Report concisely:
 
 - active project;
@@ -225,7 +269,9 @@ When project design must be synthesized, direct the human to the Web UI workflow
 that Web UI workflow inside the coding session or treat guidance to use it as completed design.
 
 After listing, switching, creating, declining, or cancelling, apply `skills/menu.md` subordinate-return rules:
-recompute and restore the invoking gate unless the resulting execution state requires a different gate.
+recompute and restore the invoking gate unless the resulting execution state requires a different gate. If Project
+Management was invoked from the repository entry gate and no project was selected, return to that gate with the
+project candidates refreshed.
 
 ## Authorized Execution
 

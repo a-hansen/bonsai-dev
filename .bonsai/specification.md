@@ -189,11 +189,13 @@ Bootstrap establishes:
 
 - Bonsai Home;
 - repository home;
-- active project.
+- an explicitly requested active project, when supplied; otherwise
+- repository-level entry state from which the human may select a project or repository-level workflow.
 
 It should not eagerly load every context file, map, skill, requirement area, or architecture subsystem.
 
-The implementation kernel decides what knowledge is needed after identity is established.
+The implementation kernel decides what knowledge is needed after environment identity and the current session route
+are established.
 
 ## Deterministic discovery should be cheap
 
@@ -461,10 +463,12 @@ The bootstrap should:
 
 1. establish repository home from the local `.bonsai` anchor;
 2. resolve Bonsai Home;
-3. resolve the active project;
-4. preserve those resolved values as current-session context;
-5. load `<bonsai-home>/prompts/implementation.md`;
-6. continue under the standard implementation workflow.
+3. enumerate immediate project directories cheaply;
+4. resolve an active project only when the human explicitly supplied one;
+5. otherwise preserve repository-level entry state without silently choosing `main` or a sole project;
+6. preserve those resolved values as current-session context;
+7. load `<bonsai-home>/prompts/implementation.md`;
+8. continue under the standard implementation workflow.
 
 The bootstrap should not routinely load requirements, architecture, maps, developer context, agent context, or specialized skills itself.
 
@@ -484,11 +488,18 @@ Resolution should conceptually follow:
 
 Bonsai should not perform broad filesystem searches merely to guess where the standard may be installed.
 
-## Active project is session state
+## Active project is optional session state
 
 The active project belongs to the current AI session.
 
-It must not be persisted as a mutable repository-wide pointer.
+An active project is required for project-oriented implementation, but it is not required for repository-level
+workflows such as code-map management.
+
+When the canonical startup prompt does not explicitly name a project, Bonsai intentionally enters a repository-level
+selection gate instead of silently selecting `main` or a sole project. Selecting a project establishes active
+project for the current session. Selecting a repository-level workflow may leave active project unset.
+
+Active project must not be persisted as a mutable repository-wide pointer.
 
 It also should not be stored as durable `agent_context.md` merely because the current session selected it.
 
@@ -535,7 +546,8 @@ the human normally starts with only:
 Read .bonsai/start.md and follow its instructions.
 ```
 
-No project name is necessary.
+No project name is necessary in the startup instruction. The repository entry gate presents `main` for selection
+alongside repository-level **Manage Code Maps**.
 
 ## Named projects
 
@@ -550,18 +562,22 @@ Large repositories may contain several independent Bonsai projects:
 
 An explicit project supplied by the human is authoritative for that session.
 
-Whenever Bonsai asks the human to choose one project from multiple existing projects, present the available project
-directories in stable lexical order as numbered choices and accept the corresponding number as the selection. This
-applies both to bootstrap project selection and to in-session project switching. A project listing that does not
-request a selection does not need to be numbered.
+Whenever Bonsai asks the human to choose from existing projects, present the available project directories in stable
+lexical order as numbered choices and accept the corresponding number as the selection. This applies both to the
+repository entry gate and to in-session project switching, even when only one project exists at repository entry.
+A project listing that does not request a selection does not need to be numbered.
 
-If no project is explicit, project selection should be resolved cheaply:
+If no project is explicit, do not silently resolve one. Enumerate project directories cheaply and present a
+repository-level startup choice:
 
-1. if `projects/main` exists, use it;
-2. otherwise enumerate project directories;
-3. if exactly one project exists, use it;
-4. if several projects exist, present the stable numbered human selection;
-5. if no project exists, surface project creation or design as the next required action.
+1. list existing project directories in stable lexical order as numbered primary choices;
+2. present **Manage Code Maps** as a peer primary choice that does not require an active project;
+3. keep applicable repository or project-management actions such as **Manage Projects** under **See more options**;
+4. if no project exists, omit project choices but still allow repository-level workflows and project management.
+
+Selecting a project establishes the active project for the current session and then enters normal project startup
+orientation. Selecting **Manage Code Maps** enters code-map management with active project unset unless one was
+already explicitly supplied.
 
 Project selection must not overwrite another concurrent session's project selection.
 
@@ -981,9 +997,11 @@ Loading all of them during every session is.
 
 Bootstrap context is small and necessary to establish identity and determine what should happen next.
 
-The local `start.md` establishes Bonsai Home, repository home, and active project.
+The local `start.md` establishes Bonsai Home and repository home, resolves an explicitly requested active project
+when supplied, and otherwise preserves repository-level entry state.
 
-The standard implementation prompt then loads only the minimum project state required to determine execution condition.
+The standard implementation prompt presents the repository entry gate when no project is active. Only after a
+project is selected does it load the minimum project state required to determine execution condition.
 
 ## Workflow-triggered context
 
@@ -1106,31 +1124,37 @@ Phase 1 planning remains the first implementation gate.
 
 # Implementation Workflow
 
-After `.bonsai/start.md` resolves session identity, implementation continues through:
+After `.bonsai/start.md` resolves repository and Bonsai Home identity plus any explicitly requested active project,
+implementation continues through:
 
 ```text
 <bonsai-home>/prompts/implementation.md
 ```
 
+When no project is active, the implementation kernel first presents the repository entry gate or routes an explicit
+repository-level request. Project execution orientation begins only after a project is selected.
+
 The implementation agent:
 
-1. loads the minimum project bootstrap state;
-2. determines the exact next step and execution readiness;
-3. loads additional project truth, plans, maps, context, or skills only when required;
-4. identifies blockers or inconsistencies;
-5. classifies anticipated final-truth impact;
-6. stops at a structured startup gate unless an explicit startup request authorizes the one exact next action to
+1. when no project is active, presents project choices plus repository-level **Manage Code Maps** without loading
+   project memory;
+2. after a project is selected, loads the minimum project bootstrap state;
+3. determines the exact next step and execution readiness;
+4. loads additional project truth, plans, maps, context, or skills only when required;
+5. identifies blockers or inconsistencies;
+6. classifies anticipated final-truth impact;
+7. stops at a structured startup gate unless an explicit startup request authorizes the one exact next action to
    proceed without stopping at that gate after canonical state reconstruction;
-7. executes only that human-authorized exact next action and does not carry startup authorization into a subsequent
+8. executes only that human-authorized exact next action and does not carry startup authorization into a subsequent
    action;
-8. reconciles completed work;
-9. when a phase completes, reconciles the approved roadmap and either establishes the next applicable phase and
-   its planning or already-approved-plan gate, or, only when no unfinished work remains in the current body of
-   work, records body-of-work completion;
-10. maintains current execution memory;
-11. preserves qualifying operational discoveries;
-12. reconciles affected framework category guides when authorized standard artifacts are added, removed, renamed, or materially change responsibility;
-13. stops at the next natural gate.
+9. reconciles completed work;
+10. when a phase completes, reconciles the approved roadmap and either establishes the next applicable phase and
+    its planning or already-approved-plan gate, or, only when no unfinished work remains in the current body of
+    work, records body-of-work completion;
+11. maintains current execution memory;
+12. preserves qualifying operational discoveries;
+13. reconciles affected framework category guides when authorized standard artifacts are added, removed, renamed, or materially change responsibility;
+14. stops at the next natural gate.
 
 The implementation prompt is a stable router and invariant set.
 
@@ -1748,7 +1772,10 @@ The exact prompt set should remain small.
 
 Stable implementation kernel and router.
 
-It receives Bonsai Home, repository home, and active project from `start.md`, then determines the minimum additional context required for the current execution condition.
+It receives Bonsai Home, repository home, an optional explicitly resolved active project, available project
+candidates, and the retained startup request from `start.md`. When no project is active, it owns the repository
+entry gate and repository-level routing. After project selection, it determines the minimum additional context
+required for the current execution condition.
 
 ## `prompts/create_project_memory.md`
 
@@ -1908,8 +1935,9 @@ Read .bonsai/start.md and follow its instructions. Active project: <project>.
 
 When the human chooses **Exit for now** at any Bonsai gate, preserve the current durable execution condition and
 present the ordinary startup pointer as a resume instruction introduced by wording equivalent to
-`You can resume later with:`. Use the project-qualified form only when startup without it would not deterministically
-resolve the same active project. The canonical startup pointer itself remains unchanged.
+`You can resume later with:`. When a project is active and resumption should return directly to that project, use
+the project-qualified form because unqualified startup intentionally returns to the repository entry gate. When no
+project is active, use the unqualified canonical pointer.
 
 **Exit for now** carries no auto-execution authorization and does not approve, discard, execute, or otherwise
 resolve the action or gate being left. Choosing it must not alter durable state merely to record that the human
@@ -1922,11 +1950,13 @@ When the human chooses fresh-session continuation with automatic execution of th
 Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate.
 ```
 
-When project selection should be explicit, append only:
+For a project-specific exact next action, append only:
 
 ```text
 Active project: <project>.
 ```
+
+The unqualified form is reserved for repository-level continuation where no active project is required.
 
 The auto-execute request carries no rendered phase, pass, readiness, approval state, or next-step text. The new
 session reconstructs canonical durable state and executes the one exact next action it establishes. That startup
@@ -2103,7 +2133,8 @@ A normal new Bonsai project may look like this:
 3. Select the Bonsai project name, normally accepting the suggested `main` default for a simple repository.
 4. Extract the resulting zip at repository root, creating `.bonsai/start.md` and the selected project memory.
 5. Start implementation with `Read .bonsai/start.md and follow its instructions.`
-6. Let bootstrap resolve Bonsai Home, repository home, and active project.
+6. Let bootstrap resolve Bonsai Home and repository home, then select `main` (or another project) at the
+   repository entry gate.
 7. Draft and review the initial Phase 1 plan.
 8. Execute one authorized bounded step.
 9. Use contract-first execution only when a durable contract actually merits separate review.
@@ -2196,7 +2227,9 @@ Bonsai keeps several kinds of memory deliberately separate:
 6. what operational knowledge the agent learned;
 7. what source structure code maps make cheaply navigable.
 
-The active project belongs to the current session.
+The active project belongs to the current session and is selected explicitly at startup unless the startup request
+already names it. Unqualified canonical startup enters the repository-level choice gate instead of silently
+selecting a project.
 
 `projects/main` is the simple real-project convention, not a mutable project pointer.
 

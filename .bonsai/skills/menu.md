@@ -39,6 +39,21 @@ The invoking workflow supplies:
    explicitly requests it. This is session-local presentation context and must not be persisted in project memory.
 7. After presenting a gate, stop for the human's choice. Rendering a menu does not authorize an action.
 
+## Repository Entry Gate
+
+When the invoking workflow supplies a repository entry gate because no active project is selected:
+
+1. present each available project directory in stable lexical order as a numbered primary choice;
+2. present **Manage Code Maps** as a peer primary choice after the project choices;
+3. keep **Manage Projects** and other less-frequent repository actions under **See more options** when supplied;
+4. do not treat the absence of an active project as `Design required`; and
+5. after project selection, let the invoking workflow establish current-session active project and replace this
+   gate with that project's normal startup orientation.
+
+**Manage Code Maps** is intentionally primary at this gate even though it is normally secondary during project
+implementation. The invoking workflow owns that promotion; this skill does not infer other repository-level
+promotions from it.
+
 ## Exit for Now
 
 **Exit for now** has one consistent session-boundary meaning across Bonsai gates.
@@ -49,9 +64,10 @@ When the human selects it:
 2. do not change durable state merely to record that the human exited;
 3. present the ordinary canonical startup pointer, never the auto-execute continuation prompt, and introduce it
    with `You can resume later with:`;
-4. using the current resolved session identity and deterministic startup-resolution rules, omit the project
-   qualifier when startup will resolve the same active project without human selection;
-5. otherwise append only `Active project: <project>.` using the active project directory name; and
+4. when an active project exists and resumption should return directly to that project, append only
+   `Active project: <project>.` using the active project directory name;
+5. when no active project exists, use the unqualified canonical pointer so startup returns to the repository entry
+   gate; and
 6. stop.
 
 The lead-in is presentation text, not part of the pointer. The copyable pointer must therefore be exactly one of:
@@ -65,9 +81,9 @@ Read .bonsai/start.md and follow its instructions. Active project: <project>.
 ```
 
 Starting a new host session remains the human's action. The ordinary pointer carries no execution authorization.
-Determining whether the project qualifier is needed may use cheap project-directory enumeration, but must not load
-or modify project memory merely to format the pointer. A later session reconstructs canonical durable state and
-reaches the applicable gate or execution condition normally.
+Unqualified startup intentionally returns to the repository entry gate; it is not a shortcut for resuming an
+already active project. Formatting the pointer must not load or modify project memory. A later session reconstructs
+canonical durable state and reaches the applicable gate or execution condition normally.
 
 ## See More Options
 
