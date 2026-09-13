@@ -17,6 +17,7 @@ The invoking workflow supplies:
 - any normally secondary action promoted into the primary menu and, when relevant, the concrete reason for that
   promotion;
 - whether the host already supplies a free-form choice; and
+- the current-session active workspace type and name when pointer rendering requires them; and
 - when relevant, whether this is the first continuation boundary of a newly entered session with no substantive
   work yet performed.
 
@@ -36,12 +37,13 @@ The invoking workflow supplies:
    execute automatically in the fresh session. Do not include fresh-session continuation merely by default. If
    the current session was itself entered through fresh-session continuation and no substantive work has occurred
    since that entry, omit another fresh-session choice at the first resulting continuation gate unless the human
-   explicitly requests it. This is session-local presentation context and must not be persisted in project memory.
+   explicitly requests it. This is session-local presentation context and must not be persisted in workspace
+   memory.
 7. After presenting a gate, stop for the human's choice. Rendering a menu does not authorize an action.
 
 ## Repository Entry Gate
 
-When the invoking workflow supplies a repository entry gate because no active project is selected:
+When the invoking workflow supplies a repository entry gate because no active workspace is selected:
 
 1. present each available project directory in stable lexical order as a numbered primary choice;
 2. present **Manage Code Maps** as a peer primary choice after the project choices;
@@ -64,11 +66,12 @@ When the human selects it:
 2. do not change durable state merely to record that the human exited;
 3. present the ordinary canonical startup pointer, never the auto-execute continuation prompt, and introduce it
    with `You can resume later with:`;
-4. when an active project exists and resumption should return directly to that project, append only
-   `Active project: <project>.` using the active project directory name;
-5. when no active project exists, use the unqualified canonical pointer so startup returns to the repository entry
-   gate; and
-6. stop.
+4. when an active project exists, omit the qualifier only when unqualified startup would deterministically resolve
+   that same project; otherwise append only `Active project: <project>.` using the project directory name;
+5. when an active map exists, always append only `Active map: <map>.` using the map directory name;
+6. when no active workspace exists, use the unqualified canonical pointer and let normal startup routing resolve
+   the next gate; and
+7. stop.
 
 The lead-in is presentation text, not part of the pointer. The copyable pointer must therefore be exactly one of:
 
@@ -80,9 +83,13 @@ Read .bonsai/start.md and follow its instructions.
 Read .bonsai/start.md and follow its instructions. Active project: <project>.
 ```
 
+```text
+Read .bonsai/start.md and follow its instructions. Active map: <map>.
+```
+
 Starting a new host session remains the human's action. The ordinary pointer carries no execution authorization.
-Unqualified startup intentionally returns to the repository entry gate; it is not a shortcut for resuming an
-already active project. Formatting the pointer must not load or modify project memory. A later session reconstructs
+Unqualified startup follows the ordinary bootstrap selection rules; it is not a shortcut for resuming a map or a
+non-default project. Formatting the pointer must not load or modify workspace memory. A later session reconstructs
 canonical durable state and reaches the applicable gate or execution condition normally.
 
 ## See More Options
@@ -158,5 +165,5 @@ disappear.
 
 - This skill owns presentation mechanics, not the meaning of a gate.
 - It does not decide which actions are authorized or applicable.
-- It does not read or write durable project memory merely to render a menu.
+- It does not read or write durable workspace memory merely to render a menu.
 - It delegates only to the subordinate workflow selected by the human.
