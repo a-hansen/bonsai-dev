@@ -132,13 +132,51 @@ When no more specific action was requested, load `skills/menu.md` and present on
 5. **Update or Rebuild Code Map** when at least one usable generated map exists.
 6. **Remove Code Map** when at least one usable generated map exists.
 7. **Inspect Map/Source Identity** when at least one usable generated map exists.
-8. **Cancel and return to `<invoking gate>`**.
+8. **Add a Code Map to the Active Project** when a valid active project exists and at least one usable generated
+   map is not already selected by that project.
+9. **Remove a Code Map from the Active Project** when a valid active project exists and at least one of its
+   selections still identifies a usable generated map.
+10. **Cancel and return to `<invoking gate>`**.
 
 Workspace actions operate on repository-local execution memory. Generated-map actions operate on reusable output.
 Do not hide one collection because the other is empty, substitute a generated map for a workspace, or require an
 active project. If an action needs source, identity, store, or workspace evidence that is not yet available, label
 the action as requiring that input rather than presenting an unsafe mutation as immediately executable. Stop for
 the human's choice.
+
+### Add or Remove a Code Map from a Project
+
+These actions manage a project's explicit selection of useful reusable maps. They are available only when the
+invoking context supplies one active `project` workspace. Omit them at the repository entry gate and for an active
+map workspace; do not ask the human to select or create a project merely to make an association action available.
+
+Before offering either action:
+
+1. Revalidate that the supplied project home is one immediate child of `<repository-home>/.bonsai/projects/` and
+   that its readable `workspace.md` contains exactly one `Type: project` declaration and one
+   `Route: Project workspace behavior` declaration.
+2. Resolve the active generated-map store independently. A selectable map is one immediate child directory whose
+   agent-owned `code_map.md` exists and is readable.
+3. Load `skills/agent_context.md` and read only the selected project's `agent_context.md` when it exists. Treat its
+   canonical `Useful code maps:` entries as project selections, not as proof that a generated map is currently
+   usable.
+4. For **Add**, list usable generated maps not already selected. For **Remove**, list only selected identities that
+   are still usable generated maps. Keep choices in stable lexical order and accept the corresponding number.
+
+Revalidate the selected project and map immediately before mutation. The map name must be one directory component,
+and `<active-map-store>/<map>/code_map.md` must still be readable. A same-name repository-local map-workspace
+candidate, its `workspace.md`, or its execution memory never establishes a valid association target. If the
+project or generated-map identity is invalid, stale, ambiguous, or no longer usable, stop without changing context.
+
+After the human selects the concrete add or remove operation, delegate only the canonical project-context mutation
+to `skills/agent_context.md`. Report the project, generated-map identity, and exact project `agent_context.md`
+target. The operation must not create, rebuild, move, rename, edit, or delete generated-map artifacts; modify a map
+workspace; change project or map execution memory; or persist active workspace/session identity.
+
+An already-present add and an already-absent remove are successful no-ops. After mutation or no-op, verify the
+project selection and return to the refreshed **Manage Code Maps** entry through `skills/menu.md`. Association
+maintenance does not activate the selected map, perform source inspection, or authorize another map lifecycle
+action.
 
 ### Create Map Workspace
 

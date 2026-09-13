@@ -312,7 +312,7 @@ filesystem tools for deterministic operations and resolve only immediate directo
   chooses to do so.
 
 When project design must be synthesized, direct the human to the Web UI workflow at
-`<bonsai-home>/prompts/create_project_memory.md` or accept explicitly human-provided project memory. Do not invoke
+`<bonsai-home>/prompts/create_project.md` or accept explicitly human-provided project memory. Do not invoke
 that Web UI workflow inside the coding session or treat guidance to use it as completed design.
 
 After listing, switching, creating, declining, or cancelling, apply `skills/menu.md` subordinate-return rules:

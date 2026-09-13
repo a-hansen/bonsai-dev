@@ -87,7 +87,7 @@ There is no requirement to provide all available maps or source context at the s
 When the design is mature enough to implement, provide the Web UI AI with:
 
 ```text
-prompts/create_project_memory.md
+prompts/create_project.md
 ```
 
 and ask it to update the existing named project:
@@ -102,23 +102,31 @@ A typical update may include:
 
 ```text
 .bonsai/projects/bonsai-dev/
+    workspace.md
     requirements.md
     architecture.md
     agent_plan.md
     agent_state.md
 ```
 
-Not every change requires all four files, but the live project memory should remain internally consistent and describe the current project and current body of work.
+Not every change requires all five files, but the live project workspace memory should remain internally consistent and describe the current project and current body of work.
 
-The Web UI workflow produces a ZIP rooted at:
+The Web UI workflow produces a repository-root ZIP containing the canonical bootstrap and project workspace:
 
 ```text
-.bonsai/projects/bonsai-dev/
+.bonsai/
+    start.md
+    projects/
+        bonsai-dev/
 ```
 
 Review the generated human-owned project truth before adopting it, then extract the ZIP at the repository root.
 
 The design workflow does not create the detailed Phase 1 implementation plan.
+
+If design establishes useful generated code maps, `create_project.md` may seed their identities in the project's
+canonical `Useful code maps:` list. Later additions and removals go through **Manage Code Maps** and change only
+project `agent_context.md`.
 
 ## Starting Implementation
 

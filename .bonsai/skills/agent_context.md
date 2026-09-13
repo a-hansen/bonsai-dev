@@ -87,6 +87,48 @@ Write a qualifying fact at the narrowest scope that keeps it reusable:
 Do not store active-project selection in any scope. It is current-session identity, not durable operational
 memory.
 
+## Project Code-Map Associations
+
+Project-to-map association maintenance is entered only through **Manage Code Maps** and is delegated here because
+the selection is project-scoped operational context. Require the invoking workflow to supply one validated active
+project, the independently resolved active generated-map store, one concrete generated-map identity, and the
+human-selected add or remove operation.
+
+Revalidate every identity immediately before writing:
+
+- the project home must be one immediate child of `<repository-home>/.bonsai/projects/`, and its readable
+  `workspace.md` must declare exactly `Type: project` and `Route: Project workspace behavior`;
+- the map name must be one directory component and its immediate active-map-store directory must contain a
+  readable agent-owned `code_map.md`; and
+- a repository-local map workspace, including one with the same name, is not association evidence and is never a
+  substitute for the generated-map check.
+
+If validation fails, stop without mutation. Otherwise change only `<project-home>/agent_context.md`, using this
+canonical compact block:
+
+```text
+Useful code maps:
+- barcache
+- tickerview
+```
+
+Maintain at most one unambiguous `Useful code maps:` block. Preserve existing selection order and all unrelated
+project context. For an add, append the selected map only when it is absent; an existing selection is a no-op. For
+a remove, delete only the exact selected item; an absent selection is a no-op. Never create duplicate entries.
+When removal leaves no selections, remove the now-empty block and its associated excess blank line. If that leaves
+an otherwise empty context file, remove the file instead of preserving empty association structure.
+
+In later project work where map-guided navigation is relevant, treat these entries as the selected map identities
+and resolve each named `<active-map-store>/<map>/code_map.md` directly. Do not enumerate the entire map store merely
+to rediscover project selections. A missing or unreadable named entry is stale operational context: surface it and
+do not rely on that map, but do not silently rewrite the selection outside an authorized association action.
+
+Do not discover dependencies, infer selections from project truth, or copy all usable maps into project context.
+Do not modify developer- or repository-level context for a project association. Association maintenance never
+changes a generated map, repository-local map workspace, project execution memory, project final truth, or active
+workspace/session identity. Verify that only the selected project's context changed, report mutation versus no-op,
+and return control to the invoking code-map workflow.
+
 ## Execution-State Boundary
 
 Keep an unresolved current blocker in `<project-home>/agent_state.md`. A separate durable lesson established while

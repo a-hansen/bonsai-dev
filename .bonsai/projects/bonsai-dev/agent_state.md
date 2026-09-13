@@ -5,30 +5,18 @@
 
 ## Current Execution State
 
-**Current Phase:** Creation, Associations, Cleanup, and Validation
+**Current Phase:** `None`
 
-**Phase Planning Status:** Required
+**Execution Readiness:** Complete
 
-**Active Phase Plan File:** `None`
+**Current Objective:** The approved four-phase workspace-refactor body of work is complete.
 
-**Phase Plan Status:** `None`
-
-**Phase Execution Mode:** To determine during planning
-
-**Execution Readiness:** Phase planning required
-
-**Current Objective:** Plan newly active Phase 4 and produce an approval-ready execution basis.
-
-- **Current Snapshot:** Phases 1 through 3 are complete. Phase 3 delivered repository-local map-workspace management, roadmap/state-driven scoped mapping, generated-output ownership separation, compatible handoff and reactivation, retirement of `map_state.md`, reconciled affected category guides, and passing focused startup, lifecycle, ownership, reference, and map-workspace validation. Phase 4 is newly active and has no approved execution basis.
-- **Active Files:** `.bonsai/projects/bonsai-dev/agent_plan.md`, `.bonsai/projects/bonsai-dev/agent_state.md`, `.bonsai/specification.md`, `.bonsai/projects/bonsai-dev/requirements.md`, `.bonsai/projects/bonsai-dev/architecture.md`
+- **Current Snapshot:** Phases 1 through 4 are complete and the approved roadmap is exhausted. Workspace-native project and map routing, shared lifecycle and handoff, repository-local map execution memory, reusable generated-map separation, creation workflows, project-to-map associations, category guides, and active guidance agree with approved final truth. The final dependency-free regression run passes 74 cases: 21 startup, 14 lifecycle, 19 map-workspace, and 20 creation/association cases. Embedded fallback, external reusable-home, and repository-local self-hosting behavior are covered; active-reference and category-guide checks pass; the authorized diff is whitespace-clean. Actual final-truth impact was `None`.
+- **Active Files:** `None`
 - **Blockers / Risks:** `None`
 
-**Exact Next Step:** Plan Phase 4, **Creation, Associations, Cleanup, and Validation**: inspect approved truth and current standard state, determine the execution mode and whether a detailed plan is warranted, and produce a bounded execution basis for human approval.
-**Success Condition:** Phase 4 has one approval-ready execution basis with a justified mode, bounded scope and exclusions, ordered work, validation strategy, final-truth impact classification, and one concrete post-approval next step; planning stops at the applicable human approval gate.
-
-### Approved Dry-Run Baseline
-
-`None`
+**Exact Next Step:** `None — the current approved body of work is complete.`
+**Success Condition:** Satisfied. The approved four-phase roadmap is exhausted and all required focused, regression, environment, reference-integrity, category-guide, and authorized-diff checks pass.
 
 ## Maintenance Rules
 

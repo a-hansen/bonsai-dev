@@ -1,11 +1,11 @@
-# Create Bonsai Project Memory
+# Create Bonsai Project
 
 ## Purpose
 
-Turn a mature Web UI design conversation into durable, independently usable Bonsai project memory and, for an
-initial synthesis, a repository-root Bonsai bootstrap package. Preserve the human's approved product and
-architecture decisions, honest unresolved questions, and a minimal implementation roadmap without turning the
-conversation into a transcript or beginning implementation.
+Turn a mature Web UI design conversation into a valid Bonsai project workspace and, for an initial synthesis, a
+repository-root bootstrap package. Preserve the human's approved product and architecture decisions, honest
+unresolved questions, and a minimal implementation roadmap without turning the conversation into a transcript or
+beginning implementation.
 
 Keep design conversational until synthesis is requested. Do not force the human to fill templates during
 exploration.
@@ -47,14 +47,15 @@ The selected project root is:
 
 ### Initial synthesis
 
-Produce one repository-root archive containing the canonical local Bonsai bootstrap plus the four instantiated core
-project files:
+Produce one repository-root archive containing the canonical local Bonsai bootstrap plus the five instantiated
+core project-workspace files:
 
 ```text
 .bonsai/
     start.md
     projects/
         <project>/
+            workspace.md
             requirements.md
             architecture.md
             agent_plan.md
@@ -69,7 +70,7 @@ requirements/requirements_<AREA>.md
 architecture/architecture_<SUBSYSTEM>.md
 ```
 
-Simple projects should contain only `start.md` and the four core project files. The archive enables the
+Simple projects should contain only `start.md` and the five core project-workspace files. The archive enables the
 repository-local Bonsai entry point; it does not make the repository an Embedded Bonsai installation unless the
 repository separately contains a complete valid Bonsai standard.
 
@@ -81,9 +82,11 @@ When the human supplies existing Bonsai project memory and requests a design upd
 2. Change only files materially affected by the approved design discussion unless full regeneration is explicitly
    requested.
 3. Preserve unaffected content; do not normalize or rewrite it for style.
-4. Include `agent_plan.md` or `agent_state.md` only when the design change requires roadmap, phase, blocker,
+4. Preserve a valid project `workspace.md`. If the supplied existing project predates the workspace contract, call
+   out adding the exact current project entry as part of the proposed update rather than silently omitting it.
+5. Include `agent_plan.md` or `agent_state.md` only when the design change requires roadmap, phase, blocker,
    readiness, or next-step reconciliation.
-5. Do not perform implementation work.
+6. Do not perform implementation work.
 
 Package update files at their existing project-root-relative paths. If the approved change requires deleting or
 renaming an existing file, state that action explicitly for human review; omission from an update archive does not
@@ -103,9 +106,16 @@ It is not a Bonsai Home entry point. Normal startup must begin from the target r
 
 ## Session Inputs
 
-Retain the human's complete startup request as natural language. An explicit active-project request is session
-identity; any remaining request is passed through unchanged after identity resolution. Do not require or invent a
-startup command syntax.
+Retain the human's complete startup request as natural language. An explicit active-project or active-map request is
+session identity; any remaining request is passed through unchanged after identity resolution. Do not require or
+invent a startup command syntax.
+
+Only one active workspace may be explicit. If the request names both an active project and an active map, stop and
+ask the human to choose one; do not guess which identity takes precedence.
+
+A request for a repository-level workflow that does not require an active workspace, such as **Manage Code Maps**
+or **Create Bonsai Home**, leaves active workspace identity unresolved unless the human also explicitly supplied
+one. Preserve the request for the implementation kernel rather than forcing ordinary project selection first.
 
 ## Bootstrap Location Guard
 
@@ -132,43 +142,74 @@ Resolve deterministic facts with host tools when available.
 
 1. **Repository home:** Treat the parent of the `.bonsai` directory containing this file as repository home. Do
    not infer repository home from the process working directory when the two differ.
-2. **Bonsai Home:** A directory is a valid Bonsai standard for bootstrap when it contains readable
-   `specification.md` and `prompts/implementation.md` files.
+2. **Bonsai Home:** A directory is a valid Bonsai standard for bootstrap when specification.md and
+   prompts/implementation.md exist and are accessible. Check only their existence/accessibility; do
+   not read specification.md during bootstrap.
    - If `BONSAI_HOME` is defined and identifies a valid standard, use it.
    - Otherwise, if the repository-local `.bonsai` directory is a valid embedded standard, use it.
    - Otherwise stop and ask the human to configure or identify Bonsai Home. Report a defined but invalid
      `BONSAI_HOME`; do not search broadly for another installation, substitute a one-session path for the missing
      environment configuration, or persist a guessed location.
-3. **Active project:** Resolve only immediate child directories of `<repository-home>/.bonsai/projects/`.
-   - If the human explicitly named a project, use it only when that project directory exists. Otherwise stop and
-     ask the human to correct the project or choose an available one. When multiple existing projects are offered
-     as alternatives, present them in stable lexical order as numbered choices and accept the corresponding number
-     as the selection.
-   - Otherwise, use `main` when `projects/main/` exists.
-   - Otherwise, if exactly one project directory exists, use it.
-   - Otherwise, if several project directories exist, enumerate them in stable lexical order, present them as
-     numbered choices, and ask the human to choose by number. Accept the corresponding number as the project
-     selection; do not require the human to retype the project name.
-   - Otherwise stop and surface project creation or project design as the required next action. Do not create
-     project memory or invent durable design during bootstrap.
+3. **Workspace candidates:** Enumerate only immediate child directories of
+   `<repository-home>/.bonsai/projects/` and `<repository-home>/.bonsai/maps/`, each in stable lexical order. Keep
+   the two concrete types separate. Do not infer a workspace from unrelated files or generated map output.
+4. **Active workspace:** Resolve at most one concrete workspace using these rules:
+   - If the human explicitly named an active project, select
+     `<repository-home>/.bonsai/projects/<project>` only when that immediate project directory exists. Otherwise
+     stop and ask the human to correct the name or choose from the available projects.
+   - If the human explicitly named an active map, select `<repository-home>/.bonsai/maps/<map>` only when that
+     immediate map directory exists. Otherwise stop and ask the human to correct the name or choose from the
+     available maps.
+   - If no workspace is explicit and the retained request directly invokes a repository-level workflow that does
+     not require one, leave active workspace unresolved and continue to handoff.
+   - Otherwise preserve ordinary project-oriented startup: select `projects/main` when it exists; if not, select
+     the sole project candidate; if several projects exist, stop and present them as numbered choices in stable
+     lexical order, accepting the corresponding number as the selection; if no projects exist, leave active
+     workspace unresolved for the implementation kernel's repository-entry routing.
+   - Never infer a map from an unqualified startup merely because one or more map directories exist.
 
-Keep repository home, Bonsai Home, active project, and the retained startup request as current-session context
-only. Do not write a current-project pointer or store session identity in developer context, agent context, or
-project memory.
+When an explicit workspace does not exist and alternatives are presented, list only candidates of that same
+concrete type in stable lexical order. Do not silently substitute `main`, a sole candidate, or a workspace of the
+other type for an invalid explicit identity.
+
+## Load the Workspace Entry
+
+When a workspace was selected, require and read only `<active-workspace-home>/workspace.md` before implementation
+handoff.
+
+The entry is valid for bootstrap only when it has one unambiguous `Type` and one unambiguous `Route` declaration
+matching both the selected directory kind and one of these two approved pairs:
+
+| Type | Route |
+| --- | --- |
+| `project` | `Project workspace behavior` |
+| `map` | `Map workspace behavior` |
+
+Stop clearly when the entry is missing or inaccessible, a required declaration is absent or conflicting, the type
+does not match the selected directory kind, the route does not match the type, or the type is unsupported. Do not
+guess around an invalid entry or fall back to another workspace.
+
+Keep repository home, Bonsai Home, active workspace type/name/home, the loaded workspace entry, project and map
+candidates, and the retained startup request as current-session context only. Do not write an active-workspace
+pointer or store session identity in developer context, agent context, project memory, or map memory.
+
+Do not read `agent_plan.md`, `agent_state.md`, requirements, architecture, map calibration, generated maps, detailed
+plans, developer context, agent context, or specialized skills during bootstrap.
 
 ## Hand Off
 
-After all identity values are resolved:
+After repository home and Bonsai Home are resolved, and after any selected workspace entry is loaded and validated:
 
 1. read `<bonsai-home>/prompts/implementation.md`;
-2. provide it the resolved Bonsai Home, repository home, active project, and retained natural-language startup
-   request;
+2. provide it the resolved Bonsai Home, repository home, optional active workspace type/name/home, loaded workspace
+   entry when applicable, project and map candidates, and retained natural-language startup request;
 3. follow it as the implementation kernel.
 
-Do not load requirements, architecture, maps, developer context, agent context, or specialized skills in this
-bootstrap. Do not execute requested project, Bonsai Home, code-map, or implementation workflows here; preserve
-the request for the implementation kernel, which must report any unavailable delegated workflow without claiming
-success.
+When no workspace is active, supply the unresolved identity and candidates so the implementation kernel can own
+repository-entry routing. Do not manufacture workspace execution readiness in bootstrap.
+
+Do not execute requested project, map, Bonsai Home, code-map, or implementation workflows here. Preserve the request
+for the implementation kernel, which must report any unavailable delegated workflow without claiming success.
 ````
 
 The bootstrap is standard framework content, not project final truth. If the canonical bootstrap changes in the
@@ -222,6 +263,8 @@ Non-blocking uncertainty belongs under ordinary `Open Questions` and does not pr
 
 ## Ownership Boundaries
 
+- `workspace.md` is the stable declarative project entry. It contains only the exact project type and route; it
+  never stores roadmap, readiness, blockers, current phase, or active-project selection.
 - `requirements.md`, `architecture.md`, and their warranted layered documents are human-owned final truth.
 - `agent_plan.md` and `agent_state.md` are agent-owned execution memory initialized by this workflow and maintained
   by implementation afterward.
@@ -277,16 +320,17 @@ execute`. The implementation workflow drafts and reviews the detailed Phase 1 pl
 Create one zip archive suitable for extraction at repository root.
 
 - Every archive entry starts under `.bonsai/`; do not add a wrapper directory above it.
-- For initial synthesis, include `.bonsai/start.md`, all four required core files under
+- For initial synthesis, include `.bonsai/start.md`, all five required core workspace files under
   `.bonsai/projects/<project>/`, and every referenced optional project file.
 - For an existing-project update, include only materially affected project files unless full regeneration was
   requested. Do not include `.bonsai/start.md`.
 - Include no `developer_context.md`, implementation source, detailed phase plan, logs, or generated test output.
 - Use ordinary UTF-8 Markdown files with stable relative links.
 - Inspect the archive manifest before presenting it. For initial synthesis, verify that `.bonsai/start.md` is
-  present and exactly matches the canonical bootstrap in this workflow. For all archives, verify safe paths,
-  required project files, ownership metadata, cross-document links, roadmap/state agreement, and absence of
-  placeholders.
+  present and byte-for-byte identical to the canonical bootstrap in this workflow, and that `workspace.md` has
+  exactly one `Type: project` declaration and one `Route: Project workspace behavior` declaration. For all
+  archives, verify safe paths, required project files, ownership metadata, cross-document links, roadmap/state
+  agreement, and absence of placeholders.
 
 The initial-synthesis archive intentionally maps onto repository-local `.bonsai` paths. If the human has indicated
 that the target repository already contains `.bonsai/start.md` or the selected project path, surface the potential
@@ -303,6 +347,17 @@ the generated final truth before adoption. Do not add conversational filler or b
 ## Inline Output Schemas
 
 Instantiate these schemas; do not emit the blank forms.
+
+### `workspace.md`
+
+Every initial project package uses this exact entry:
+
+```markdown
+# Workspace
+
+**Type:** `project`
+**Route:** Project workspace behavior
+```
 
 ### `requirements.md`
 

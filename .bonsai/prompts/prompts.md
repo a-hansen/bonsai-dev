@@ -5,6 +5,6 @@ authoritative; load a prompt only for its entry workflow.
 
 | Prompt | Responsibility / when to load |
 | --- | --- |
-| `<bonsai-home>/prompts/create_map_calibration.md` | Turn a Web UI source-owner conversation into optional human-owned code-map calibration and a repository-root extraction package. |
-| `<bonsai-home>/prompts/create_project_memory.md` | Turn a mature Web UI design conversation into durable Bonsai project memory and an initial repository-root bootstrap package. |
+| `<bonsai-home>/prompts/create_map.md` | Turn Web UI mapping discussion or source calibration into a repository-root package containing a resumable map workspace and optional human-owned calibration, without generated map output. |
+| `<bonsai-home>/prompts/create_project.md` | Turn a mature Web UI design conversation into durable project workspace memory and an initial repository-root bootstrap package. |
 | `<bonsai-home>/prompts/implementation.md` | Route coding-agent startup, authorization gates, implementation, reconciliation, and handoff after bootstrap identity resolution. |

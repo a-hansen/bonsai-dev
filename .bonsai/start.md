@@ -42,8 +42,8 @@ Resolve deterministic facts with host tools when available.
 
 1. **Repository home:** Treat the parent of the `.bonsai` directory containing this file as repository home. Do
    not infer repository home from the process working directory when the two differ.
-2. **Bonsai Home:** A directory is a valid Bonsai standard for bootstrap when specification.md and 
-   prompts/implementation.md exist and are accessible. Check only their existence/accessibility; do 
+2. **Bonsai Home:** A directory is a valid Bonsai standard for bootstrap when specification.md and
+   prompts/implementation.md exist and are accessible. Check only their existence/accessibility; do
    not read specification.md during bootstrap.
    - If `BONSAI_HOME` is defined and identifies a valid standard, use it.
    - Otherwise, if the repository-local `.bonsai` directory is a valid embedded standard, use it.

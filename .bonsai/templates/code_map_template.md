@@ -95,9 +95,9 @@ When source and this map disagree, correct the map or keep the mismatch explicit
 ## Related Map Files
 
 Keep only entries for generated-map files that exist. All paths are relative to this named-source map. Repository-
-local map workspace memory remains separate and is not listed here.
+local map workspace memory remains separate and is not listed here. Optional human-owned `map_calibration.md` is
+source-local guidance for the mapping workflow, not a generated related-map file.
 
-- `map_repo.md` — Optional human-owned source calibration; mapping guidance, not source proof
 - `namespace_router.tsv` — Optional fuller namespace ownership lookup
 - `manifest.tsv` — Optional compact subsystem/path registry
 - `symbol_index.tsv` — Optional selective high-value symbol lookup

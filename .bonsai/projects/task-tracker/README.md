@@ -14,10 +14,11 @@ The included memory is intentionally at a clean post-design checkpoint. Requirem
 Start a Web UI design conversation with the Task Tracker prompt below. When the design is mature, use Bonsai's project-memory workflow:
 
 ```text
-.bonsai/prompts/create_project_memory.md
+.bonsai/prompts/create_project.md
 ```
 
-During this repository's v2 staging period, the candidate copy is available at `bonsai/prompts/create_project_memory.md`. After promotion, `.bonsai/prompts/create_project_memory.md` is canonical.
+That workflow creates a repository-root package with the canonical `.bonsai/start.md` bootstrap and a project workspace under `.bonsai/projects/<project>/`.
+The workspace contains `workspace.md`, requirements, architecture, roadmap, and current resume state; optional useful generated-map selections belong only in project `agent_context.md`.
 
 Use this design prompt:
 
@@ -32,7 +33,7 @@ Keep the project local, single-user, compact, and free of accounts, networking, 
 
 Use a contract-first initial phase: define a reviewable core task API or structural contract plus behavior-focused tests or usage examples, then stop for human review before full implementation.
 
-Help me settle the language, tooling, and other material design choices. When the design is ready, follow `prompts/create_project_memory.md` to produce the Bonsai project memory.
+Help me settle the language, tooling, and other material design choices. When the design is ready, follow `prompts/create_project.md` to produce the Bonsai project workspace memory.
 ```
 
 ## Use the Included Java Reference Memory

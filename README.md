@@ -48,13 +48,13 @@ The biggest changes are:
   Read .bonsai/start.md and follow its instructions.
   ```
 
-  The small repository-local bootstrap resolves the Bonsai Home, repository, and active project before loading the standard implementation workflow.
+  The small repository-local bootstrap resolves the Bonsai Home, repository, and active project or map workspace before loading the standard implementation workflow.
 
 * **Fresh-session continuation can execute the exact next step immediately.** At an appropriate boundary, Bonsai can generate a fresh-session prompt that reconstructs canonical state and executes the already-authorized exact next action without stopping at the normal startup gate. Independent approval, review, blocker, and final-truth gates still remain intact.
 
 * **Code maps are reusable Bonsai assets.** Maps are integrated into the normal Bonsai workflow and stored centrally under Bonsai Home when one is active. They are tied to the source they describe rather than to a particular Bonsai project, so multiple projects can reuse the same map and multi-repository work becomes much cleaner.
 
-* **Web UI workflows produce repository-ready artifacts.** Project-memory creation and map calibration produce ZIPs meant to be extracted directly at the repository root, reducing setup to a straightforward design → extract → start workflow.
+* **Web UI workflows produce repository-ready workspaces.** Project and map creation produce ZIPs meant to be extracted directly at the repository root. Projects preserve design truth and execution memory; maps preserve resumable mapping memory and optional human-owned calibration without generating reusable map output during creation.
 
 # Try Bonsai First
 
@@ -116,7 +116,7 @@ That prompt is intentionally boring.
 
 You do not need to reconstruct the correct implementation instructions every time you open a coding session. You do not need to summarize the previous session. You do not need to remember which project files, plans, context, maps, or skills the agent should load.
 
-The local `start.md` establishes the repository anchor and routes the session into the active Bonsai standard. Bonsai then reconstructs the current project state and determines the next applicable gate or exact action.
+The local `start.md` establishes the repository anchor and routes the session into the active Bonsai standard. Bonsai then reconstructs the current workspace state and determines the next applicable gate or exact action.
 
 For a repository with multiple named projects, you may specify one directly:
 
@@ -126,16 +126,23 @@ Read .bonsai/start.md and follow its instructions. Active project: <project>.
 
 If you do not, Bonsai can resolve `main`, select the only available project, or ask you to choose among multiple projects.
 
-The project memory carries the continuity. The startup prompt stays small.
+Workspace memory carries the continuity. The startup prompt stays small.
+
+To resume a named map workspace instead, be explicit:
+
+```text
+Read .bonsai/start.md and follow its instructions. Active map: <map>.
+```
 
 ---
 
 # How Bonsai Organizes Project Memory
 
-A normal Bonsai project begins with four core memory files:
+A normal Bonsai project begins with a workspace entry and four core memory files:
 
 ```text
 .bonsai/projects/main/
+├── workspace.md
 ├── requirements.md
 ├── architecture.md
 ├── agent_plan.md
@@ -146,6 +153,7 @@ They have deliberately different jobs.
 
 | File | Purpose | Ownership |
 | --- | --- | --- |
+| `workspace.md` | Stable project type and implementation-route declaration | Declarative workspace entry |
 | `requirements.md` | Product behavior, scope, and constraints | Human-owned |
 | `architecture.md` | Intended system architecture and durable technical decisions | Human-owned |
 | `agent_plan.md` | Implementation roadmap and phase-level execution state | Agent-maintained |
@@ -191,7 +199,7 @@ Do not force the conversation into Bonsai documents prematurely.
 When the design is mature enough to preserve, use:
 
 ```text
-prompts/create_project_memory.md
+prompts/create_project.md
 ```
 
 in that same conversation.
@@ -205,6 +213,7 @@ Its core shape is:
 ├── start.md
 └── projects/
     └── <project>/
+        ├── workspace.md
         ├── requirements.md
         ├── architecture.md
         ├── agent_plan.md
@@ -225,7 +234,7 @@ The generated `start.md` creates the repository-local Bonsai entry point. The Bo
 
 ---
 
-# Calibrate a Code Map in the Web UI
+# Create a Map Workspace in the Web UI
 
 Source inspection is authoritative, but a repository owner often knows things that are expensive or unreliable for an agent to infer from source alone.
 
@@ -241,23 +250,26 @@ For example:
 Use:
 
 ```text
-prompts/create_map_calibration.md
+prompts/create_map.md
 ```
 
-to preserve that knowledge before building a code map.
+to create resumable repository-local mapping memory before building a reusable code map.
 
-The workflow produces a repository-root ZIP containing human-owned calibration under:
+The workflow produces a repository-root ZIP containing map workspace memory and optional human-owned calibration:
 
 ```text
 .bonsai/
 └── maps/
     └── <source>/
-        └── map_calibration.md
+        ├── workspace.md
+        ├── agent_plan.md
+        ├── agent_state.md
+        └── map_calibration.md    # optional
 ```
 
 Extract it at the repository root.
 
-The calibration is guidance, not source truth and not the map itself. Bonsai's mapping workflow later combines it with actual source to create or update the reusable code map.
+The workspace records the mapping roadmap and current resume state. Calibration is optional guidance, not source truth, execution state, or the map itself. Bonsai's coding-agent mapping workflow later combines relevant context with actual source to create or update reusable generated map output.
 
 A source does not need Bonsai project memory in order to be mapped.
 
@@ -281,7 +293,7 @@ Bonsai is designed around a different model:
 
 It records only the current execution condition, blockers or risks that still matter, resume-critical files, the exact next step, and the success condition.
 
-At a natural boundary, Bonsai can also offer to continue one exact next action in a fresh session. The continuation prompt does not carry a handwritten summary of volatile state. The new session reconstructs the canonical state from project memory before it acts.
+At a natural boundary, Bonsai can also offer to continue one exact next action in a fresh session. The continuation prompt does not carry a handwritten summary of volatile state. The new session reconstructs canonical workspace state before it acts.
 
 If you exit instead, Bonsai gives you the ordinary startup prompt so you can resume later without changing durable state merely to record that you stopped.
 
@@ -358,6 +370,10 @@ Bonsai includes layered code maps for that problem.
 Maps are named for the source they represent, not for whichever Bonsai project happened to create them. That makes them reusable across projects and especially useful when one project's source universe spans several repositories.
 
 Optional human-owned `map_calibration.md` can tell the mapping workflow what deserves attention, what is misleading, and what should remain out of scope. Actual source remains authoritative.
+
+Map workspace memory lives with the source repository under `.bonsai/maps/<map>/`; reusable generated maps live in the active map store. In Embedded Bonsai those paths can overlap physically, but their ownership remains separate.
+
+Projects can retain explicit reusable-map selections in project `agent_context.md` using a compact `Useful code maps:` list. Add and remove those selections through **Manage Code Maps**; changing a selection does not modify either the generated map or its map workspace.
 
 The maps are not a substitute for reading source code. They help the agent find the right source code faster and avoid rediscovering the same repository structure every session.
 

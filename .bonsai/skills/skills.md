@@ -5,12 +5,12 @@ authoritative; load a skill only when its responsibility matches the current wor
 
 | Skill | Responsibility / when to load |
 | --- | --- |
-| `<bonsai-home>/skills/agent_context.md` | Apply, qualify, or preserve durable operational knowledge at the narrowest reusable scope. |
+| `<bonsai-home>/skills/agent_context.md` | Apply, qualify, or preserve durable operational knowledge at the narrowest reusable scope, including canonical project code-map selections. |
 | `<bonsai-home>/skills/artifact_index.md` | Reconcile and validate category guides after qualifying standard prompt, skill, or template lifecycle changes. |
 | `<bonsai-home>/skills/bonsai_home.md` | Create or safely populate a configured reusable Bonsai Home from an embedded standard. |
-| `<bonsai-home>/skills/code_maps.md` | Manage repository-local map workspaces and create, inspect, maintain, remove, or use selective generated source-navigation maps. |
+| `<bonsai-home>/skills/code_maps.md` | Manage repository-local map workspaces, generated source-navigation maps and their source identity, and project entry actions for useful-map selections. |
 | `<bonsai-home>/skills/dry_run.md` | Preview one approved exact next step through an explicitly requested, read-only dry run. |
 | `<bonsai-home>/skills/final_truth_update.md` | Classify, authorize, and apply clarifications or revisions to human-owned final truth. |
-| `<bonsai-home>/skills/handoff.md` | Reconcile a completed exact step, preserve resumable execution state, and present the next gate. |
+| `<bonsai-home>/skills/handoff.md` | Reconcile a completed project or map exact step, preserve workspace execution state, and present the next gate. |
 | `<bonsai-home>/skills/menu.md` | Present focused human gates and applicable secondary actions for an invoking workflow. |
 | `<bonsai-home>/skills/phase_execution.md` | Govern phase planning, execution modes, phase-plan lifecycle, contract review, and implementation passes. |
