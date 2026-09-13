@@ -129,7 +129,7 @@ root. The ZIP must contain exactly:
             map_calibration.md
 ```
 
-Do not include `.bonsai/start.md`, project memory, `code_map.md`, `map_state.md`, subsystem maps, lookup tables,
+Do not include `.bonsai/start.md`, project memory, `code_map.md`, subsystem maps, lookup tables,
 source files, or any other artifact. This package adds source-specific human calibration only. It does not create a
 code map and does not by itself make the source repository a Bonsai project or Embedded Bonsai installation.
 
@@ -262,7 +262,7 @@ The mapping agent should:
 - inspect **Calibration-Only Areas** only to validate or refine in-scope maps;
 - avoid subsystem maps, API maps, manifest rows, router rows, or symbol-index rows for **Out of Scope** areas
   unless the human explicitly expands scope; and
-- record unresolved scope concerns in `map_state.md` rather than silently widening the effort.
+- retain unresolved scope concerns under **Open Questions** rather than silently widening the effort.
 
 ---
 

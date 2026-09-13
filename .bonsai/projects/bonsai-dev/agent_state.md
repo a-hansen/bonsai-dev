@@ -5,18 +5,26 @@
 
 ## Current Execution State
 
-**Current Phase:** Map Workspace Execution
-**Phase Planning Status:** Required  
-**Phase Execution Mode:** To determine during planning  
-**Execution Readiness:** Phase planning required  
-**Current Objective:** Plan Phase 3 from approved truth and current repository reality.
+**Current Phase:** Creation, Associations, Cleanup, and Validation
 
-- **Current Snapshot:** Phases 1 and 2 are complete. Phase 2 validation passed all 19 startup and 14 lifecycle cases, all 10 focused truth/reference anchors, the scoped diff check, and 9/9 skills-guide coverage. Shared handoff and menu now preserve project/map identity and continuation without weakening project-only gates; actual final-truth impact was `None`, and no category-guide edit was required. Phase 3 is active but has no approved execution basis or detailed plan.
-- **Active Files:** `.bonsai/projects/bonsai-dev/agent_plan.md`, `.bonsai/projects/bonsai-dev/agent_state.md`, `.bonsai/projects/bonsai-dev/requirements.md`, `.bonsai/projects/bonsai-dev/architecture.md`, `.bonsai/specification.md`, `.bonsai/skills/code_maps.md`, `.bonsai/skills/handoff.md`, `.bonsai/prompts/implementation.md`
+**Phase Planning Status:** Required
+
+**Active Phase Plan File:** `None`
+
+**Phase Plan Status:** `None`
+
+**Phase Execution Mode:** To determine during planning
+
+**Execution Readiness:** Phase planning required
+
+**Current Objective:** Plan newly active Phase 4 and produce an approval-ready execution basis.
+
+- **Current Snapshot:** Phases 1 through 3 are complete. Phase 3 delivered repository-local map-workspace management, roadmap/state-driven scoped mapping, generated-output ownership separation, compatible handoff and reactivation, retirement of `map_state.md`, reconciled affected category guides, and passing focused startup, lifecycle, ownership, reference, and map-workspace validation. Phase 4 is newly active and has no approved execution basis.
+- **Active Files:** `.bonsai/projects/bonsai-dev/agent_plan.md`, `.bonsai/projects/bonsai-dev/agent_state.md`, `.bonsai/specification.md`, `.bonsai/projects/bonsai-dev/requirements.md`, `.bonsai/projects/bonsai-dev/architecture.md`
 - **Blockers / Risks:** `None`
 
-**Exact Next Step:** Plan Phase 3, **Map Workspace Execution**: inspect approved truth and current mapping artifacts, determine whether a detailed phase plan is warranted, select the execution mode, and prepare the proposed execution basis for human review.
-**Success Condition:** Phase 3 has a concrete, truth-aligned detailed plan or lightweight execution basis ready for human approval; execution memory is reconciled to the resulting review gate; and no Phase 3 implementation begins.
+**Exact Next Step:** Plan Phase 4, **Creation, Associations, Cleanup, and Validation**: inspect approved truth and current standard state, determine the execution mode and whether a detailed plan is warranted, and produce a bounded execution basis for human approval.
+**Success Condition:** Phase 4 has one approval-ready execution basis with a justified mode, bounded scope and exclusions, ordered work, validation strategy, final-truth impact classification, and one concrete post-approval next step; planning stops at the applicable human approval gate.
 
 ### Approved Dry-Run Baseline
 
