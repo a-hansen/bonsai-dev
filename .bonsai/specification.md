@@ -314,8 +314,8 @@ The map workspace is distinct from the generated reusable map.
 
 A **code map** is the normal user-facing concept for source mapping.
 
-A **map workspace** is the durable execution mechanism Bonsai uses to create, maintain, rebuild, and resume work on
-a code map.
+A **map workspace** is the durable execution mechanism Bonsai uses to create, extend, refresh, rebuild, and resume
+work on a code map.
 
 Users should not normally need to understand or manually create a map workspace before asking Bonsai to map source.
 
@@ -970,7 +970,7 @@ entire map store in every future session.
 
 Adding or removing an association changes only project operational context.
 
-It does not create, rebuild, move, rename, or delete the reusable generated map.
+It does not create, extend, refresh, rebuild, move, rename, or delete the reusable generated map.
 
 ---
 
@@ -1252,9 +1252,16 @@ The implementation kernel:
 10. reconciles completed work;
 11. maintains current workspace execution memory;
 12. preserves qualifying operational discoveries;
-13. reconciles affected framework category guides when authorized standard artifacts are added, removed, renamed,
+13. when authorized project work materially changes source represented by a known relevant code map, identifies
+    whether the existing map coverage now needs maintenance and surfaces one bounded maintenance action at a
+    natural boundary;
+14. when source inspection already required by authorized project work reveals reusable, non-obvious,
+    architecturally significant source knowledge that is not adequately represented by a useful code map, may
+    surface one bounded mapping recommendation without expanding source inspection merely to hunt for mapping
+    opportunities;
+15. reconciles affected framework category guides when authorized standard artifacts are added, removed, renamed,
     or materially change responsibility;
-14. stops at the next natural gate.
+16. stops at the next natural gate.
 
 For map work, one exact executable action may be a complete bounded mapping unit. Discovery, ownership resolution,
 standard generated-map updates, validation, and reconciliation inside that unit are not separate authorization
@@ -1266,6 +1273,20 @@ Project-specific phase execution belongs in project workflow and skills.
 
 Mapping-specific source inspection, generated-map maintenance, and source/map identity handling belong in the
 mapping workflow and `skills/code_maps.md`.
+
+Project implementation may detect that mapping work would be valuable, but it does not silently acquire authority
+to mutate reusable generated maps. A maintenance or mapping recommendation is a proposed next action. If the human
+accepts it, Bonsai routes that work through the applicable map workspace and normal bounded mapping-unit
+authorization.
+
+For implementation-time maintenance detection, a **known relevant map** is one already selected for the project,
+already loaded or used in the current work, or cheaply identifiable from the current source identity without loading
+or surveying the entire map store. Bonsai does not need to enumerate and inspect every reusable map after every
+source edit.
+
+Implementation-driven mapping recommendations must arise from source knowledge the agent already had legitimate
+reason to inspect for the current project action. Bonsai should not roam through unrelated source merely to find
+additional things that might be worth mapping.
 
 Detailed workflow belongs in triggered skills rather than one permanently loaded monolithic prompt.
 
@@ -1322,6 +1343,28 @@ detail when those targets remain inside the selected focus and standard output e
 Code maps provide selective structural memory for source navigation.
 
 They are navigation aids, not substitutes for source inspection and not project truth.
+
+## Code-map lifecycle intents
+
+Bonsai distinguishes between creating, extending, refreshing, and rebuilding a code map.
+
+**Create** establishes a reusable map for a source identity that does not yet have a suitable map.
+
+**Extend** deliberately broadens the useful mapping scope of an existing map. Examples include adding coverage for
+another architectural subsystem, mapping a cross-cutting concern, or mapping another reusable caller or extension
+surface. Extending a map reuses and reactivates the existing map workspace rather than creating a duplicate map for
+the same source identity.
+
+**Refresh** reconciles existing mapped knowledge after the represented source changes materially. Refresh normally
+preserves the existing map identity and intended coverage while updating the standard generated layers required to
+keep that coverage trustworthy.
+
+**Rebuild** intentionally replaces substantial generated representation and is distinct from ordinary extension or
+refresh. Destructive removal, broad ownership restructuring, or replacement of existing generated output remains
+separately gated.
+
+These lifecycle intents all use the same source-backed mapping model. Once a concrete bounded mapping focus is
+selected and authorized, `skills/code_maps.md` executes the applicable bounded mapping unit.
 
 ## Map store and source names
 
@@ -1630,6 +1673,62 @@ The broader authorization remains bounded. Bonsai must stop for human direction 
 The selected focus establishes the authorization boundary. Discovery resolves the exact standard generated-map
 targets inside that boundary.
 
+## Map extension and maintenance
+
+A completed map is complete only for its current mapping scope and represented source state. Completion does not
+seal the map against later useful work.
+
+An explicit request to broaden coverage should reactivate the existing compatible map workspace and establish a new
+bounded mapping focus. The human may name an architectural subsystem directly, name a cross-cutting concern, or ask
+Bonsai to review current coverage and suggest valuable additions. A requested subsystem is a mapping focus, not an
+instruction to create a directory or generated subsystem blindly; source discovery still determines justified
+architectural ownership and standard output.
+
+A source change is a different lifecycle trigger. When Bonsai has changed source during authorized project work and
+that change materially affects knowledge represented by a known relevant map, Bonsai should surface bounded map
+maintenance at a natural project boundary. Material changes may include changes to:
+
+- public or extension structure;
+- lifecycle or ownership behavior;
+- reusable caller or extension mechanics;
+- architectural relationships;
+- persistence, serialization, event, tracking, or similar mapped contracts;
+- source identity or routing facts that make current map guidance misleading.
+
+Routine local implementation edits, narrow bug fixes, private refactors, formatting, and other changes that do not
+materially affect mapped knowledge should not trigger map maintenance.
+
+Map maintenance is not an incidental side effect of project source mutation. The project agent identifies and
+proposes the affected bounded maintenance work; accepted maintenance then runs through the normal mapping workflow
+and map workspace. The agent should use what it already knows about the source change rather than rediscovering the
+entire library merely to decide whether maintenance is warranted.
+
+## Project-discovered mapping opportunities
+
+Authorized project work may reveal reusable source knowledge that deserves mapping even when no source change made
+the current map stale.
+
+Bonsai may recommend creating or extending a code map when all of the following are true:
+
+- the knowledge was discovered while inspecting source already required for the authorized project action;
+- the knowledge is source-level and useful beyond the current project-specific implementation;
+- the behavior or structure is non-obvious enough that preserving it would materially reduce future rediscovery;
+- it is architecturally significant, cross-boundary, reusable, or otherwise valuable map content; and
+- it is not already represented adequately by a useful current map.
+
+The recommendation should identify the relevant source or existing map, the proposed bounded mapping focus, and
+why the knowledge appears reusable enough to preserve. It should prefer extending an existing compatible map when
+one already represents the source identity; otherwise the normal code-map creation path applies.
+
+A mapping recommendation does not authorize source inspection beyond the current project need, does not mutate map
+output, does not silently expand the active project's execution scope, and does not become durable map or project
+state merely because the agent noticed it. If the human accepts the recommendation, Bonsai routes it through normal
+map selection, mapping-unit authorization, and current-session or fresh-session continuation.
+
+Bonsai should combine closely related observations and avoid repeatedly interrupting implementation with the same
+mapping suggestion. The purpose is to preserve expensive reusable knowledge encountered naturally during real
+work, not to turn every implementation session into a map-coverage survey.
+
 ## Map-specific reconciliation
 
 When the active workspace is a map, handoff additionally reconciles applicable:
@@ -1661,7 +1760,8 @@ Bonsai exposes code-map lifecycle actions through:
 
 **Manage Code Maps**
 
-During normal project implementation, it generally appears under **See more options**.
+During normal project implementation, it generally appears under **See more options** unless a mapping action has
+become directly relevant to the current work.
 
 The menu should present **code maps** as the primary managed object.
 
@@ -1669,13 +1769,33 @@ Useful primary operations include:
 
 - Create Code Map;
 - Inspect Code Map;
-- Update or Rebuild Code Map;
+- Extend Code Map;
+- Refresh Code Map;
+- Rebuild Code Map;
 - Remove Code Map;
 - Add a Code Map to the Active Project;
 - Remove a Code Map from the Active Project;
 - Manage Map Workspaces.
 
-Map-workspace operations are secondary lifecycle operations rather than peers of normal code-map creation.
+**Extend Code Map** is the normal human-facing path for broadening the useful scope of an existing map. After a map
+is selected, useful choices may include:
+
+- map another subsystem;
+- map a cross-cutting concern or reusable behavior;
+- map another public or extension surface;
+- review current coverage and suggest valuable additions.
+
+These choices select or help derive a bounded mapping focus. They do not directly prescribe generated filesystem
+structure. Source discovery determines where the resulting durable knowledge belongs.
+
+**Refresh Code Map** is the normal non-destructive path for reconciling an existing map after source changes. It
+should prefer the narrowest source-backed maintenance focus that restores trustworthy coverage.
+
+**Rebuild Code Map** is reserved for cases where ordinary extension or refresh is not sufficient and substantial
+replacement or ownership restructuring is intended. It retains the stronger human gates required for destructive
+or broad restructuring work.
+
+Map-workspace operations are secondary lifecycle operations rather than peers of normal code-map use.
 
 **Manage Map Workspaces** may provide actions such as:
 
@@ -1683,10 +1803,10 @@ Map-workspace operations are secondary lifecycle operations rather than peers of
 - Inspect Map Workspace;
 - Resume Map Workspace.
 
-## Context-aware code-map creation
+## Context-aware code-map creation and extension
 
-When **Create Code Map** is invoked from an active repository or project, Bonsai should prefer known session context
-over asking the human to restate it.
+When **Create Code Map** or **Extend Code Map** is invoked from an active repository or project, Bonsai should prefer
+known session context over asking the human to restate it.
 
 When reliably derivable, Bonsai should present or use defaults for:
 
@@ -1695,17 +1815,20 @@ When reliably derivable, Bonsai should present or use defaults for:
 - map identity;
 - current source snapshot;
 - corresponding repository-local map workspace;
-- initial bounded mapping scope;
+- initial or expanded bounded mapping scope;
 - initial bounded mapping focus;
-- optional active-project association.
+- optional active-project association for new maps.
 
 The human may override those defaults.
 
-A code-map creation proposal authorizes the initial selected mapping focus and standard generated-output envelope,
-not a precomputed exact list of standard Markdown target files.
+A code-map creation or extension proposal authorizes the selected mapping focus and standard generated-output
+envelope, not a precomputed exact list of standard Markdown target files.
 
-When the approved code-map action requires creation of the corresponding map workspace, that workspace creation is
-part of the same approved action and should not trigger a redundant second workspace-creation gate.
+When the approved action requires creation or reactivation of the corresponding map workspace, that workspace
+lifecycle step is part of the same approved action and should not trigger a redundant second workspace gate.
+
+Extending a compatible map must reuse that map identity and preserve existing generated output unless the human
+separately authorizes destructive replacement or restructuring.
 
 ## First-use behavior
 
@@ -1717,11 +1840,43 @@ implementation.
 
 For a greenfield repository with little useful source, mapping should normally be deferred.
 
+## Contextual map maintenance during project work
+
+When authorized project implementation materially changes source represented by a known relevant map, Bonsai
+should surface a concise maintenance recommendation at the next natural project boundary rather than silently
+allowing the map to become knowingly misleading.
+
+The recommendation should identify the affected map and the bounded area believed to need refresh. It may offer to
+perform the maintenance in the current session, continue it in a fresh session through normal exact-next-action
+semantics, review or change the proposed focus, or defer it.
+
+The recommendation itself does not authorize map mutation. If accepted, map maintenance becomes normal map work
+and is governed by `skills/code_maps.md`.
+
+## Contextual mapping opportunities during project work
+
+When authorized project work already required the agent to learn reusable, non-obvious source mechanics that are
+not adequately mapped, Bonsai may surface a concise recommendation to create or extend the relevant code map.
+
+The recommendation should explain:
+
+- which source or existing map is implicated;
+- the proposed bounded mapping focus;
+- what reusable knowledge was expensive or non-obvious to establish; and
+- why preserving it would help future work beyond the current project.
+
+Bonsai must not perform unrelated source exploration merely to generate these recommendations. It should recommend
+from evidence naturally encountered during the current authorized work.
+
+If the human accepts, the recommendation enters the normal mapping workflow. If the human declines or defers, the
+project continues without map mutation and Bonsai should not repeatedly surface the same suggestion during the same
+work merely because it remains technically possible.
+
 ## Project map associations
 
 Project map associations are stored in project `agent_context.md`.
 
-Managing an association does not create, rebuild, move, rename, or delete the generated map.
+Managing an association does not create, rebuild, move, rename, extend, refresh, or delete the generated map.
 
 Map-workspace discovery should use the repository-local `.bonsai/maps/` workspace area.
 
@@ -1820,6 +1975,11 @@ Stable workspace-aware implementation kernel and router.
 
 It receives Bonsai Home, repository home, active workspace identity, and the retained startup request from
 `.bonsai/start.md`, then determines the minimum additional context required for the current execution condition.
+
+During project execution it may also identify known code-map maintenance made necessary by the source changes it
+just performed, or recommend a mapping opportunity revealed by source inspection already required for the project
+action. It does not perform extra source exploration merely to search for mapping opportunities, and accepted map
+work is routed to `skills/code_maps.md`.
 
 ## `prompts/create_project.md`
 
@@ -1931,8 +2091,10 @@ Operational-context qualification, layering, maintenance, and project code-map a
 
 ## `skills/code_maps.md`
 
-Map-workspace execution, source inspection, generated-map production and maintenance, map/source identity, mapping
-validation, and map-specific completion behavior.
+Map-workspace execution, source inspection, code-map creation, extension, refresh and rebuild behavior,
+generated-map production and maintenance, map/source identity, mapping validation, and map-specific completion
+behavior. It owns execution after a project implementation session's map-maintenance or mapping-opportunity
+recommendation is accepted.
 
 ---
 
@@ -2217,9 +2379,19 @@ Human authorization to preserve an item is not authorization to implement it.
 
 ## Maps
 
-Maps should be updated when structural changes materially affect what the map is supposed to represent.
+Maps should be refreshed when structural changes materially affect knowledge the map already represents, and may
+be extended when later work identifies valuable source concerns outside the current mapping scope.
 
 Routine local source edits do not necessarily require map maintenance.
+
+When Bonsai itself makes a material source change during project implementation and a known relevant map is
+affected, it should surface bounded maintenance at a natural boundary rather than silently treating the existing map
+as current. The source change does not itself authorize generated-map mutation; accepted maintenance runs through
+the normal mapping workflow.
+
+When project work naturally exposes reusable, non-obvious source knowledge that is not adequately mapped, Bonsai
+may recommend map creation or extension. It must not broaden source inspection merely to search for such
+opportunities.
 
 Map/source identity must remain trustworthy enough that Bonsai does not knowingly apply a stale or mismatched map
 as though it represented current source.
@@ -2271,22 +2443,27 @@ A normal Bonsai project may look like this:
 6. Plan or review the current phase when required.
 7. Execute the exact authorized next action.
 8. Reconcile execution memory at natural boundaries.
-9. Continue in the current session, use fresh-session one-step continuation, review/change the next step, or exit.
-10. Preserve durable operational discoveries in agent context when they qualify.
-11. Complete the project when the approved scope is implemented and reconciled.
+9. When the just-completed work materially affected a known map, address the bounded maintenance recommendation;
+   when already-required source inspection revealed valuable reusable unmapped knowledge, optionally act on the
+   resulting mapping recommendation.
+10. Continue in the current session, use fresh-session one-step continuation, review/change the next step, or exit.
+11. Preserve durable operational discoveries in agent context when they qualify.
+12. Complete the project when the approved scope is implemented and reconciled.
 
 ## Map work
 
 A normal mapping effort may look like this:
 
-1. From the repository to be mapped, choose **Create Code Map** or resume an existing map workspace.
+1. From the repository to be mapped, choose **Create Code Map**, **Extend Code Map**, **Refresh Code Map**, or resume
+   an existing map workspace.
 2. Let Bonsai derive the current source location, source identity, and sensible map identity when they are
    unambiguous.
 3. Review or override those defaults when needed.
-4. Let Bonsai create or reuse the repository-local map workspace required for durable mapping execution.
+4. Let Bonsai create, reuse, or reactivate the repository-local map workspace required for durable mapping
+   execution.
 5. Make the map workspace active for mapping execution.
 6. Use `agent_plan.md` as the map-wide roadmap.
-7. Select one bounded mapping focus.
+7. Select one bounded mapping focus appropriate to the lifecycle intent.
 8. Reconcile that focus into the map roadmap/state as the exact next mapping unit without changing generated
    output.
 9. Choose current-session continuation, fresh-session continuation, review/change, or **Exit for now**.
@@ -2297,7 +2474,8 @@ A normal mapping effort may look like this:
     unrelated mapping work.
 13. Mark the map workspace complete only when the current mapping scope is exhausted and its generated output is
     reconciled.
-14. Reactivate the same map workspace later when source changes or the requested mapping scope expands.
+14. Reactivate the same map workspace later for explicit extension, source-change maintenance, or an accepted
+    project-discovered mapping recommendation.
 
 For mapping efforts that require deliberate preparation or calibration before coding-agent execution, the human
 may instead use `prompts/create_map.md` to create the map workspace explicitly.
@@ -2400,5 +2578,29 @@ The Bonsai standard should validate at least the following workspace and mapping
     absorbed into the standard mapping-unit output envelope.
 43. Mapping handoff normally occurs after generated-map production and validation, not immediately after discovery,
     unless discovery reaches a real blocker or mandatory human decision.
+
+## Code-map extension, maintenance, and project recommendations
+
+44. **Extend Code Map** reuses or reactivates the existing compatible map workspace and does not create a duplicate
+    map merely because new coverage is requested.
+45. A human request to map another subsystem becomes a bounded mapping focus; source discovery still determines the
+    justified generated architectural ownership rather than blindly creating a same-named subsystem artifact.
+46. A human may request a cross-cutting focus or ask Bonsai to review current map coverage and suggest valuable
+    additions before selecting the next mapping unit.
+47. When Bonsai materially changes source represented by a known relevant map during authorized project work, it
+    surfaces bounded map maintenance at a natural project boundary when the existing mapped knowledge is affected.
+48. Routine private implementation changes that do not materially alter mapped knowledge do not trigger map
+    maintenance merely because files changed.
+49. An implementation session that already had to establish reusable, non-obvious, architecturally significant
+    source knowledge may recommend creating or extending a code map when that knowledge is not adequately mapped.
+50. Project implementation does not inspect unrelated source merely to search for mapping opportunities.
+51. A maintenance or mapping-opportunity recommendation does not mutate generated maps or silently expand project
+    execution scope before human acceptance.
+52. An accepted maintenance or mapping recommendation enters the normal map-workspace and bounded mapping-unit
+    workflow and may use current-session or fresh-session continuation.
+53. Closely related mapping observations are combined and a declined or deferred recommendation is not repeatedly
+    resurfaced during the same work merely because the opportunity still exists.
+54. Refresh preserves the intended map identity and coverage where possible, while rebuild remains the separately
+    gated path for destructive replacement or broad generated-map ownership restructuring.
 
 These cases are behavioral expectations, not a mandate for one particular test harness implementation.

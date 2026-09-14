@@ -29,7 +29,9 @@ Read only what the handoff needs:
 - `<workspace-home>/agent_plan.md` and `<workspace-home>/agent_state.md`;
 - the active detailed plan named by state, when applicable;
 - an approved dry-run baseline, when present;
-- meaningful unreviewed out-of-scope observations, when any were noticed; and
+- meaningful unreviewed out-of-scope observations, when any were noticed;
+- qualifying contextual code-map follow-up candidates supplied by authorized project work, when any were noticed;
+  and
 - the invoking workflow or gate.
 
 For a project, also load affected final truth and project phase, contract, or review state only when applicable.
@@ -76,9 +78,12 @@ execution memory. Current working-tree contents remain the human's baseline; do 
    runtime map changes do not trigger this workflow.
 7. When the work established or disproved qualifying durable operational knowledge, delegate its maintenance to
    `skills/agent_context.md`. Do not dump troubleshooting history into context during handoff.
-8. Handle any unreviewed out-of-scope observations under the rules below.
-9. Present the completion summary and applicable handoff gate through `skills/menu.md`, then stop for the human's
-   choice.
+8. For a project, handle any qualifying contextual code-map follow-up candidates under the dedicated rules below.
+   Keep them distinct from generic out-of-scope observations and do not load `skills/code_maps.md` unless the human
+   accepts one of them.
+9. Handle any unreviewed out-of-scope observations under the rules below.
+10. Present the completion summary and applicable handoff gate through `skills/menu.md`, then stop for the human's
+    choice.
 
 ## Project-Specific Reconciliation
 
@@ -124,6 +129,72 @@ Use this branch only when the active workspace type is `map`:
 4. Do not classify ordinary map work through project final truth, phases, phase plans, contract state, body-of-work
    exhaustion, or project icebox semantics. A map action that actually proposes a project final-truth change must
    stop at that separate project's applicable final-truth gate.
+
+## Project Code-Map Follow-Ups
+
+Use this section only for an active `project` workspace when the owning implementation workflow supplies a
+qualifying contextual mapping candidate discovered from evidence already required by the completed authorized
+project work.
+
+Do not search source, enumerate the map store, inspect map coverage, or manufacture a mapping opportunity during
+handoff. Handoff presents and routes candidates; `skills/code_maps.md` owns map identity, source alignment,
+workspace reactivation or creation, mapping proposals, generated output, and map execution.
+
+Classify each supplied candidate as one of:
+
+- **Create Code Map:** substantial existing source lacks a useful map;
+- **Extend Code Map:** reusable, non-obvious, architecturally significant knowledge learned during the project work
+  is not adequately represented by an existing compatible map; or
+- **Refresh Code Map:** source changed by the completed project work materially affects knowledge represented by a
+  known relevant map.
+
+Before presentation:
+
+1. discard a candidate whose own supplied evidence no longer supports the proposed lifecycle intent;
+2. combine closely related candidates into one bounded recommendation;
+3. keep Create, Extend, and Refresh distinct when they concern materially different source identities or mapping
+   focuses;
+4. do not turn a candidate into the project's exact next implementation step, phase work, final truth, or icebox
+   content merely because it is useful; and
+5. do not persist a declined or deferred recommendation into project execution memory solely to remember that it
+   was offered.
+
+Present a qualifying recommendation concisely after project completion reconciliation and before the ordinary
+handoff continuation menu. Include only:
+
+- the lifecycle action: Create, Extend, or Refresh;
+- the implicated source or existing map;
+- one bounded proposed mapping focus;
+- for Create or Extend, the reusable knowledge that was costly or non-obvious to establish and why preserving it
+  would help future work; or
+- for Refresh, the concrete structural source change and mapped concern believed to be stale.
+
+Then load `skills/menu.md` and offer only applicable choices such as:
+
+1. proceed with the proposed map action in the current session;
+2. prepare the proposed map action for fresh-session continuation;
+3. review or change the proposed mapping focus; and
+4. defer the map follow-up and return to the project handoff.
+
+Acceptance is authorization to enter the mapping workflow, not authorization to mutate generated output
+immediately. Delegate to `skills/code_maps.md`, which must resolve the source/map identity, compatible map
+workspace, mapping proposal, and bounded mapping-unit gate under its normal rules.
+
+When the human chooses current-session mapping, the accepted map action may establish or reactivate a map workspace
+and replace the active project workspace for subsequent map execution in that session. Project execution memory
+must already be reconciled before that transition.
+
+When the human chooses fresh-session mapping, first delegate to `skills/code_maps.md` far enough to establish or
+reactivate the applicable map workspace and one safe exact mapping action. Only after canonical map state records
+that action may normal map handoff produce the fresh-session auto-execute pointer. Do not construct an `Active map:`
+pointer from a project-only recommendation that has not yet been resolved into durable map workspace state.
+
+When the human defers, leave generated maps and map workspaces unchanged and return to the refreshed project
+handoff. Do not repeatedly present the same recommendation again during the same completed work merely because it
+remains technically possible.
+
+Contextual map follow-ups are not generic out-of-scope observations. Do not include them in the observation count,
+write them to project `icebox.md`, or require icebox review before the project can continue.
 
 ## Out-of-Scope Observations
 
@@ -195,6 +266,7 @@ Keep the report compact and include:
 - relevant execution-memory updates;
 - for a project, approved versus actual final-truth impact and updates proposed or completed, or `None`;
 - for a map, mapping-scope, source/map identity, and generated-output reconciliation when applicable;
+- for a project, a qualifying contextual code-map follow-up only when one is being surfaced at this handoff;
 - dry-run comparison, when applicable;
 - deviations or `None`; and
 - a project icebox update only when the human previously authorized it.
@@ -217,13 +289,18 @@ Do not bury either field in a paragraph or refer indirectly to a "recorded next 
 
 Load `skills/menu.md` and supply concrete choices derived from the reconciled fields.
 
-When one concrete agent-performable exact next action is established and no observations await review, normally
-supply:
+When one concrete agent-performable exact next action is established, no observations await review, and no
+contextual code-map follow-up currently owns the immediate decision gate, normally supply:
 
 1. Continue with `<actual next step>` in the current session.
 2. Continue with `<actual next step>` in a fresh session and automatically execute it.
 3. Review or change the next step.
 4. Exit for now.
+
+When a contextual project code-map follow-up is being surfaced, present its dedicated decision gate first. If the
+human defers or declines it, recompute and return to this ordinary project handoff menu without changing the
+already-reconciled project next step. If the human accepts it, route through `skills/code_maps.md` as described
+above.
 
 An agent-performable next action is not limited to `Ready to execute` implementation. It also includes a concrete
 planning action under `Phase planning required`, such as planning a newly activated later phase, when no human
@@ -333,6 +410,7 @@ Stop at the applicable gate when:
 - final-truth impact requires review;
 - execution memory conflicts or cannot state one safe next step;
 - a subordinate action creates a new mandatory gate;
+- a contextual project code-map follow-up decision has been presented;
 - the completion summary and handoff menu have been presented; or
 - the human chooses fresh-session continuation, review, change, discussion, or **Exit for now**.
 

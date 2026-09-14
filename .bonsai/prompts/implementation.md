@@ -193,14 +193,35 @@ workflow, and guide maintenance grants no authority to broaden the underlying ch
 
 Code-map editing is not routine project implementation startup or an automatic consequence of source changes.
 **Manage Code Maps** is nevertheless a first-class repository entry action and does not require an active
-workspace. During an authorized project implementation facet, a substantial existing source without a useful map
-may receive one contextual creation action. If the human declines, keep creation under applicable secondary
-options instead of interrupting again in the same context; do not pressure greenfield work. Surface bounded
-maintenance only for an explicit request or a known material structural change. Load `skills/code_maps.md` only
-after one of these actions is accepted, when a project facet actually requires map-guided navigation or
-map/source alignment, or for active map execution after the compatibility check in map workspace orientation.
-That skill owns source/store identity, map loading and generation, applicable lifecycle gates, context delegation,
-and return to the invoking gate.
+workspace.
+
+During authorized project work, Bonsai may surface three contextual mapping paths without silently acquiring map
+mutation authority:
+
+- a substantial existing source without a useful map may receive one contextual **Create Code Map** action;
+- source inspection already required by the authorized project action may reveal reusable, non-obvious,
+  architecturally significant knowledge that is not adequately mapped, in which case Bonsai may recommend
+  **Create Code Map** or **Extend Code Map** with one bounded candidate focus; and
+- a material source change performed by the authorized project action may affect knowledge represented by a known
+  relevant map, in which case Bonsai may recommend **Refresh Code Map** with the bounded affected concern.
+
+A known relevant map is one already selected for the project, already loaded or used in the current work, or
+cheaply identifiable from the current source identity without enumerating and inspecting the entire map store.
+
+These contextual paths must arise from evidence Bonsai already had legitimate reason to obtain for the current
+project action. Do not inspect unrelated source merely to find mapping opportunities or continuously scan maps for
+drift. Routine local edits, narrow bug fixes, private refactors, formatting, tests, and other changes that do not
+materially affect mapped knowledge do not create refresh pressure.
+
+If the human declines or defers a contextual recommendation, keep any still-applicable manual map action under
+normal secondary options rather than interrupting repeatedly in the same work. Do not create placeholder map
+state merely to remember a declined recommendation.
+
+Load `skills/code_maps.md` only after one of these contextual actions is accepted, when a project facet actually
+requires map-guided navigation or map/source alignment, for an explicit map lifecycle request, or for active map
+execution after the compatibility check in map workspace orientation. That skill owns source/store identity,
+create/extend/refresh/rebuild semantics, map loading and generation, applicable lifecycle gates, context
+delegation, and return or transition behavior.
 
 ## Developer Context Layering
 
@@ -343,9 +364,40 @@ startup request that validly bypasses only the startup gate:
 - If checks fail in a way that materially changes the approved approach or success condition, report the
   deviation and stop rather than improvising a new scope.
 
+### Mapping follow-up candidates
+
+While executing an authorized project step, retain only lightweight session-local evidence for a possible mapping
+follow-up when that evidence arises naturally from the work already required.
+
+Classify a candidate as one of:
+
+- **Create:** substantial existing source lacks a useful map and preserving source navigation would materially help
+  future work;
+- **Extend:** the work had to establish reusable, non-obvious, architecturally significant source knowledge that
+  is not adequately represented by an existing compatible map; or
+- **Refresh:** the authorized source changes materially affected knowledge represented by a known relevant map.
+
+For **Extend**, capture only enough to explain the implicated source or map, one bounded candidate mapping focus,
+the reusable knowledge that was costly or non-obvious to establish, and why it is useful beyond the current
+project.
+
+For **Refresh**, capture only enough to identify the known relevant map, the bounded mapped concern affected by
+the source change, and the concrete change evidence that makes refresh warranted.
+
+Do not stop the authorized project step merely because a non-blocking mapping candidate appears. Do not load the
+mapping editing workflow, reactivate a map workspace, inspect unrelated map coverage, or broaden source discovery
+just to refine the candidate.
+
+At the next natural project handoff, supply qualifying candidates to `skills/handoff.md` separately from generic
+out-of-scope observations. Closely related candidates should be combined. A mapping follow-up is not an icebox
+observation and must not be written into project execution memory merely because it was noticed.
+
+A mapping issue that makes the current project step unsafe is a blocker, not a deferred mapping candidate.
+
 ### Out-of-scope observations
 
-For an adjacent bug, debt item, refactor, missing test, or other observation outside the exact next step:
+For an adjacent bug, debt item, refactor, missing test, or other observation outside the exact next step that is
+not already classified as a contextual mapping follow-up:
 
 1. do not fix it or expand scope unless the human authorizes that change;
 2. do not automatically write it to execution memory or `icebox.md`;
@@ -366,6 +418,8 @@ Do not claim an exact next step complete until `skills/handoff.md` has reconcile
   planning or already-approved-plan gate, or confirmed roadmap exhaustion for the current body of work;
 - for map work, current mapping scope, roadmap progress, source/map identity, and generated-output reconciliation
   through compatible map-workspace handoff behavior;
+- for project work, any qualifying contextual Create/Extend/Refresh map follow-up candidates discovered from
+  evidence already required by the completed step, kept distinct from generic out-of-scope observations;
 - qualifying operational discoveries through `skills/agent_context.md` when triggered;
 - affected framework category guides through `skills/artifact_index.md` when a qualifying standard-artifact
   lifecycle change reaches its completion boundary;
@@ -386,3 +440,6 @@ reset, clear, or create a host session.
 - Keep volatile roadmap, detailed-plan, readiness, blocker, and next-step details in workspace execution memory;
   keep project-only phase, pass, and approval details in project execution memory. Do not put them in the
   fresh-session prompt.
+- Do not persist or mutate reusable code maps merely because project work exposed a Create, Extend, or Refresh
+  opportunity. Accepted mapping work must enter `skills/code_maps.md` under its normal map identity, workspace,
+  and bounded mapping-unit rules.

@@ -2,12 +2,12 @@
 
 ## Purpose
 
-Create, inspect, update, rebuild, remove, and use selective generated source-navigation maps through Bonsai's normal
-identity, menu, context, workspace, and human-gate model.
+Create, inspect, extend, refresh, rebuild, remove, and use selective generated source-navigation maps through
+Bonsai's normal identity, menu, context, workspace, and human-gate model.
 
 A **code map** is the primary user-facing mapping concept. A **map workspace** is the durable execution mechanism
-used to create, maintain, rebuild, and resume work on a code map. Normal code-map operations may create, reuse,
-resume, or update map workspace memory as needed; the human should not have to create a workspace first merely to
+used to create, extend, refresh, rebuild, and resume work on a code map. Normal code-map operations may create,
+reuse, reactivate, resume, or update map workspace memory as needed; the human should not have to create a workspace first merely to
 ask Bonsai to map the current source.
 
 Generated maps describe actual source and are reusable navigation aids, not source authority, project truth,
@@ -20,8 +20,9 @@ Load this skill only when:
 - the human selects **Manage Code Maps**;
 - an explicit startup request asks for a code-map action;
 - current implementation needs map-guided navigation or map/source alignment checking;
-- the human accepts a contextual first-use mapping action for substantial existing source; or
-- the human accepts bounded maintenance after a known material structural source change.
+- the human accepts a contextual first-use mapping action for substantial existing source;
+- the human accepts a contextual recommendation to extend an existing map with newly valuable coverage; or
+- the human accepts bounded refresh after a known material structural source change.
 
 Do not load the editing workflow merely because a map exists, and do not treat routine source edits as map
 maintenance. Ordinary map consumption reads `code_map.md` first and only the deeper artifact needed for the current
@@ -157,15 +158,17 @@ When no more specific action was requested, load `skills/menu.md` and present on
 actions:
 
 1. **Create Code Map**.
-2. **Inspect Code Map** when at least one usable generated map exists.
-3. **Update or Rebuild Code Map** when at least one usable generated map exists.
-4. **Remove Code Map** when at least one usable generated map exists.
-5. **Add a Code Map to the Active Project** when a valid active project exists and at least one usable generated
+2. **Extend Code Map** when at least one usable generated map exists.
+3. **Inspect Code Map** when at least one usable generated map exists.
+4. **Refresh Code Map** when at least one usable generated map exists.
+5. **Rebuild Code Map** when at least one usable generated map exists.
+6. **Remove Code Map** when at least one usable generated map exists.
+7. **Add a Code Map to the Active Project** when a valid active project exists and at least one usable generated
    map is not already selected by that project.
-6. **Remove a Code Map from the Active Project** when a valid active project exists and at least one of its
+8. **Remove a Code Map from the Active Project** when a valid active project exists and at least one of its
    selections still identifies a usable generated map.
-7. **Manage Map Workspaces**.
-8. **Cancel and return to `<invoking gate>`**.
+9. **Manage Map Workspaces**.
+10. **Cancel and return to `<invoking gate>`**.
 
 Omit unavailable actions rather than preserving fixed numbering.
 
@@ -534,13 +537,16 @@ trustworthy:
    - source type, such as repository checkout, released source archive, or supplied source tree;
    - exact source location;
    - version, Git revision, artifact coordinate, checksum, or other smallest useful snapshot evidence.
-5. For **Create Code Map**, prefer established current-session context over asking the human to restate it:
+5. For **Create Code Map**, **Extend Code Map**, and **Refresh Code Map**, prefer established current-session
+   context over asking the human to restate it:
    - when the current repository is the intended source, default the source location to `<repository-home>`;
    - when repository identity is unambiguous, derive the logical source name from that repository/source identity;
    - when the active project clearly supplies useful mapping calibration, use it without making the project the map
      identity;
-   - when project association is obviously intended, propose it as a post-creation association rather than making
-     it a map-identity requirement.
+   - when a known structural source change already establishes a bounded refresh concern, carry that evidence into
+     the refresh proposal rather than rediscovering the whole source merely to name the focus;
+   - when project association is obviously intended for a newly created map, propose it as a post-creation
+     association rather than making it a map-identity requirement.
 6. Resolve the proposed map identity from the source universe, not the consuming project. Never silently choose
    among several plausible source identities or snapshots.
 7. Inspect only the named map entry or directory metadata needed to determine whether the generated map exists,
@@ -560,8 +566,31 @@ If the source location, map store, map identity, source snapshot, or ownership b
 ambiguous, stop and ask the human to resolve only that ambiguity. Do not invent a source resolver, downloader,
 registry, manifest schema, dependency-to-map matcher, or source-location convention.
 
-If **Create Code Map** resolves to an existing usable `code_map.md`, do not overwrite it as creation. Offer a
-bounded update, a separately gated rebuild, or a distinct source identity as appropriate.
+If **Create Code Map** resolves to an existing usable `code_map.md`, do not overwrite it as creation. Offer
+**Extend Code Map**, **Refresh Code Map**, a separately gated **Rebuild Code Map**, or a distinct source identity as
+appropriate.
+
+## Lifecycle Intent Boundaries
+
+Treat create, extend, refresh, and rebuild as distinct lifecycle intents even though their executable source-backed
+work ultimately uses the same bounded mapping-unit model.
+
+- **Create** establishes a suitable reusable map for a source identity that does not yet have one.
+- **Extend** broadens the useful mapping scope of an existing map. The human may name a subsystem, a cross-cutting
+  concern, a caller or extension surface, or another bounded source-backed concern. A requested subsystem is a
+  mapping focus, not a command to create a same-named generated subsystem.
+- **Refresh** reconciles existing mapped knowledge after represented source changes materially. It preserves the
+  intended map identity and existing coverage where possible and targets the bounded mapped concern made stale by
+  the change.
+- **Rebuild** replaces substantial generated representation or performs broad ownership restructuring. It remains
+  separately and explicitly gated because it is materially more destructive than extension or refresh.
+
+A completed map is complete only for its current mapping scope and represented source state. Completion does not
+prevent later extension or refresh from reactivating the same compatible map workspace.
+
+Do not disguise scope expansion as refresh. When new reusable coverage is desired beyond the map's prior intended
+scope, use **Extend Code Map**. Do not disguise broad replacement or ownership restructuring as extension or
+refresh; use the separately gated rebuild path.
 
 ## Mapping Proposal Gate
 
@@ -688,6 +717,39 @@ Before creating a costly optional artifact or materially expanding an optional i
 navigation value exceeds its maintenance cost, identify the exact output and scope, and stop for explicit human
 approval.
 
+## Action: Extend Code Map
+
+Use **Extend Code Map** when the human wants useful new coverage in an existing compatible map.
+
+1. Select or resolve the usable generated map and its corresponding repository-local map workspace independently.
+2. Validate map/source alignment before relying on non-obvious existing map claims. A materially incompatible
+   source identity stops extension until the identity issue is resolved.
+3. Reuse and reactivate the existing compatible map workspace. Do not create a duplicate map merely because new
+   coverage is requested.
+4. Establish one bounded extension focus. The human may:
+   - name an architectural subsystem;
+   - name a cross-cutting concern such as persistence, event handling, serialization, lifecycle, or tracking;
+   - name a reusable caller or extension concern; or
+   - explicitly ask Bonsai to review current map coverage and suggest valuable additions.
+5. When the human asks for suggestions, inspect the existing map only enough to understand current coverage, then
+   inspect authoritative source only as needed to identify a small number of high-value missing concerns. Prefer
+   foundational, reused, cross-boundary, risky, or repeatedly non-obvious knowledge. Do not turn suggestion mode
+   into an exhaustive source survey.
+6. Present the selected or proposed bounded focus through the **Mapping Proposal Gate**. Existing generated output
+   remains unchanged until the focus is authorized.
+7. After authorization, treat the selected focus as the mapping-unit boundary. Discovery may determine that the
+   durable result belongs in one subsystem, several existing subsystems, a newly justified subsystem, or no
+   standalone subsystem with the focus's name.
+8. Preserve existing generated output outside the authorized focus. Ordinary extension may add or update justified
+   standard Markdown layers, but it does not authorize destructive replacement, broad ownership restructuring, or
+   optional-index creation or material expansion.
+9. Validate the complete mapping unit and reconcile the reactivated map workspace through `skills/handoff.md`.
+   Do not select another extension focus under the same authorization.
+
+A contextual implementation recommendation to preserve newly discovered reusable knowledge enters this same
+action when a compatible map already exists. The recommendation supplies evidence for a candidate focus; it does
+not bypass the mapping proposal or map/source alignment rules.
+
 ## Action: Inspect Code Map
 
 Inspection is read-only.
@@ -704,41 +766,53 @@ Inspection does not normalize existing files, update identity metadata, or prese
 separately authorizes the applicable action. An explicit **Inspect Map/Source Identity** request is handled as this
 same read-only inspection path with identity/alignment as the selected facet.
 
-## Action: Update or Rebuild Code Map
+## Action: Refresh Code Map
 
-First determine whether the requested work is a bounded update or a destructive rebuild.
+Use **Refresh Code Map** when represented source changed materially and existing mapped knowledge needs to be
+reconciled without broad destructive replacement.
 
-### Bounded update
+A refresh may be requested directly by the human or may originate from a contextual maintenance recommendation
+after authorized project work changed source represented by a known relevant map.
 
-Use an update for known material changes to source identity, public structure, extension mechanics, lifecycle,
-architectural relationships, subsystem ownership, rebuild-relevant behavior, or reusable routing.
-
-1. Verify map/source alignment and establish the bounded mapping focus for the update.
-2. Treat that focus as the authorization boundary. Discovery may determine which standard Markdown map layers
-   need changes inside it.
-3. Improve justified existing artifacts in place. Preserve their established structure unless ownership
-   restructuring was explicitly authorized.
-4. Update only map-owned standard artifacts whose durable content changed as part of the selected focus.
-5. Update already-present dependent lookup artifacts only when bounded maintenance is necessary to keep their
+1. Select or resolve the usable generated map, represented source, and corresponding repository-local map workspace.
+2. Establish the bounded mapped concern affected by the source change. Reuse concrete change evidence already
+   available from the invoking implementation workflow when trustworthy; do not rescan unrelated source merely to
+   rediscover why maintenance was proposed.
+3. Verify map/source identity and classify alignment. Expected source drift caused by the known change is the reason
+   to refresh, not permission to trust unrelated stale map claims.
+4. Reuse and reactivate the compatible existing map workspace and present the bounded refresh focus through the
+   **Mapping Proposal Gate** unless that same focus has already been explicitly established and authorized through
+   normal active-map continuation.
+5. Treat the refresh focus as the authorization boundary. Discovery may determine which standard Markdown map
+   layers inside that focus require changes.
+6. Improve justified existing artifacts in place and update standard map-owned artifacts whose durable content
+   changed. Preserve established ownership and structure unless restructuring was separately authorized.
+7. Update already-present dependent lookup artifacts only when bounded maintenance is necessary to keep their
    contracted routing correct. Do not create or materially expand optional lookup/index artifacts without their
    separate gate.
-6. Re-check representative usage when a caller or extension mechanic changed.
-7. Validate and reconcile the complete mapping unit before selecting another focus.
+8. Re-check representative usage when caller, extension, lifecycle, ownership, persistence, serialization, event,
+   tracking, or similar reusable mechanics changed.
+9. Validate and reconcile the complete refresh mapping unit before selecting another focus.
 
-Routine bug fixes, private refactors, tests, cosmetic cleanup, and ordinary churn do not justify map updates by
-themselves. Bonsai does not continuously scan for drift or silently update maps after implementation work.
+Routine bug fixes, private refactors, tests, cosmetic cleanup, and ordinary churn do not justify refresh by
+themselves. Bonsai does not continuously scan for drift or silently refresh maps after source changes.
 
-### Destructive rebuild
+If the required work materially broadens useful coverage beyond the prior map scope, stop and route that portion
+through **Extend Code Map**. If safe reconciliation requires substantial replacement, destructive removal, or broad
+generated-map ownership restructuring, stop and route through **Rebuild Code Map**.
 
-A rebuild requires a separate explicit gate after inspection, even when the broader **Update or Rebuild Code Map**
-action was previously selected.
+## Action: Rebuild Code Map
+
+A rebuild intentionally replaces substantial generated representation and always requires its own explicit gate.
+Selecting **Rebuild Code Map** or arriving there from another lifecycle action does not itself authorize mutation.
 
 Before that gate:
 
 1. resolve and display every existing agent-owned target that would be replaced or removed;
 2. display every known preserved item in the target map, including `map_calibration.md`, supplied source inputs, and
    other unowned files;
-3. show the source snapshot, map identity, rebuild scope, proposed replacement artifacts, and validation plan; and
+3. show the source snapshot, map identity, rebuild scope, proposed replacement artifacts, ownership changes when
+   any, and validation plan; and
 4. stop for explicit approval, revision, discussion, or cancellation.
 
 After approval, replace only the displayed agent-owned targets. Never delete the named source directory as a
@@ -883,14 +957,50 @@ Do not store active-project selection, active-map selection, transient extractio
 locations, speculative source identity, map workflow state, or map content in agent context. Context maintenance
 grants no permission to broaden the mapping action.
 
-## Contextual First Use and Maintenance
+## Contextual First Use, Extension, and Refresh
+
+Project implementation may surface code-map work at a natural boundary, but it must not silently mutate reusable
+maps or expand source inspection merely to search for mapping opportunities.
+
+### First useful map
 
 - A substantial existing source without a useful map may receive one contextual **Create Code Map** action.
 - If the human declines, return that result to the invoking workflow so creation moves under **See more options**
   rather than interrupting again in the same context. Do not create a placeholder map or state file for a decline.
 - Greenfield source with little stable structure receives no map pressure.
-- Surface maintenance only for an explicit request or a known material structural change.
-- Do not continuously discover drift, repeatedly offer declined work, or update maps after routine changes.
+
+### Mapping opportunity discovered during project work
+
+When authorized project work already required source inspection and that inspection established reusable,
+non-obvious, architecturally significant knowledge that is not adequately represented by a useful map, Bonsai may
+recommend preserving it as code-map coverage.
+
+- If no suitable map exists, recommend **Create Code Map**.
+- If a compatible map exists but lacks the concern, recommend **Extend Code Map** with one bounded candidate focus.
+- Explain the implicated source or map, proposed focus, what reusable knowledge was costly or non-obvious to
+  establish, and why it is useful beyond the current project.
+- Base the recommendation only on evidence encountered for the authorized project work. Do not inspect unrelated
+  source to manufacture recommendations.
+- Closely related observations should become one recommendation rather than several interruptions.
+- A recommendation does not create or mutate a map, reactivate a workspace, or change project execution scope until
+  the human accepts it.
+- If declined or deferred, return that disposition to the invoking workflow and do not repeatedly resurface the
+  same recommendation during the same work merely because it remains possible.
+
+### Known map maintenance after source change
+
+When authorized project work materially changed source represented by a known relevant map and the existing map
+coverage is now affected, Bonsai may recommend **Refresh Code Map**.
+
+A known relevant map is one already selected for the project, already loaded or used by the current work, or cheaply
+identifiable from the current source identity without surveying the entire map store.
+
+- Carry the known source-change evidence and bounded affected concern into the refresh proposal.
+- Do not enumerate and inspect every reusable map after routine source edits.
+- Routine local edits, narrow bug fixes, private refactors, formatting, tests, and other changes that do not
+  materially alter mapped knowledge do not trigger refresh.
+- The recommendation itself does not authorize map mutation. Accepted maintenance enters the normal refresh action
+  and bounded mapping-unit workflow.
 
 Preserve a longer-lived source or selection rule only when it independently qualifies under
 `skills/agent_context.md`.
