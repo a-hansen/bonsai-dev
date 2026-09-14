@@ -2,9 +2,13 @@
 
 ## Purpose
 
-Turn a Web UI conversation about source mapping into a valid, resumable repository-local Bonsai map workspace and
-a repository-root bootstrap package. When owner guidance materially improves later source inspection, also preserve
-it as optional human-owned `map_calibration.md`.
+Turn a Web UI conversation about source mapping into an explicitly prepared, resumable repository-local Bonsai map
+workspace and a repository-root bootstrap package. When owner guidance materially improves later source inspection,
+also preserve it as optional human-owned `map_calibration.md`.
+
+This is the explicit map-workspace preparation workflow. It is not the normal coding-agent path for a human who
+simply wants to create a code map for the current repository. Normal coding-agent **Create Code Map** behavior may
+create or reuse its required map workspace automatically through `skills/code_maps.md`.
 
 This workflow creates mapping execution memory, not reusable generated map output. It never creates `code_map.md`,
 subsystem maps, manifests, namespace routers, symbol indexes, or any other generated map artifact. Actual source
@@ -15,12 +19,19 @@ project memory and do not begin code-map generation or repository implementation
 
 ## Invocation and Inputs
 
-Use this workflow when the human wants to establish a resumable mapping effort for a named source, whether or not:
+Use this workflow when the human explicitly wants to prepare a map workspace, calibration package, or substantial
+mapping effort before coding-agent mapping begins. Typical reasons include:
 
-- the source has no Bonsai project memory; or
-- project memory exists;
-- a generated map with the same identity already exists in the active map store; or
-- additional owner emphasis would improve mapping.
+- the source has no Bonsai project memory;
+- the source is external to the project currently being discussed;
+- mapping scope benefits from deliberate calibration before execution;
+- the human wants durable mapping memory prepared before entering a coding-agent session;
+- a generated map with the same identity already exists but a new or resumed mapping workspace is intentionally
+  being prepared; or
+- additional owner emphasis would materially improve mapping.
+
+Do not route a generic request to "create a code map" here merely because code-map creation uses a map workspace
+internally. That ordinary interaction belongs to `skills/code_maps.md`.
 
 Use only:
 
@@ -35,7 +46,9 @@ Do not inspect or modify a repository or map store automatically. This is an art
 ## Choose the Map Workspace Safely
 
 Resolve the repository-local map-workspace name before generating artifacts. If the human already supplied one,
-use it after validation; otherwise ask for it. Do not derive it silently from a consuming project.
+use it after validation; otherwise ask for it. Because this is explicit workspace preparation, do not silently
+derive the workspace identity from a consuming project or repository merely for convenience. Context-aware defaults
+for ordinary coding-agent **Create Code Map** belong to `skills/code_maps.md`.
 
 The name must be one non-empty directory segment: not `.` or `..`, not absolute, and containing no `/`, `\`, drive
 prefix, traversal, or control characters. Ask for a corrected name when unsafe; do not sanitize it silently.

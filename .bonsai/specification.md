@@ -281,6 +281,31 @@ A mapping effort may itself be durable, planned, and resumable across fresh sess
 
 The map workspace is distinct from the generated reusable map.
 
+## Code maps are the primary user-facing mapping concept
+
+A **code map** is the normal user-facing concept for source mapping.
+
+A **map workspace** is the durable execution mechanism Bonsai uses to create, maintain, rebuild, and resume work on a code map.
+
+Users should not normally need to understand or manually create a map workspace before asking Bonsai to map source.
+
+The normal intent is:
+
+```text
+Create a code map for this source.
+```
+
+When persistent mapping work is required, Bonsai may create or reuse the corresponding map workspace automatically.
+
+Explicit map-workspace management remains available when the human needs direct control over mapping execution memory, such as:
+
+- preparing a mapping effort before generated output exists;
+- mapping source unrelated to the active project;
+- resuming or inspecting a long-running mapping effort;
+- managing mapping scope or calibration independently from generated output.
+
+The distinction between map workspace memory and reusable generated map output remains architecturally significant even when normal interaction hides that distinction.
+
 ## Maps describe source, not projects
 
 A generated map represents a source universe or source snapshot.
@@ -1307,15 +1332,66 @@ Phase 1 planning remains the first implementation gate.
 
 # Map Creation Workflow
 
-A mapping effort may begin in a Web UI design/calibration conversation and then continue as a resumable coding-agent workspace.
+Bonsai supports both direct code-map creation from a coding-agent session and explicit map-workspace creation from a Web UI design or calibration conversation.
 
-The human uses:
+## Direct code-map creation
+
+The normal coding-agent mapping intent is:
+
+```text
+Create a code map.
+```
+
+When invoked from a repository with an active Bonsai project, Bonsai should use already-established context rather than require the human to restate information it can determine reliably.
+
+Where unambiguous, Bonsai should derive sensible defaults for:
+
+- source location from the current repository;
+- source identity from the current checkout;
+- map name from the repository or active project context;
+- initial mapping scope from the selected source;
+- project association when the new map is clearly being created for the active project.
+
+The human may override these defaults.
+
+If persistent mapping work is required and no suitable map workspace exists, Bonsai creates the corresponding repository-local map workspace automatically.
+
+If a suitable map workspace already exists, Bonsai should reuse or resume it rather than create duplicate execution memory.
+
+Direct code-map creation may therefore conceptually perform:
+
+```text
+source selection
+    ↓
+map identity resolution
+    ↓
+create or reuse map workspace
+    ↓
+mapping workflow
+    ↓
+generated reusable code map
+```
+
+Creating the workspace is part of implementing the user's mapping intent rather than a prerequisite the user must normally perform separately.
+
+## Explicit map-workspace creation
+
+A mapping effort may also begin in a Web UI design or calibration conversation.
+
+The human may use:
 
 ```text
 <bonsai-home>/prompts/create_map.md
 ```
 
-The workflow creates a repository-root extractable map workspace.
+to explicitly establish a repository-local map workspace before mapping begins.
+
+This workflow is useful when:
+
+- mapping scope requires deliberate calibration;
+- the source is external to the project currently being discussed;
+- mapping will be substantial enough to benefit from preparation;
+- the human wants to prepare durable mapping memory before entering a coding-agent session.
 
 Initial output normally contains:
 
@@ -1334,7 +1410,7 @@ Initial output normally contains:
 
 The workflow may also create the empty `plan/` directory or allow it to appear later when detailed map planning is needed.
 
-The map creation workflow must not generate reusable map outputs such as:
+The explicit map-workspace creation workflow must not generate reusable map outputs such as:
 
 ```text
 code_map.md
@@ -1344,7 +1420,7 @@ manifest.tsv
 symbol_index.tsv
 ```
 
-Those are outputs of the later coding-agent mapping workflow.
+Those remain outputs of the coding-agent mapping workflow.
 
 The actual source remains authoritative.
 
@@ -1566,6 +1642,16 @@ Generated maps do not replace source inspection.
 
 They help future agents read the right source first.
 
+## Code-map interaction model
+
+Humans normally interact with **code maps** rather than with the execution machinery used to build them.
+
+A request to create, update, inspect, rebuild, remove, or associate a code map should therefore be expressed primarily in code-map terms.
+
+Map workspaces remain visible when their lifecycle matters, but normal code-map operations may create, reuse, resume, or update map workspace memory as necessary.
+
+Bonsai should avoid requiring the human to choose between "create a map workspace" and "create a code map" when the human's actual intent is simply to map the current source.
+
 ## Map workspace memory and generated map output are separate
 
 For a repository checkout being mapped, durable mapping execution memory belongs with that source repository:
@@ -1737,9 +1823,12 @@ Code mapping is part of the main Bonsai workflow rather than a parallel standalo
 
 The Bonsai standard routes active mapping through the same startup, workspace, menu, context-layering, execution-memory, handoff, and fresh-session model used by projects where those concepts genuinely apply.
 
+A mapping workflow executes through a map workspace, whether that workspace was explicitly selected by the human or created or reused automatically while fulfilling a code-map operation.
+
 A mapping workflow should:
 
-- operate from an active map workspace;
+- resolve, create, or reuse the applicable map workspace;
+- make that workspace active for the mapping execution session;
 - use the active Bonsai generated-map store;
 - identify the source being mapped independently from any active project;
 - use relevant project memory when available;
@@ -1765,30 +1854,77 @@ Bonsai exposes code-map lifecycle actions through:
 
 During normal project implementation, it generally appears under **See more options**.
 
-Useful operations include:
+The menu should present **code maps** as the primary managed object.
 
-- Create Map Workspace;
-- List or Inspect Code Maps;
-- Resume Map Workspace;
+Useful primary operations include:
+
+- Create Code Map;
+- Inspect Code Map;
 - Update or Rebuild Code Map;
 - Remove Code Map;
-- Inspect Map/Source Identity;
-- Add a Code Map to a Project;
-- Remove a Code Map from a Project.
+- Add a Code Map to the Active Project;
+- Remove a Code Map from the Active Project;
+- Manage Map Workspaces.
 
-Map-workspace discovery should use the repository-local `.bonsai/maps/` workspace area.
+Map-workspace operations are secondary lifecycle operations rather than peers of normal code-map creation.
 
-Reusable generated-map discovery should use the active Bonsai map store.
+**Manage Map Workspaces** may provide actions such as:
+
+- Create Map Workspace;
+- List or Inspect Map Workspaces;
+- Resume Map Workspace;
+- Inspect Map Workspace State.
+
+## Context-aware code-map creation
+
+When **Create Code Map** is invoked from an active repository or project, Bonsai should prefer known session context over asking the human to restate it.
+
+When reliably derivable, Bonsai should present or use defaults for:
+
+- the current repository as the source;
+- the current checkout as source identity;
+- a map name derived from the repository or active context;
+- the active project as a likely consumer of the map.
+
+The human must be able to change those choices before they become durable when the defaults are not appropriate.
+
+Creating a code map may automatically create the repository-local map workspace required to perform and resume the mapping effort.
+
+The existence of that workspace is not itself a reason to interrupt the user with a separate workspace-creation decision.
+
+If a suitable workspace already exists, Bonsai should reuse it.
+
+## Discovery and inspection
+
+Map-workspace discovery uses:
+
+```text
+repo/.bonsai/maps/
+```
+
+Reusable generated-map discovery uses the active Bonsai map store.
 
 These are related but distinct collections.
+
+Bonsai should use cheap deterministic discovery to determine available map names and workspace names.
+
+It should not perform expensive source inspection, full map validation, or source-identity reconciliation merely to display the management menu unless the current workflow actually requires those checks.
+
+An **Inspect Code Map** or source-identity operation may perform deeper inspection when selected.
+
+If the management screen already displays the discovered generated maps, a separate operation need not exist merely to list the same names again.
+
+## Project associations
 
 Project map associations are stored in project `agent_context.md`.
 
 Managing an association does not create, rebuild, move, or delete the generated map.
 
+Creating a code map for the current project may offer or establish that association when the intent is unambiguous, but map identity remains independent from project identity.
+
 ## First-use behavior
 
-When Bonsai encounters a substantial existing codebase without a useful generated map, it may surface map creation once as a primary contextual action.
+When Bonsai encounters a substantial existing codebase without a useful generated map, it may surface **Create Code Map** once as a primary contextual action.
 
 If the human declines, mapping remains available through **See more options** rather than repeatedly interrupting implementation.
 
@@ -1880,13 +2016,13 @@ The exact prompt set should remain small.
 
 Stable workspace-aware implementation kernel and router.
 
-It receives Bonsai Home, repository home, active workspace identity, and the retained startup request from `start.md`, then determines the minimum additional context required for the current execution condition.
+It receives Bonsai Home, repository home, active workspace identity, and the retained startup request from `../../../distech/eclypse-framework/.bonsai/start.md`, then determines the minimum additional context required for the current execution condition.
 
 ## `prompts/create_project.md`
 
 Web UI project creation and repository-bootstrap packaging workflow.
 
-It turns a mature design conversation into durable Bonsai project workspace memory and, for initial synthesis, a repository-root zip containing the canonical local `.bonsai/start.md` anchor plus the selected project under:
+It turns a mature design conversation into durable Bonsai project workspace memory and, for initial synthesis, a repository-root zip containing the canonical local `../../../distech/eclypse-framework/.bonsai/start.md` anchor plus the selected project under:
 
 ```text
 .bonsai/projects/<project>/
@@ -2093,7 +2229,7 @@ They are not required for the conceptual workflow.
 
 A helper may:
 
-- create the initial `.bonsai/start.md` bootstrap;
+- create the initial `../../../distech/eclypse-framework/.bonsai/start.md` bootstrap;
 - create the conventional `projects/main` directory;
 - list workspace directories without invoking an AI;
 - launch a configured coding CLI with an initial Bonsai prompt.
@@ -2286,7 +2422,7 @@ A normal new Bonsai project may look like this:
 1. Explore product and architecture design in a Web UI AI.
 2. Use `prompts/create_project.md` when the design is mature enough to preserve.
 3. Select the Bonsai project name, normally accepting the suggested `main` default for a simple repository.
-4. Extract the resulting zip at repository root, creating `.bonsai/start.md` and the selected project workspace.
+4. Extract the resulting zip at repository root, creating `../../../distech/eclypse-framework/.bonsai/start.md` and the selected project workspace.
 5. Start with `Read .bonsai/start.md and follow its instructions.`
 6. Let bootstrap resolve Bonsai Home, repository home, and active project workspace.
 7. Draft and review the initial Phase 1 plan.
@@ -2301,20 +2437,23 @@ A normal new Bonsai project may look like this:
 
 ## Map work
 
-A normal large mapping effort may look like this:
+A normal mapping effort may look like this:
 
-1. Identify the repository or source to map.
-2. Use `prompts/create_map.md` to establish a repository-local map workspace.
-3. Start with `Read .bonsai/start.md and follow its instructions. Active map: <map>.`
-4. Let bootstrap resolve Bonsai Home, repository home, and active map workspace.
-5. Use `agent_plan.md` as the map-wide roadmap.
-6. Map bounded units of source.
-7. Create scoped plans under `plan/` only when a mapping unit is too large for useful roadmap-level execution.
-8. Reconcile generated map output, source identity, `agent_plan.md`, and `agent_state.md` at natural boundaries.
-9. Record the exact next mapping step and readiness.
-10. Continue in the current session or choose a fresh session that automatically executes that one exact next action.
-11. Mark the map workspace complete only when the current mapping scope is exhausted and its generated output is reconciled.
-12. Reactivate the same map workspace later when source changes or the requested mapping scope expands.
+1. From the repository to be mapped, choose **Create Code Map**.
+2. Let Bonsai derive the current source location, source identity, and sensible map identity when they are unambiguous.
+3. Review or override those defaults when needed.
+4. Let Bonsai create or reuse the repository-local map workspace required for durable mapping execution.
+5. Make the map workspace active for mapping execution.
+6. Use `agent_plan.md` as the map-wide roadmap.
+7. Map bounded units of source.
+8. Create scoped plans under `plan/` only when a mapping unit is too large for useful roadmap-level execution.
+9. Reconcile generated map output, source identity, `agent_plan.md`, and `agent_state.md` at natural boundaries.
+10. Record the exact next mapping step and readiness.
+11. Continue in the current session or choose a fresh session that automatically executes that one exact next action.
+12. Mark the map workspace complete only when the current mapping scope is exhausted and its generated output is reconciled.
+13. Reactivate the same map workspace later when source changes or the requested mapping scope expands.
+
+For mapping efforts that require deliberate preparation or calibration before coding-agent execution, the human may instead use `prompts/create_map.md` to create the map workspace explicitly.
 
 ---
 
@@ -2391,6 +2530,25 @@ Read .bonsai/start.md and follow its instructions.
 26. `create_map.md` creates `workspace.md`, `agent_plan.md`, `agent_state.md`, optional `map_calibration.md`, and the repository bootstrap.
 
 27. `create_map.md` does not generate `code_map.md`, subsystem maps, or lookup tables.
+
+
+## Code-map creation interaction
+
+28. From an active project repository with no existing map workspace, **Create Code Map** can derive the current repository as the default source and create the required map workspace without requiring a separate **Create Map Workspace** action.
+
+29. When the repository or project name provides an unambiguous map-name default, Bonsai may propose or use that default while allowing the human to override it.
+
+30. If a suitable map workspace already exists, **Create Code Map** reuses or resumes it rather than creating duplicate workspace memory.
+
+31. A source unrelated to the active project can still be mapped by explicitly selecting another source or by explicitly creating a map workspace.
+
+32. The main **Manage Code Maps** menu presents code-map operations before map-workspace lifecycle operations.
+
+33. Discovering names for display in **Manage Code Maps** does not require full inspection or validation of every generated map.
+
+34. If available generated maps are already displayed in code-map status, Bonsai does not require a redundant list operation merely to expose those same map names.
+
+35. Explicit map-workspace creation remains available without becoming a prerequisite for ordinary code-map creation.
 
 ---
 
@@ -2500,6 +2658,14 @@ agent_state.md
 Projects add durable product and architecture truth plus project-specific phase, contract, and final-truth workflow.
 
 Maps add source-specific calibration, mapping plans when useful, source/map reconciliation, and reusable generated map production.
+
+Although maps are resumable Bonsai workspaces internally, **code maps are the primary user-facing mapping concept**.
+
+A normal user may ask Bonsai to create a code map for the current repository without first creating or selecting a map workspace manually.
+
+Bonsai creates or reuses the required map workspace as part of fulfilling that intent.
+
+Direct map-workspace management remains available for advanced, external-source, calibration, and resume scenarios.
 
 Mapping workspace memory stays with the source repository.
 

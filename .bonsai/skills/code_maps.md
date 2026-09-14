@@ -2,11 +2,16 @@
 
 ## Purpose
 
-Manage repository-local map workspaces and create, inspect, update, rebuild, remove, and use selective generated
-source-navigation maps through Bonsai's normal identity, menu, context, and human-gate model.
+Create, inspect, update, rebuild, remove, and use selective generated source-navigation maps through Bonsai's normal
+identity, menu, context, workspace, and human-gate model.
 
-Map workspaces preserve resumable execution memory. Generated maps describe actual source and are reusable
-navigation aids, not source authority, project truth, workspace execution memory, or exhaustive documentation.
+A **code map** is the primary user-facing mapping concept. A **map workspace** is the durable execution mechanism
+used to create, maintain, rebuild, and resume work on a code map. Normal code-map operations may create, reuse,
+resume, or update map workspace memory as needed; the human should not have to create a workspace first merely to
+ask Bonsai to map the current source.
+
+Generated maps describe actual source and are reusable navigation aids, not source authority, project truth,
+workspace execution memory, or exhaustive documentation.
 
 ## When to Load
 
@@ -38,6 +43,10 @@ Do not require a Bonsai project or active project for source mapping. **Manage C
 from the repository entry gate before any project is selected. Do not create project memory merely to map source.
 Do not put active project, phase, pass, approval, requirement-tracking, icebox, or session status into map workspace
 memory or generated map data.
+
+Normal user interaction should speak in code-map terms. Expose map-workspace lifecycle directly only when the
+workspace itself is what the human intends to create, inspect, resume, or manage. Keep the workspace/output
+distinction strict internally even when ordinary creation hides it.
 
 ## Map Workspace and Generated-Map Collections
 
@@ -118,31 +127,81 @@ source archive, source checkout, or another colocated file merely because it is 
 
 ## Manage Code Maps Entry
 
-Retain the invoking Bonsai gate before doing anything else. When the human enters **Manage Code Maps**, discover the
-repository-local map-workspace candidates and reusable generated maps independently under the rules above. Do not
-read every candidate's contents merely to render the first menu; inspect a candidate's required entry only when its
-validity or selection is relevant.
+Retain the invoking Bonsai gate before doing anything else.
 
-When no more specific action was requested, load `skills/menu.md` and present only applicable actions:
+When the human enters **Manage Code Maps**, perform only cheap deterministic discovery needed to describe the
+available choices:
+
+- enumerate immediate repository-local map-workspace child directories;
+- enumerate immediate active-map-store child directories;
+- for generated-map discovery, check only whether each candidate has a readable `code_map.md`;
+- do not read `code_map.md`, `workspace.md`, `agent_plan.md`, `agent_state.md`, calibration, source identity, or
+  generated drill-down artifacts merely to render the menu.
+
+Keep repository-local map-workspace candidates and reusable generated maps as two typed collections even when they
+share names.
+
+When useful, render a compact status summary such as:
+
+```text
+Available code maps: <stable lexical list or none>
+Active project: <project or none>
+Maps used by <project>: <selected usable maps or none>
+Map workspaces: <count or stable lexical list when materially useful>
+```
+
+If available code-map names are already shown in status, do not offer a separate action whose only purpose is to
+list those same names.
+
+When no more specific action was requested, load `skills/menu.md` and present only applicable primary code-map
+actions:
+
+1. **Create Code Map**.
+2. **Inspect Code Map** when at least one usable generated map exists.
+3. **Update or Rebuild Code Map** when at least one usable generated map exists.
+4. **Remove Code Map** when at least one usable generated map exists.
+5. **Add a Code Map to the Active Project** when a valid active project exists and at least one usable generated
+   map is not already selected by that project.
+6. **Remove a Code Map from the Active Project** when a valid active project exists and at least one of its
+   selections still identifies a usable generated map.
+7. **Manage Map Workspaces**.
+8. **Cancel and return to `<invoking gate>`**.
+
+Omit unavailable actions rather than preserving fixed numbering.
+
+The primary menu manages code maps. Map-workspace lifecycle is secondary and lives under **Manage Map Workspaces**.
+Do not require the human to choose between **Create Map Workspace** and **Create Code Map** merely to map the
+current source.
+
+If an action needs source, identity, store, workspace, or project evidence that is not yet available, obtain that
+evidence inside the selected action. Do not eagerly validate every candidate merely to annotate the menu.
+
+### Manage Map Workspaces
+
+This submenu exposes direct control of repository-local mapping execution memory for advanced, external-source,
+calibration, inspection, and resume cases.
+
+On entry, enumerate repository-local map-workspace candidates cheaply and show their names in stable lexical order.
+Do not validate every candidate merely to render the submenu.
+
+Present only applicable actions:
 
 1. **Create Map Workspace**.
 2. **Resume Map Workspace** when at least one repository-local candidate exists.
-3. **List or Inspect Code Maps**.
-4. **Create Code Map**.
-5. **Update or Rebuild Code Map** when at least one usable generated map exists.
-6. **Remove Code Map** when at least one usable generated map exists.
-7. **Inspect Map/Source Identity** when at least one usable generated map exists.
-8. **Add a Code Map to the Active Project** when a valid active project exists and at least one usable generated
-   map is not already selected by that project.
-9. **Remove a Code Map from the Active Project** when a valid active project exists and at least one of its
-   selections still identifies a usable generated map.
-10. **Cancel and return to `<invoking gate>`**.
+3. **Inspect Map Workspace** when at least one repository-local candidate exists.
+4. **Cancel and return to Manage Code Maps**.
 
-Workspace actions operate on repository-local execution memory. Generated-map actions operate on reusable output.
-Do not hide one collection because the other is empty, substitute a generated map for a workspace, or require an
-active project. If an action needs source, identity, store, or workspace evidence that is not yet available, label
-the action as requiring that input rather than presenting an unsafe mutation as immediately executable. Stop for
-the human's choice.
+**Create Map Workspace** is explicit workspace lifecycle management. It is not a prerequisite for ordinary
+**Create Code Map**.
+
+For **Inspect Map Workspace**, select one candidate, validate only that candidate using the same workspace-entry,
+plan, and state rules used by **Select or Resume a Map Workspace**, and report its source identity, current scope,
+roadmap status, readiness, blocker, active scoped plan, and exact next step without mutation. Do not activate the
+workspace merely because it was inspected.
+
+After a non-mutating workspace inspection or cancellation, return to the refreshed **Manage Map Workspaces**
+submenu. After explicit workspace creation, follow the creation rules below; after successful resume, the selected
+map workspace becomes the active workspace for the session and replaces the prior parent gate.
 
 ### Add or Remove a Code Map from a Project
 
@@ -176,12 +235,18 @@ workspace; change project or map execution memory; or persist active workspace/s
 An already-present add and an already-absent remove are successful no-ops. After mutation or no-op, verify the
 project selection and return to the refreshed **Manage Code Maps** entry through `skills/menu.md`. Association
 maintenance does not activate the selected map, perform source inspection, or authorize another map lifecycle
-action.
+action, except when the association was explicitly included in an approved **Create Code Map** action and is being
+performed as that action's final post-creation step.
 
 ### Create Map Workspace
 
-Runtime creation is a specific map-workspace action, not the Web UI `prompts/create_map.md` design/calibration
-workflow. Require all of the following before proposing creation:
+Runtime creation is an explicit map-workspace lifecycle action under **Manage Map Workspaces**, not the normal
+prerequisite for **Create Code Map** and not the Web UI `prompts/create_map.md` design/calibration workflow.
+
+Use this action when the human intentionally wants to establish mapping execution memory directly, including for an
+external source or deliberately prepared mapping effort.
+
+Require all of the following before proposing creation:
 
 - a human-supplied, unused map-workspace name;
 - the map-wide objective and an initial bounded mapping scope;
@@ -363,7 +428,8 @@ icebox state, active-workspace identity, or session history into map memory.
 
 ## Resolve the Mapping Context
 
-Before proposing substantive mapping work, resolve only enough context to make the action and gate trustworthy:
+Before proposing substantive mapping work, resolve only enough context to make the selected action and gate
+trustworthy:
 
 1. Retain the invoking Bonsai workflow or gate so this subordinate workflow can return to it. The invoking gate
    may be the repository entry gate with no active project.
@@ -375,21 +441,38 @@ Before proposing substantive mapping work, resolve only enough context to make t
    - source type, such as repository checkout, released source archive, or supplied source tree;
    - exact source location;
    - version, Git revision, artifact coordinate, checksum, or other smallest useful snapshot evidence.
-5. Resolve the proposed map identity from the source universe, not the consuming project. Never silently derive a
-   map name when several identities or snapshots are plausible.
-6. Inspect only the named map entry or directory metadata needed to determine whether the map exists, whether its
+5. For **Create Code Map**, prefer established current-session context over asking the human to restate it:
+   - when the current repository is the intended source, default the source location to `<repository-home>`;
+   - when repository identity is unambiguous, derive the logical source name from that repository/source identity;
+   - derive source snapshot evidence from the current checkout when cheaply available;
+   - derive the proposed map identity from the source universe, normally the logical source name, not from the
+     consuming project;
+   - use repository orientation and initial subsystem identification as the default initial bounded mapping scope
+     when no narrower source-backed scope is already established; and
+   - when an active project invoked creation for the current repository, treat that project as a likely consumer
+     and include project association in the proposal, while allowing the human to decline or change it.
+6. Do not invent defaults when several source identities, snapshots, or map identities remain materially plausible.
+   Ask only for the unresolved choice that changes the mapping action.
+7. Inspect only the named map entry or directory metadata needed to determine whether the map exists, whether its
    identity aligns, and which files are map-owned. A colocated non-map file does not prove a map exists.
-7. Resolve source-specific calibration only when it can materially improve the selected action. For a repository
+8. Resolve the corresponding repository-local map-workspace candidate independently:
+   - direct **Create Code Map** normally uses the same name for the map workspace and generated map;
+   - if a valid same-name map workspace exists and its source identity is compatible, plan to reuse it;
+   - if no workspace files exist at the same-name repository-local target, plan to create the workspace
+     automatically as part of the approved code-map action;
+   - if a partial, invalid, or incompatible same-name workspace exists, stop with the concrete conflict rather
+     than creating duplicate execution memory or silently choosing another workspace name.
+9. Resolve source-specific calibration only when it can materially improve the selected action. For a repository
    checkout, check `<source-repository>/.bonsai/maps/<source>/map_calibration.md`. Use another calibration location
    only when the human explicitly supplied it for the selected source.
-8. Read relevant project memory only when an active project exists and that memory can materially calibrate the
-   selected action. Absence of active project is not an ambiguity or blocker for mapping.
-9. Load `skills/agent_context.md` only when stable source locations, relevant map selection, or another qualifying
-   operational rule may need to be applied or maintained.
+10. Read relevant project memory only when an active project exists and that memory can materially calibrate the
+    selected action. Absence of active project is not an ambiguity or blocker for mapping.
+11. Load `skills/agent_context.md` only when stable source locations, relevant map selection, or another qualifying
+    operational rule may need to be applied or maintained.
 
 If the source location, map store, map identity, source snapshot, or ownership boundary remains materially
-ambiguous, stop and ask the human to resolve it. Do not invent a source resolver, downloader, registry, manifest
-schema, dependency-to-map matcher, or source-location convention.
+ambiguous, stop and ask the human to resolve only that ambiguity. Do not invent a source resolver, downloader,
+registry, manifest schema, dependency-to-map matcher, or source-location convention.
 
 If **Create Code Map** resolves to an existing usable `code_map.md`, do not overwrite it as creation. Offer a
 bounded update, a separately gated rebuild, or a distinct source identity as appropriate.
@@ -403,7 +486,10 @@ source inspection or mutation:
 - **Action:** selected lifecycle action;
 - **Source:** logical name, type, location, and available snapshot identity;
 - **Map identity:** selected named source map;
+- **Map workspace:** existing compatible workspace to reuse, exact new repository-local workspace to create, or
+  `Not required` for a read-only/non-workspace action;
 - **Map store / target:** resolved store and proposed map-owned target set;
+- **Project association:** active project to add after a usable map exists, `None`, or `Not applicable`;
 - **Scope:** repository orientation, one named subsystem, API mechanics, maintenance, cleanup, or another
   concrete bound;
 - **Alignment:** `Aligned`, `Mismatch`, `Insufficient evidence`, or `Not applicable for new map`;
@@ -414,8 +500,13 @@ source inspection or mutation:
 Load `skills/menu.md` and offer concrete choices to proceed, redirect scope or identity, discuss a material
 ambiguity, or cancel and return to the invoking gate. Wait for explicit human direction.
 
-Approval covers only the displayed action, source, map identity, scope, and non-destructive target set. It does not
-authorize a later destructive rebuild, removal, scope expansion, source mutation, or high-cost optional index.
+Approval covers only the displayed action, source, map identity, workspace disposition, project-association
+choice, scope, and non-destructive target set. When **Create Code Map** shows creation of the corresponding map
+workspace, that workspace creation is part of the approved code-map action and must not trigger a second,
+standalone workspace-creation gate.
+
+Approval does not authorize a later destructive rebuild, removal, scope expansion, source mutation, or high-cost
+optional index.
 
 When the current mapping scope is already complete, say so and do not invent another objective merely to continue.
 
@@ -437,29 +528,62 @@ Do not assume an active development checkout matches a released dependency.
 
 ## Action: Create Code Map
 
+**Create Code Map** is the normal user-facing creation path.
+
 After the proposal is approved:
 
-1. Inspect actual source for orientation before deep mapping. Use build structure, representative source, tests,
+1. Resolve the approved corresponding map workspace before generated output:
+   - when a compatible same-name workspace already exists, validate and reuse it;
+   - when no workspace files exist at the approved repository-local target, create the workspace automatically;
+   - when a partial, invalid, incompatible, or ownership-ambiguous workspace exists, stop without generated-output
+     mutation.
+2. Automatic workspace creation writes only:
+
+   ```text
+   <repository-home>/.bonsai/maps/<map>/workspace.md
+   <repository-home>/.bonsai/maps/<map>/agent_plan.md
+   <repository-home>/.bonsai/maps/<map>/agent_state.md
+   ```
+
+   Preserve every existing colocated generated artifact, calibration file, source input, and unknown file. Use the
+   same ownership and overlap safety rules as **Create Map Workspace**, but do not require a separate human-supplied
+   workspace objective, scope, or source identity when the approved code-map proposal already establishes them.
+3. Initialize the automatically created workspace from the approved code-map proposal:
+   - map objective: create and maintain reusable navigation knowledge for the selected source;
+   - current mapping scope: the approved bounded creation scope;
+   - source identity: the approved logical source, type, exact location, and available snapshot evidence;
+   - roadmap: one bounded active initial mapping unit plus only justified pending work;
+   - state: one safe exact next step, success condition, blockers, and `Ready to execute` only when evidence is
+     sufficient.
+   Do not create `map_calibration.md`, a scoped plan, or `plan/` as a side effect.
+4. Establish the validated or newly created map workspace as the active `map` workspace in current-session context
+   only. Do not persist an active-map pointer.
+5. Inspect actual source for orientation before deep mapping. Use build structure, representative source, tests,
    examples, and call sites only as needed for the approved scope.
-2. Treat relevant project truth and applicable `map_calibration.md` as calibration, not source proof. Preserve
+6. Treat relevant project truth and applicable `map_calibration.md` as calibration, not source proof. Preserve
    material disagreements as uncertainty.
-3. Resolve the exact map-owned files to create. Preserve every pre-existing human-owned or otherwise unowned file,
+7. Resolve the exact map-owned files to create. Preserve every pre-existing human-owned or otherwise unowned file,
    including any calibration or supplied source artifact physically colocated with the target map. Treat
    source-local calibration outside the active map store as read-only input.
-4. Instantiate only justified artifacts from `<bonsai-home>/templates/`:
+8. Instantiate only justified artifacts from `<bonsai-home>/templates/`:
    - `code_map_template.md` for the required entry;
    - `subsystem_map_template.md` for each approved architectural subsystem;
    - `api_pub_template.md` and `api_ext_template.md` only when non-obvious reusable mechanics justify them;
    - `namespace_router_template.tsv`, `manifest_template.tsv`, and `symbol_index_template.tsv` only when their
      narrow lookup value exceeds maintenance cost.
-5. Record the logical source and the smallest useful snapshot identity in `code_map.md`. Keep all drill-down links
+9. Record the logical source and the smallest useful snapshot identity in `code_map.md`. Keep all drill-down links
    relative to the named source map.
-6. Build one active subsystem at a time. Complete its architecture map and evaluate both API-map needs before
-   moving to another subsystem.
-7. When apparent design and actual use may differ, check at least one representative production use, test,
-   example, call site, or extension before recording the mechanic as durable.
-8. Update related routing and lookup artifacts together only when their contracted role is affected.
-9. Validate the created artifacts under the structural and completion rules below.
+10. Build one active subsystem at a time. Complete its architecture map and evaluate both API-map needs before
+    moving to another subsystem.
+11. When apparent design and actual use may differ, check at least one representative production use, test,
+    example, call site, or extension before recording the mechanic as durable.
+12. Update related routing and lookup artifacts together only when their contracted role is affected.
+13. Validate the created artifacts under the structural and completion rules below.
+14. If the approved proposal included adding the completed map to an active project, perform that association only
+    after `<active-map-store>/<map>/code_map.md` is usable. Delegate the canonical project-context mutation to
+    `skills/agent_context.md`; do not make association a condition for map identity or workspace validity.
+15. Reconcile the completed bounded mapping action through `skills/handoff.md`. Do not continue into another
+    mapping unit under the same authorization.
 
 Creating a map store or named source directory after approval does not transfer ownership of existing contents.
 Template presence never authorizes optional output.
@@ -468,20 +592,21 @@ Before creating a costly optional artifact or materially expanding an optional i
 navigation value exceeds its maintenance cost, identify the exact output and scope, and stop for explicit human
 approval.
 
-## Action: Inspect Code Maps
+## Action: Inspect Code Map
 
 Inspection is read-only.
 
-1. For store-level inspection, list only plausible named maps and distinguish directories that lack `code_map.md`
-   from usable maps. Do not treat arbitrary colocated files as generated map data.
-2. For one map, load `code_map.md` first and verify alignment with the selected source when source-dependent claims
-   matter.
-3. Load only the subsystem, API, namespace, manifest, or symbol facet needed for the inspection question.
-4. Use actual source to verify non-obvious behavior; report map claims as navigation, not authority.
-5. Report missing, stale, mismatched, uncertain, or malformed data without changing it.
+1. When no map was named by the human, present the already-discovered usable code-map names in stable lexical
+   order only as the selection for this inspection; do not rescan or pre-read every map.
+2. Load the selected map's `code_map.md` first.
+3. When source-dependent claims or identity matter, resolve the selected source and classify map/source alignment.
+4. Load only the subsystem, API, namespace, manifest, symbol, or identity facet needed for the inspection question.
+5. Use actual source to verify non-obvious behavior; report map claims as navigation, not authority.
+6. Report missing, stale, mismatched, uncertain, or malformed data without changing it.
 
 Inspection does not create `map_state.md`, normalize existing files, update identity metadata, or preserve context
-unless the human separately authorizes the applicable action.
+unless the human separately authorizes the applicable action. An explicit **Inspect Map/Source Identity** request is
+handled as this same read-only inspection path with identity/alignment as the selected facet.
 
 ## Action: Update or Rebuild Code Map
 
@@ -638,7 +763,7 @@ the mapping action.
 
 ## Contextual First Use and Maintenance
 
-- A substantial existing source without a useful map may receive one contextual creation action.
+- A substantial existing source without a useful map may receive one contextual **Create Code Map** action.
 - If the human declines, return that result to the invoking workflow so creation moves under **See more options**
   rather than interrupting again in the same context. Do not create a placeholder map or state file for a decline.
 - Greenfield source with little stable structure receives no map pressure.

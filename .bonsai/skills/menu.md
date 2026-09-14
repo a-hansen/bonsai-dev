@@ -165,5 +165,6 @@ disappear.
 
 - This skill owns presentation mechanics, not the meaning of a gate.
 - It does not decide which actions are authorized or applicable.
-- It does not read or write durable workspace memory merely to render a menu.
+- It does not discover, inspect, validate, enumerate, read, or write domain state merely to render a menu. The
+  invoking workflow supplies any status summary and the applicable choices.
 - It delegates only to the subordinate workflow selected by the human.
