@@ -2,147 +2,175 @@
 
 ## Purpose
 
-Create, inspect, extend, refresh, rebuild, remove, and use selective generated source-navigation maps through
-Bonsai's normal identity, menu, context, workspace, and human-gate model.
+Create, inspect, extend, refresh, rebuild, remove, and use selective generated source-navigation maps through Bonsai's normal identity, menu, context, workspace, and human-gate model.
 
-A **code map** is the primary user-facing mapping concept. A **map workspace** is the durable execution mechanism
-used to create, extend, refresh, rebuild, and resume work on a code map. Normal code-map operations may create,
-reuse, reactivate, resume, or update map workspace memory as needed; the human should not have to create a workspace first merely to
-ask Bonsai to map the current source.
+A **code map** is the user-facing mapping concept. A **map workspace** is durable execution memory used to create, extend, refresh, rebuild, and resume a code map. Normal code-map actions may create, reuse, reactivate, resume, or update workspace memory as needed; ordinary mapping must not require the human to create a workspace first.
 
-Generated maps describe actual source and are reusable navigation aids, not source authority, project truth,
-workspace execution memory, or exhaustive documentation.
+Generated maps describe observed source and are reusable navigation aids. They are not source authority, project truth, workspace execution memory, or exhaustive documentation.
+
+Source mapping requires no Bonsai project or active project. **Manage Code Maps** may start directly from the repository-entry gate. Never create project memory merely to enable mapping. Normal user interaction speaks in code-map terms; expose workspace lifecycle directly only when the human intends to create, inspect, resume, or manage the workspace itself.
+
+## Global Invariants
+
+These rules apply throughout this skill unless a narrower section explicitly adds a stricter rule.
+
+### Authority
+
+Use evidence in this order:
+
+1. selected actual source, including build files, tests, examples, and representative uses;
+2. approved project final truth and archaeological analysis as attention/interpretation context;
+3. optional human-owned `map_calibration.md` as source-specific calibration;
+4. existing generated map data as navigation memory that must remain source-aligned.
+
+Source wins over project memory, calibration, and map content. Preserve disagreement as visible mismatch or uncertainty until corrected.
+
+### Ownership and mutation
+
+Keep these concepts distinct even when Embedded Bonsai colocates them physically:
+
+| Role | Owned content |
+| --- | --- |
+| Map workspace | `workspace.md`, `agent_plan.md`, `agent_state.md`, optional `plan/agent_plan_<scope>.md` |
+| Human calibration | `map_calibration.md` |
+| Generated map | `code_map.md`, subsystem/API maps, optional generated lookup/index artifacts |
+| Source/input | repository checkout, source tree/archive, supplied artifacts |
+
+A named map directory is a storage boundary, not blanket ownership. Never treat unknown colocated files as agent-owned merely because of location. Never mutate human calibration, supplied source, project truth, or project execution memory through map-output operations.
+
+Generated runtime map data may be written only under the resolved active map store. Never write runtime map state into Bonsai standards, staged distributions, or template locations.
+
+### Workspace/session separation
+
+Map workspaces contain mapping continuation only. Do not store active-project selection, project phase/pass state, approvals, requirement tracking, contract/final-truth status, icebox state, active-workspace pointers, or session history in workspace or generated-map data.
+
+Active workspace identity exists only in current-session context. Never persist an active-map pointer.
+
+Do not reconstruct missing workspace state from generated output, project memory, directory inference, chat history, or speculation. Missing/conflicting required state is `Blocked`.
+
+### Mapping-unit authorization
+
+A human-selected **bounded mapping focus** is the execution-authorization boundary. It may cover one subsystem, caller/extension concern, cross-cutting behavior, persistence, event handling, serialization, lifecycle, tracking, or another bounded source-backed concern. It need not correspond one-to-one with a generated subsystem.
+
+For ordinary non-destructive mapping, the normal generated-output envelope is:
+
+```text
+code_map.md
+subsystems/<subsystem>/map.md
+subsystems/<subsystem>/api_pub.md
+subsystems/<subsystem>/api_ext.md
+```
+
+Source discovery may determine architectural ownership, whether one or several subsystem maps are affected, whether a new subsystem is justified, whether no same-named subsystem should exist, and which standard files in that envelope are required. These are discovery-resolved details within an already authorized focus and do not create a routine second gate.
+
+Creating or materially expanding optional lookup/index artifacts such as `namespace_router.tsv`, `manifest.tsv`, or `symbol_index.tsv` is outside that implicit envelope and requires explicit authorization. Existing optional lookup data may receive only bounded maintenance needed to keep already-authorized routing correct.
+
+Always stop for human direction before:
+
+- material expansion of mapping focus or current source scope;
+- materially different source or map identity;
+- unresolved source/map alignment;
+- destructive rebuild or removal;
+- generated-map ownership restructuring beyond ordinary representation of the selected focus;
+- a genuinely unrelated mapping objective;
+- optional lookup/index creation or material expansion;
+- another costly optional artifact;
+- insufficient source evidence; or
+- another material decision requiring authorization.
+
+Do **not** stop merely because source discovery selects different standard Markdown targets than predicted, spans several existing subsystems, justifies `api_pub.md` or `api_ext.md`, justifies a new subsystem, or finds no standalone subsystem matching the focus.
+
+### Lifecycle and completion
+
+Create, extend, refresh, rebuild, inspect, and remove remain distinct lifecycle intents. Completion is only for the current mapping scope and represented source state; later source change or new coverage may reactivate the same compatible workspace.
+
+Complete and validate the full authorized mapping unit before selecting another focus. Discovery alone is not completion when justified generated-map mutation remains.
 
 ## When to Load
 
 Load this skill only when:
 
 - the human selects **Manage Code Maps**;
-- an explicit startup request asks for a code-map action;
-- current implementation needs map-guided navigation or map/source alignment checking;
-- the human accepts a contextual first-use mapping action for substantial existing source;
-- the human accepts a contextual recommendation to extend an existing map with newly valuable coverage; or
+- startup explicitly requests a code-map action;
+- implementation needs map-guided navigation or map/source alignment checking;
+- the human accepts contextual first-use mapping for substantial existing source;
+- the human accepts a contextual extension recommendation; or
 - the human accepts bounded refresh after a known material structural source change.
 
-Do not load the editing workflow merely because a map exists, and do not treat routine source edits as map
-maintenance. Ordinary map consumption reads `code_map.md` first and only the deeper artifact needed for the current
-facet.
+Do not load editing workflow merely because a map exists. Routine source edits are not map maintenance. Ordinary consumption reads `code_map.md` first, then only the deeper artifact needed for the current facet.
 
-## Authority and Boundaries
+## Collections and Identity
 
-Use these authorities in order:
-
-1. actual selected source, including its build files, tests, examples, and representative uses;
-2. approved project final truth and archaeological analysis as attention and interpretation context;
-3. optional human-owned `map_calibration.md` as source-specific calibration;
-4. existing map data as navigation memory that must remain aligned with source.
-
-Project memory and `map_calibration.md` may guide where to look, but they do not prove source behavior or determine
-map identity. When they disagree with observed source, source wins and the mismatch remains visible until corrected.
-
-Do not require a Bonsai project or active project for source mapping. **Manage Code Maps** may be entered directly
-from the repository entry gate before any project is selected. Do not create project memory merely to map source.
-Do not put active project, phase, pass, approval, requirement-tracking, icebox, or session status into map workspace
-memory or generated map data.
-
-Normal user interaction should speak in code-map terms. Expose map-workspace lifecycle directly only when the
-workspace itself is what the human intends to create, inspect, resume, or manage. Keep the workspace/output
-distinction strict internally even when ordinary creation hides it.
-
-## Map Workspace and Generated-Map Collections
-
-Resolve two collections independently from the repository and Bonsai Home identity supplied by `start.md`:
+Resolve these independently from repository and Bonsai Home identity supplied by `start.md`:
 
 - repository-local map workspaces: `<repository-home>/.bonsai/maps/`;
-- reusable generated maps: the active map store described below.
+- reusable generated maps: active map store below.
 
-Enumerate only immediate child directories of each collection, in stable lexical order. Keep the results as two
-typed collections even when they contain the same name. A directory is a map-workspace candidate because it is an
-immediate child of the repository-local workspace area; it is not valid until its workspace entry and required
-execution memory pass validation. A directory is a usable generated map only when its agent-owned `code_map.md`
-entry exists and is readable. The presence of one does not prove the presence or validity of the other.
+Enumerate only immediate child directories, in stable lexical order, and retain separate typed collections even when names coincide.
 
-In Embedded Bonsai, `<repository-home>/.bonsai/maps/<map>/` may be both the workspace directory and the generated-map
-directory. Physical overlap does not merge ownership. Classify known files by role, not by their parent path:
+A repository-local child is only a **workspace candidate** until workspace entry and required execution memory validate. A generated-map child is **usable** only when its agent-owned `code_map.md` exists and is readable. One never proves the other.
+
+In Embedded Bonsai, `<repository-home>/.bonsai/maps/<map>/` may physically hold both workspace and generated output. Classify by role:
 
 ```text
-workspace.md                     # Repository-local workspace entry
-agent_plan.md                    # Repository-local map roadmap
-agent_state.md                   # Repository-local current resume state
-map_calibration.md               # Optional human-owned workspace input
-plan/agent_plan_<scope>.md       # Optional repository-local scoped plans
-code_map.md                      # Generated-map entry
-namespace_router.tsv             # Optional generated routing
-manifest.tsv                     # Optional generated registry
-symbol_index.tsv                 # Optional generated routing
-subsystems/                      # Optional generated drill-down maps
+workspace.md                     # workspace entry
+agent_plan.md                    # map-wide roadmap
+agent_state.md                   # current resume state
+map_calibration.md               # optional human-owned input
+plan/agent_plan_<scope>.md       # optional scoped plan
+code_map.md                      # generated-map entry
+namespace_router.tsv             # optional generated routing
+manifest.tsv                     # optional generated registry
+symbol_index.tsv                 # optional generated routing
+subsystems/                      # optional generated drill-down maps
 ```
-
-Never treat workspace memory as generated output, generated output as execution memory, or an unknown colocated
-file as owned merely because Embedded Bonsai makes the paths overlap.
 
 ## Active Generated-Map Store
 
-Resolve the active map store from Bonsai Home and repository identity supplied by `start.md`; active project is
-not required:
+Resolve independently from source location and active project:
 
-- when a configured Bonsai Home is active: `<bonsai-home>/maps/`;
-- for Embedded Bonsai without a configured external home: `<repository-home>/.bonsai/maps/`.
+- configured Bonsai Home: `<bonsai-home>/maps/`;
+- Embedded Bonsai with no configured external home: `<repository-home>/.bonsai/maps/`.
 
-Resolve that store independently from the source location. Mapping source in another repository, directory, or
-archive does not place generated output beside that source by default.
+Mapping source in another repository, directory, or archive does not relocate generated output beside that source.
 
-Human-owned calibration is an input, not generated runtime map data. When the selected source is a repository
-checkout, look for source-local calibration at:
+For a repository checkout, source-local calibration is:
 
 ```text
 <source-repository>/.bonsai/maps/<source>/map_calibration.md
 ```
 
-In Embedded Bonsai this source-local location may also be physically inside the active map store. Never move, copy,
-normalize, or rewrite calibration merely because generated map artifacts are stored elsewhere.
+Calibration is human-owned input. Never move, copy, normalize, or rewrite it because generated output lives elsewhere. Embedded Bonsai may colocate calibration and output physically without merging ownership.
 
-Several projects may reuse one named source map, and one project may select several relevant source maps. Do not
-duplicate a map per consuming project or treat the active project's name as the map identity.
+Several projects may reuse one named source map; one project may select several maps. Map identity comes from the source universe, never the consuming project.
 
-Each named source map may contain:
+A named generated map may contain:
 
 ```text
 <map-store>/<source>/
-    code_map.md                       # Required entry for a usable map
-    namespace_router.tsv              # Optional fuller namespace routing
-    manifest.tsv                      # Optional subsystem/path registry
-    symbol_index.tsv                  # Optional selective symbol routing
+    code_map.md                       # required for usability
+    namespace_router.tsv              # optional
+    manifest.tsv                      # optional
+    symbol_index.tsv                  # optional
     subsystems/<subsystem>/map.md
-    subsystems/<subsystem>/api_pub.md # Optional caller mechanics
-    subsystems/<subsystem>/api_ext.md # Optional extension mechanics
+    subsystems/<subsystem>/api_pub.md # optional
+    subsystems/<subsystem>/api_ext.md # optional
 ```
-
-Write generated runtime map data only beneath the resolved active map store. Never instantiate a template back into
-the Bonsai standard, write generated map data into a staged distribution, or treat a standard template as runtime
-map state.
-
-The named source directory is a storage boundary, not a blanket ownership boundary. Map lifecycle operations own
-only agent-owned map artifacts they actually create or manage. They never own `map_calibration.md`, a supplied
-source archive, source checkout, or another colocated file merely because it is under that directory.
 
 ## Manage Code Maps Entry
 
-Retain the invoking Bonsai gate before doing anything else.
+Retain the invoking Bonsai gate.
 
-When the human enters **Manage Code Maps**, perform only cheap deterministic discovery needed to describe the
-available choices:
+On **Manage Code Maps**, do only cheap deterministic discovery needed for the menu:
 
-- enumerate immediate repository-local map-workspace child directories;
-- enumerate immediate active-map-store child directories;
-- for generated-map discovery, check only whether each candidate has a readable `code_map.md`;
-- do not read `code_map.md`, `workspace.md`, `agent_plan.md`, `agent_state.md`, calibration, source identity, or
-  generated drill-down artifacts merely to render the menu.
+- enumerate immediate repository-local workspace children;
+- enumerate immediate active-map-store children;
+- for generated maps, check only readable `code_map.md` presence;
+- do not read map/workspace/state/plan/calibration/source/drill-down content merely to render the menu.
 
-Keep repository-local map-workspace candidates and reusable generated maps as two typed collections even when they
-share names.
+Keep workspace candidates and usable generated maps as separate typed collections.
 
-When useful, render a compact status summary such as:
+When useful, show compact status:
 
 ```text
 Available code maps: <stable lexical list or none>
@@ -151,127 +179,83 @@ Maps used by <project>: <selected usable maps or none>
 Map workspaces: <count or stable lexical list when materially useful>
 ```
 
-If available code-map names are already shown in status, do not offer a separate action whose only purpose is to
-list those same names.
+If status already names available maps, do not add a redundant list-only action.
 
-When no more specific action was requested, load `skills/menu.md` and present only applicable primary code-map
-actions:
+If no specific action was requested, load `skills/menu.md` and show only applicable actions:
 
 1. **Create Code Map**.
-2. **Extend Code Map** when at least one usable generated map exists.
-3. **Inspect Code Map** when at least one usable generated map exists.
-4. **Refresh Code Map** when at least one usable generated map exists.
-5. **Rebuild Code Map** when at least one usable generated map exists.
-6. **Remove Code Map** when at least one usable generated map exists.
-7. **Add a Code Map to the Active Project** when a valid active project exists and at least one usable generated
-   map is not already selected by that project.
-8. **Remove a Code Map from the Active Project** when a valid active project exists and at least one of its
-   selections still identifies a usable generated map.
+2. **Extend Code Map** if a usable map exists.
+3. **Inspect Code Map** if a usable map exists.
+4. **Refresh Code Map** if a usable map exists.
+5. **Rebuild Code Map** if a usable map exists.
+6. **Remove Code Map** if a usable map exists.
+7. **Add a Code Map to the Active Project** if a valid active project exists and at least one usable map is unselected.
+8. **Remove a Code Map from the Active Project** if a valid active project exists and at least one selected identity remains usable.
 9. **Manage Map Workspaces**.
 10. **Cancel and return to `<invoking gate>`**.
 
 Omit unavailable actions rather than preserving fixed numbering.
 
-The primary menu manages code maps. Map-workspace lifecycle is secondary and lives under **Manage Map Workspaces**.
-Do not require the human to choose between **Create Map Workspace** and **Create Code Map** merely to map the
-current source.
-
-If an action needs source, identity, store, workspace, or project evidence that is not yet available, obtain that
-evidence inside the selected action. Do not eagerly validate every candidate merely to annotate the menu.
+Primary UX manages code maps. Workspace lifecycle is secondary under **Manage Map Workspaces**. Do not require a workspace choice merely to map current source. Resolve missing evidence inside the chosen action instead of eagerly validating every candidate.
 
 ### Manage Map Workspaces
 
-This submenu exposes direct control of repository-local mapping execution memory for advanced, external-source,
-calibration, inspection, and resume cases.
+This submenu provides direct repository-local execution-memory control for advanced, external-source, calibration, inspection, and resume cases.
 
-On entry, enumerate repository-local map-workspace candidates cheaply and show their names in stable lexical order.
-Do not validate every candidate merely to render the submenu.
+On entry, cheaply enumerate workspace candidates in stable lexical order. Do not validate all candidates just to render the submenu.
 
-Present only applicable actions:
+Show only applicable actions:
 
 1. **Create Map Workspace**.
-2. **Resume Map Workspace** when at least one repository-local candidate exists.
-3. **Inspect Map Workspace** when at least one repository-local candidate exists.
+2. **Resume Map Workspace** if candidates exist.
+3. **Inspect Map Workspace** if candidates exist.
 4. **Cancel and return to Manage Code Maps**.
 
-**Create Map Workspace** is explicit workspace lifecycle management. It is not a prerequisite for ordinary
-**Create Code Map**.
+**Create Map Workspace** is explicit lifecycle management, not a prerequisite for **Create Code Map**.
 
-For **Inspect Map Workspace**, select one candidate, validate only that candidate using the same workspace-entry,
-plan, and state rules used by **Select or Resume a Map Workspace**, and report its source identity, current scope,
-roadmap status, readiness, blocker, active scoped plan, and exact next step without mutation. Do not activate the
-workspace merely because it was inspected.
+For **Inspect Map Workspace**, select one candidate, validate only it using the same entry/plan/state rules as resume, and report source identity, current scope, roadmap status, readiness, blocker, active scoped plan, and exact next step without mutation or activation.
 
-After a non-mutating workspace inspection or cancellation, return to the refreshed **Manage Map Workspaces**
-submenu. After explicit workspace creation, follow the creation rules below; after successful resume, the selected
-map workspace becomes the active workspace for the session and replaces the prior parent gate.
+After inspection/cancellation, return to refreshed **Manage Map Workspaces**. After explicit creation, follow creation rules below. After successful resume, the selected map workspace becomes the active session workspace and replaces the prior parent gate.
 
-### Add or Remove a Code Map from a Project
+### Project Map Associations
 
-These actions manage a project's explicit selection of useful reusable maps. They are available only when the
-invoking context supplies one active `project` workspace. Omit them at the repository entry gate and for an active
-map workspace; do not ask the human to select or create a project merely to make an association action available.
+Available only when the invoking context supplies one active `project` workspace. Omit at repository entry and while an active map workspace owns the session. Do not ask the human to select/create a project merely to expose association actions.
 
-Before offering either action:
+Before offering Add/Remove:
 
-1. Revalidate that the supplied project home is one immediate child of `<repository-home>/.bonsai/projects/` and
-   that its readable `workspace.md` contains exactly one `Type: project` declaration and one
-   `Route: Project workspace behavior` declaration.
-2. Resolve the active generated-map store independently. A selectable map is one immediate child directory whose
-   agent-owned `code_map.md` exists and is readable.
-3. Load `skills/agent_context.md` and read only the selected project's `agent_context.md` when it exists. Treat its
-   canonical `Useful code maps:` entries as project selections, not as proof that a generated map is currently
-   usable.
-4. For **Add**, list usable generated maps not already selected. For **Remove**, list only selected identities that
-   are still usable generated maps. Keep choices in stable lexical order and accept the corresponding number.
+1. Revalidate project home as one immediate child of `<repository-home>/.bonsai/projects/`; readable `workspace.md` must contain exactly one `Type: project` and one `Route: Project workspace behavior`.
+2. Resolve active generated-map store independently. A selectable map is one immediate child with readable agent-owned `code_map.md`.
+3. Load `skills/agent_context.md`; read only the selected project's `agent_context.md` if present. Canonical `Useful code maps:` entries are project selections, not usability proof.
+4. **Add:** list usable, unselected maps. **Remove:** list only selected identities still usable. Stable lexical order; accept corresponding number.
 
-Revalidate the selected project and map immediately before mutation. The map name must be one directory component,
-and `<active-map-store>/<map>/code_map.md` must still be readable. A same-name repository-local map-workspace
-candidate, its `workspace.md`, or its execution memory never establishes a valid association target. If the
-project or generated-map identity is invalid, stale, ambiguous, or no longer usable, stop without changing context.
+Immediately before mutation, revalidate project and chosen map. Map name must be one directory component and `<active-map-store>/<map>/code_map.md` must still be readable. Same-name workspace/state does not prove a valid target. If project/map identity is invalid, stale, ambiguous, or unusable, stop without changing context.
 
-After the human selects the concrete add or remove operation, delegate only the canonical project-context mutation
-to `skills/agent_context.md`. Report the project, generated-map identity, and exact project `agent_context.md`
-target. The operation must not create, rebuild, move, rename, edit, or delete generated-map artifacts; modify a map
-workspace; change project or map execution memory; or persist active workspace/session identity.
+After concrete human selection, delegate only canonical project-context mutation to `skills/agent_context.md`. Report project, map identity, and exact project `agent_context.md` target. The association operation must not create/rebuild/move/rename/edit/delete generated maps; mutate map workspace or project/map execution memory; or persist active session/workspace identity.
 
-An already-present add and an already-absent remove are successful no-ops. After mutation or no-op, verify the
-project selection and return to the refreshed **Manage Code Maps** entry through `skills/menu.md`. Association
-maintenance does not activate the selected map, perform source inspection, or authorize another map lifecycle
-action, except when the association was explicitly included in an approved **Create Code Map** action and is being
-performed as that action's final post-creation step.
+Already-present Add and already-absent Remove are successful no-ops. Verify selection afterward and return to refreshed **Manage Code Maps** via `skills/menu.md`.
+
+Association maintenance does not activate a map, inspect source, or authorize another lifecycle action. Exception: an association explicitly approved as part of **Create Code Map** may run as that action's final post-creation step.
+
+## Create, Select, and Resume Map Workspaces
 
 ### Create Map Workspace
 
-Runtime creation is an explicit map-workspace lifecycle action under **Manage Map Workspaces**, not the normal
-prerequisite for **Create Code Map** and not the Web UI `prompts/create_map.md` design/calibration workflow.
+This explicit submenu action creates execution memory directly. It is not ordinary **Create Code Map** setup and not the Web UI `prompts/create_map.md` design/calibration workflow.
 
-Use this action when the human intentionally wants to establish mapping execution memory directly, including for an
-external source or deliberately prepared mapping effort.
+Before proposing creation require:
 
-Require all of the following before proposing creation:
+- a human-supplied unused workspace name;
+- map-wide objective and initial bounded mapping scope;
+- source logical name, type, exact location, and available snapshot evidence;
+- one safe exact initial action, or concrete missing evidence recorded as blocker.
 
-- a human-supplied, unused map-workspace name;
-- the map-wide objective and an initial bounded mapping scope;
-- the actual source's logical name, source type, exact location, and available snapshot evidence; and
-- one safe initial exact next action, or the concrete missing evidence that must become a blocker.
+The name must be one directory component. Reject empty, `.`, `..`, absolute paths, drive prefixes, separators, control characters, or targets outside `<repository-home>/.bonsai/maps/`.
 
-The name must be one directory component. Reject an empty name, `.` or `..`, an absolute path, a drive prefix, path
-separators, control characters, or any target outside `<repository-home>/.bonsai/maps/`. "Unused" means that no
-valid or partial map workspace already owns that name; it does not mean that a same-name generated map cannot exist.
+"Unused" means no valid or partial workspace already owns that name; a same-name generated map may exist.
 
-Preflight the exact target without mutation. If the target directory already exists, classify every existing item
-needed for safety. Embedded overlap may make an existing same-name generated-map directory the correct physical
-target. Permit creation there only when `workspace.md`, `agent_plan.md`, and `agent_state.md` are all absent and no
-existing item makes ownership ambiguous. Preserve `code_map.md`, generated-map artifacts, `map_calibration.md`, and
-every other colocated file unchanged. If any required workspace file already exists without a complete valid
-workspace, classify the candidate as conflicting and stop; do not overwrite, complete, or repair it through
-creation.
+Preflight exact target without mutation. If it exists, inspect enough items for safety. Embedded overlap may make an existing same-name generated directory correct. Permit creation there only when `workspace.md`, `agent_plan.md`, and `agent_state.md` are all absent and nothing makes ownership ambiguous. Preserve `code_map.md`, generated artifacts, `map_calibration.md`, and all other colocated files unchanged. If any required workspace file already exists without a complete valid workspace, stop as conflicting; creation does not overwrite, complete, or repair it.
 
-Before mutation, report the name, repository-local target, source identity, initial scope, exact three files to be
-created, every known preserved colocated item, and whether the target overlaps the generated-map store. Load
-`skills/menu.md`, offer creation of that exact workspace, revision, discussion, or cancellation, and stop for
-explicit human confirmation.
+Before mutation, report name, repository-local target, source identity, initial scope, exact three files to create, every known preserved colocated item, and whether target overlaps generated-map store. Load `skills/menu.md`; offer creation of exactly that workspace, revision, discussion, or cancellation; wait for explicit confirmation.
 
 After approval, create only:
 
@@ -281,143 +265,72 @@ After approval, create only:
 <repository-home>/.bonsai/maps/<map>/agent_state.md
 ```
 
-Write `workspace.md` as the small declarative map entry with exactly one `Type: map` declaration and one
-`Route: Map workspace behavior` declaration. Initialize `agent_plan.md` as a map-wide roadmap for the approved
-objective and selected scope. Initialize `agent_state.md` as current map resume truth: current mapping scope,
-source/map identity evidence, readiness, one exact next step or concrete blocker, success condition, and only
-resume-critical files. Do not add project phases, passes, final-truth status, contract state, or an active-workspace
-pointer. Set `Ready to execute` only when the recorded action has sufficient evidence and no independent gate;
-otherwise record the concrete `Blocked` condition.
+`workspace.md` is a small declarative map entry with exactly one `Type: map` and one `Route: Map workspace behavior`. `agent_plan.md` is the map-wide roadmap for approved objective/scope. `agent_state.md` records current scope, source/map identity evidence, readiness, one exact next step or concrete blocker, success condition, and only resume-critical files.
 
-Do not create or modify `map_calibration.md`, `code_map.md`, generated lookup/drill-down artifacts, a scoped plan,
-or a `plan/` directory as a side effect. If all three files cannot be created without changing a pre-existing item,
-stop and report the partial result rather than claiming a valid workspace. Validate the completed workspace, then
-activate it only in current-session context and follow **Select or Resume a Map Workspace** below.
+Do not add project phases/passes/final-truth/contract state or active-workspace pointers. Set `Ready to execute` only when the action has sufficient evidence and no independent gate; otherwise record the concrete `Blocked` condition.
+
+Do not create/modify `map_calibration.md`, generated-map output, scoped plans, or `plan/` as a side effect. If all three required files cannot be created without changing a pre-existing item, stop and report the partial result rather than claiming a valid workspace.
+
+Validate the completed workspace, activate it only in current-session context, then use **Select or Resume a Map Workspace** behavior below.
 
 ### Select or Resume a Map Workspace
 
-For **Resume Map Workspace**, list repository-local candidates in stable lexical order. When selection is required,
-present numbered choices and accept the corresponding number. Inspect the selected candidate only; invalid
-candidates remain visible but unavailable, with the concrete reason.
+For resume, list candidates in stable lexical order. When selection is needed, use numbered choices. Inspect only the selected candidate; invalid candidates remain visible but unavailable with a concrete reason.
 
-Validate the selected candidate in this order:
+Validate in this order:
 
-1. require a readable `workspace.md` containing exactly one unambiguous `Type: map` declaration and exactly one
-   unambiguous `Route: Map workspace behavior` declaration;
-2. require readable `agent_state.md` and `agent_plan.md`;
-3. read state first and plan second, compare overlapping mapping scope, roadmap status, readiness, blocker,
-   active scoped-plan identity, exact-next-step, and completion claims;
-4. read one flat scoped plan under `plan/` only when state names it or it is required to establish the current
-   mapping gate; reject an absent named plan or a path outside that workspace; and
-5. classify a missing required file, conflicting common truth, unsafe exact step, or unsupported completion claim
-   as `Blocked` rather than guessing or repairing it.
+1. readable `workspace.md` with exactly one unambiguous `Type: map` and one `Route: Map workspace behavior`;
+2. readable `agent_state.md` and `agent_plan.md`;
+3. read state first, plan second; compare overlapping mapping scope, roadmap status, readiness, blocker, active scoped-plan identity, exact next step, and completion claims;
+4. read one flat `plan/agent_plan_<scope>.md` only when state names it or it is required to establish the current gate; reject missing named plan or any path outside the workspace;
+5. classify missing required files, conflicting common truth, unsafe exact step, or unsupported completion as `Blocked` rather than guessing/repairing.
 
-Do not read generated map output, project memory, or chat history to reconstruct missing workspace state. Load
-`map_calibration.md`, actual source, generated output, developer context, or agent context only when the
-reconstructed exact action requires that facet.
+Do not read generated output, project memory, or chat history to reconstruct missing state. Load calibration, actual source, generated output, developer context, or agent context only when the reconstructed exact action requires that facet.
 
-After validation, establish the selected name and home as the active `map` workspace in current-session context
-only. Never persist an active-map pointer. Return the reconstructed condition to the implementation kernel as the
-refreshed active-map gate; a compatible mapping action proceeds through this skill's active map behavior and shared
-handoff, while a human gate or blocker stops there. A successful selection replaces the repository-entry gate for
-this session. Cancellation, invalid selection, or non-mutating inspection returns to the retained invoking gate
-through `skills/menu.md` unless it creates a concrete blocker that must be shown first.
+After validation, establish name/home as active `map` workspace in current-session context only. Return reconstructed condition to the implementation kernel as the refreshed active-map gate. Compatible mapping proceeds through this skill and shared handoff; human gate/blocker stops there.
+
+Successful selection replaces repository-entry gate for this session. Cancellation, invalid selection, or non-mutating inspection returns to retained invoking gate through `skills/menu.md`, unless a concrete blocker must be shown first.
 
 ## Active Map Workspace Execution
 
-Use this path only after startup or **Resume Map Workspace** has established one valid active `map` workspace in
-current-session context. The map workspace supplies continuation authority; the generated map does not.
+Use only after startup or resume establishes one valid active `map` workspace. Workspace memory supplies continuation authority; generated map content does not.
 
 ### Derive one bounded action
 
-1. Start from the already loaded repository-local `agent_state.md`, then `agent_plan.md`, and the one flat scoped
-   plan named by state when applicable. Confirm that their overlapping mapping scope, roadmap status, active-plan
-   identity and status, readiness, blockers, exact next step, and completion claims still agree.
-2. Derive exactly one action from the narrowest applicable execution basis:
-   - use the map-wide roadmap directly for a small bounded mapping unit;
-   - use the active scoped plan for a larger mapping unit when state names it; or
-   - make drafting or refining one scoped plan the exact action when the unit is too large to execute reliably
-     from roadmap-level detail.
-3. When the exact action is an executable mapping unit, require it to identify:
-   - the current mapping scope;
-   - the human-selected bounded mapping focus;
-   - the source identity and location;
-   - the normal generated-output envelope available to that mapping unit;
-   - the observable success condition; and
-   - any evidence, blocker, or independent human gate that must be resolved first.
-4. Do not require the exact standard generated-map file set to be known before source discovery. Discovery is
-   allowed to determine architectural ownership and the exact standard map layers needed to represent the selected
-   focus.
-5. Treat a missing or conflicting basis, an absent named plan, multiple plausible mapping focuses, a source/map
-   identity mismatch, insufficient source evidence, or an ownership ambiguity that cannot safely be resolved from
-   authoritative source as `Blocked`. Do not repair the gap from generated output, project memory, directory
-   inference, or chat history.
+1. Start from loaded `agent_state.md`, then `agent_plan.md`, plus the one named flat scoped plan when applicable. Confirm overlapping scope, roadmap status, active-plan identity/status, readiness, blockers, exact next step, and completion claims agree.
+2. Derive exactly one action from the narrowest applicable basis:
+   - map-wide roadmap for a small bounded unit;
+   - active scoped plan for a larger unit named by state;
+   - drafting/refining one scoped plan when roadmap detail is insufficient.
+3. An executable mapping unit must identify current mapping scope, human-selected bounded focus, source identity/location, normal output envelope, observable success condition, and any unresolved evidence/blocker/independent gate.
+4. Exact standard generated files need not be known before discovery.
+5. `Blocked`: missing/conflicting basis, missing named plan, multiple plausible focuses, source/map identity mismatch, insufficient source evidence, or ownership ambiguity not safely resolvable from authoritative source.
 
-A bounded mapping focus is the execution-authorization boundary for a mapping unit. It may be one architectural
-subsystem, one caller or extension concern, a cross-cutting behavior, persistence, event handling, serialization,
-lifecycle, tracking, or another bounded source-backed concern.
-
-The selected focus does not have to correspond one-to-one with a generated subsystem.
-
-For an ordinary non-destructive mapping unit, the normal generated-output envelope is:
-
-```text
-code_map.md
-subsystems/<subsystem>/map.md
-subsystems/<subsystem>/api_pub.md
-subsystems/<subsystem>/api_ext.md
-```
-
-The mapping unit may ultimately require one subsystem, several existing subsystems, a newly justified subsystem,
-or only part of that output set. The exact standard paths are discovery-resolved details inside the already
-authorized focus.
-
-Creating or materially expanding optional lookup or index artifacts such as `namespace_router.tsv`, `manifest.tsv`,
-or `symbol_index.tsv` is not implicitly authorized by that standard envelope.
-
-Map roadmap text is execution basis for a small unit only when state identifies one safe bounded mapping focus and
-no independent decision gate remains. A scoped plan refines one map roadmap unit; it does not supersede the
-map-wide roadmap or grant authority outside the selected focus or current mapping scope.
+A roadmap directly authorizes a small unit only when state identifies one safe bounded focus and no independent gate remains. A scoped plan refines one roadmap unit; it never supersedes the map-wide roadmap or grants authority outside current scope/focus.
 
 ### Scoped map planning
 
-Create or refine a scoped plan only when decomposition materially improves execution or resumption. Use one flat
-file beneath the active workspace:
+Create/refine a scoped plan only when decomposition materially improves execution or resumption:
 
 ```text
 plan/agent_plan_<scope>.md
 ```
 
-The file records the bounded mapping objective, source/map identity relevant to that unit, selected mapping focus,
-ordered mapping work, known or expected generated-output effects, validation, status, and the next useful
-mapping-unit boundary. It does not need to predict the exact standard generated-map files that source discovery
-will justify.
+Record bounded objective, relevant source/map identity, selected focus, ordered work, known/expected generated-output effects, validation, status, and next useful mapping-unit boundary. Exact standard target files may remain discovery-resolved.
 
-Keep `agent_plan.md` roadmap-level and make `agent_state.md` name the active scoped plan and its exact next action.
-A still-larger later unit may use another flat peer plan; do not create nested plan directories or reinterpret a
-scoped plan as a project phase.
+Keep `agent_plan.md` roadmap-level. `agent_state.md` names the active scoped plan and exact next action. Larger later units may use flat peer plans; never nest plan directories or treat scoped plans as project phases.
 
-Creating or refining agent-owned map planning does not automatically require project-style plan approval,
-contract review, or final-truth review. Stop for human direction only when the planning work changes the selected
-mapping focus or current mapping scope, requires a materially different source or map identity, proposes
-destructive work, requires restructuring existing generated-map ownership, adds a costly optional artifact, or
-reaches another decision that genuinely requires authorization.
+Agent-owned mapping-plan work does not automatically require project-style plan approval, contract review, or final-truth review. Stop only if planning changes selected focus/current scope, needs materially different source/map identity, proposes destructive work, restructures generated ownership, adds a costly optional artifact, or reaches another real authorization decision.
 
-When planning itself is the exact next action, its continuation authorization ends when that planning action is
-complete. Once durable state instead establishes one executable bounded mapping unit, continuation authorization
-for that action covers the complete mapping unit described below.
+Planning continuation authority ends when the planning action completes. Once durable state establishes one executable bounded unit, continuation authority covers that full mapping unit.
 
 ### Apply mapping gates
 
-Before beginning an executable mapping unit, apply the **Mapping Proposal Gate** unless the selected bounded
-mapping focus has already been explicitly established and the current-session or fresh-session continuation
-authorizes that same reconstructed mapping unit.
+Before executable mapping, apply the **Mapping Proposal Gate** unless the same bounded unit was already explicitly established and current-session or fresh-session continuation authorizes it.
 
-For an ordinary bounded mapping unit, authorization is based on the selected focus, source identity, map identity,
-current mapping scope, and normal generated-output envelope. It does not require advance approval of each exact
-standard Markdown target that discovery may select inside that envelope.
+Authorization is based on focus, source identity, map identity, current scope, and normal output envelope, not preapproval of every standard Markdown path.
 
-A current-session or fresh-session continuation of an executable mapping unit authorizes the complete unit:
+Continuation of one executable unit covers:
 
 ```text
 selected bounded mapping focus
@@ -428,235 +341,139 @@ determine architectural ownership
         ↓
 determine justified standard map layers
         ↓
-create or update those standard layers
+create/update those standard layers
         ↓
 validate against source
         ↓
 reconcile workspace execution memory
         ↓
-stop at the next mapping-unit boundary
+stop at next mapping-unit boundary
 ```
 
-Do not introduce a routine human gate between source discovery and generated-map production.
+Do not insert a routine human gate between discovery and standard generated-map production.
 
-Always stop for human direction when the work requires:
-
-- material expansion of the selected mapping focus or current source scope;
-- a materially different source or map identity;
-- unresolved source/map alignment;
-- a destructive rebuild or removal;
-- restructuring existing generated-map ownership rather than ordinary representation of the selected focus;
-- a genuinely unrelated new mapping objective;
-- creation or material expansion of an optional lookup or index artifact;
-- another costly optional artifact;
-- insufficient source evidence to map the selected focus safely; or
-- another material decision that genuinely requires human authorization.
-
-Do not stop merely because discovery determines that:
-
-- different standard map files are needed than could be predicted before inspection;
-- one cross-cutting focus belongs in several existing subsystem maps;
-- `api_pub.md` or `api_ext.md` is justified;
-- a new subsystem map is justified by the selected focus; or
-- no standalone subsystem corresponds to the selected focus.
-
-A fresh-session auto-execute request still authorizes only the one exact action reconstructed from current
-workspace memory. For executable mapping work, that exact action is the complete bounded mapping unit, not a
-discovery-only substep. It never authorizes the next mapping unit or bypasses a real gate or blocker.
+A fresh-session auto-execute request authorizes only the one exact action reconstructed from workspace memory. For executable mapping, that action is the full bounded unit above, not discovery alone. It never authorizes the next unit or bypasses a real gate/blocker.
 
 ### Execute the authorized mapping unit
 
-1. Resolve the repository-local workspace, authoritative source, and active generated-map store independently.
-2. Inspect actual source as needed to answer the selected bounded mapping focus. Use build structure,
-   representative implementation, tests, examples, and call sites only as needed for that focus.
-3. Recheck source/map identity while inspecting. A mismatch or insufficient alignment evidence stops generated
-   output changes until the applicable identity gate resolves it.
-4. Determine from authoritative source where the durable knowledge belongs. Resolve the exact standard
-   generated-map targets only after enough discovery exists to establish architectural ownership.
-5. Create or update the justified standard targets inside the authorized output envelope:
-   - `code_map.md` when source identity, top-level orientation, or routing is affected;
-   - `subsystems/<subsystem>/map.md` for each architectural domain needed to represent the focus;
-   - `api_pub.md` when the focus reveals reusable non-obvious caller mechanics;
-   - `api_ext.md` when the focus reveals reusable non-obvious extension mechanics.
-6. Preserve `workspace.md`, `agent_plan.md`, `agent_state.md`, `map_calibration.md`, `plan/`, supplied source, and
-   unknown colocated files from generated-output mutation even when Embedded Bonsai makes workspace and output
-   paths overlap.
-7. Do not create or materially expand optional lookup or index artifacts without their required authorization.
-   Existing optional lookup data may receive only bounded maintenance necessary to keep already-authorized,
-   already-present routing correct.
-8. Validate all changed generated output against the source evidence and the applicable completion checks below.
-9. If discovery materially escapes the selected focus, source scope, map/source identity, or normal output
-   envelope, stop at the applicable human gate. Do not reinterpret such an escape as part of the existing
-   authorization.
-10. When the complete mapping unit has been generated and validated, delegate reconciliation to
-    `skills/handoff.md`.
+1. Resolve workspace, authoritative source, and active map store independently.
+2. Inspect actual source only as needed for the selected focus. Use build structure, representative implementation, tests, examples, and call sites as needed.
+3. Recheck source/map identity while inspecting. Mismatch or insufficient alignment evidence blocks generated-output changes until resolved.
+4. Determine architectural ownership from source before choosing exact standard targets.
+5. Create/update justified standard targets within the authorized envelope:
+   - `code_map.md` when source identity, orientation, or routing changes;
+   - `subsystems/<subsystem>/map.md` for each architectural domain needed for the focus;
+   - `api_pub.md` for reusable non-obvious caller mechanics;
+   - `api_ext.md` for reusable non-obvious extension mechanics.
+6. Preserve workspace memory, calibration, `plan/`, supplied source, and unknown colocated files from generated-output mutation.
+7. Do not create/materially expand optional lookup/index artifacts without authorization; bounded maintenance of existing routing is allowed only as stated in Global Invariants.
+8. Validate all changed generated output against source and completion rules.
+9. If discovery materially escapes authorized focus, source scope, identity, or normal output envelope, stop at the applicable gate.
+10. After full unit generation and validation, delegate reconciliation to `skills/handoff.md`.
 
-Do not delegate to handoff merely because discovery has finished and the exact standard target files have become
-known. Discovery, ownership resolution, standard generated-map mutation, and validation normally remain one
-authorized mapping unit.
+Do not delegate merely because discovery finished and standard targets became known. Discovery, ownership resolution, standard mutation, and validation normally form one unit.
 
-### Reconcile mapping-unit completion and reactivation
+### Reconcile completion and reactivation
 
-Through the map branch of `skills/handoff.md`, reconcile the completed mapping unit against the map-wide roadmap,
-active scoped plan when present, `agent_state.md`, actual source/map identity, changed generated output, and
-performed checks.
+Through the map branch of `skills/handoff.md`, reconcile the completed unit against map-wide roadmap, active scoped plan if any, `agent_state.md`, actual source/map identity, changed generated output, and performed checks.
 
-- Mark the completed mapping focus and its generated-output effects accurately in the applicable roadmap or scoped
-  plan.
-- If the current mapping scope still contains useful work but no next bounded focus has yet been selected, present
-  concrete next-focus choices and stop for human direction. Do not silently choose and execute another focus.
-- When the human selects the next bounded focus, reconcile that selection into `agent_plan.md`, `agent_state.md`,
-  and the active scoped plan when applicable. Leave generated output unchanged while doing so.
-- Once the selected focus has become one safe exact mapping unit with an observable success condition and no
-  independent gate, record it as ready and offer current-session continuation, fresh-session continuation,
-  review/change, and **Exit for now** through the shared handoff behavior.
-- When a scoped plan is exhausted, mark it complete and return control to the map-wide roadmap without turning
-  scoped-plan completion into a project phase transition.
-- Set `Execution Readiness: Complete` only when the current selected mapping scope has no unfinished roadmap or
-  scoped-plan work and generated output is sufficiently reconciled with the selected source identity for that
-  scope.
-- A later observed source change, explicit maintenance request, expanded mapping scope, or newly discovered map
-  need may reactivate the same workspace. Leave prior generated output in place until a newly authorized mapping
-  unit changes it.
+- Mark completed focus and output effects accurately in roadmap/scoped plan.
+- If current scope still has useful work but no next focus is selected, present concrete next-focus choices and stop. Never silently choose/execute one.
+- When the human selects next focus, reconcile it into `agent_plan.md`, `agent_state.md`, and active scoped plan if applicable; do not change generated output during selection reconciliation.
+- Once that focus is one safe exact unit with success condition and no independent gate, record ready and offer current-session continuation, fresh-session continuation, review/change, and **Exit for now** through shared handoff.
+- When a scoped plan is exhausted, mark it complete and return to the map-wide roadmap; this is not a project phase transition.
+- Set `Execution Readiness: Complete` only when current selected mapping scope has no unfinished roadmap/scoped-plan work and output is sufficiently reconciled with selected source identity for that scope.
+- Later source change, maintenance request, scope expansion, or new map need may reactivate the same workspace. Preserve prior generated output until newly authorized work changes it.
 
-Map reconciliation never writes project phases, passes, contract state, project final-truth status, project
-icebox state, active-workspace identity, or session history into map memory.
+Never write project phases/passes, contract/final-truth/icebox state, active-workspace identity, or session history into map memory.
 
 ## Resolve the Mapping Context
 
-Before proposing substantive mapping work, resolve only enough context to make the selected action and gate
-trustworthy:
+Before substantive mapping proposals, resolve only enough context to make the chosen action/gate trustworthy:
 
-1. Retain the invoking Bonsai workflow or gate so this subordinate workflow can return to it. The invoking gate
-   may be the repository entry gate with no active project.
-2. Resolve the active map store without creating or modifying it.
-3. Resolve the requested generated-map lifecycle action. If none was supplied, return to the **Manage Code Maps**
-   entry menu above.
-4. Identify the actual source independently from the active project:
-   - logical source name;
-   - source type, such as repository checkout, released source archive, or supplied source tree;
-   - exact source location;
-   - version, Git revision, artifact coordinate, checksum, or other smallest useful snapshot evidence.
-5. For **Create Code Map**, **Extend Code Map**, and **Refresh Code Map**, prefer established current-session
-   context over asking the human to restate it:
-   - when the current repository is the intended source, default the source location to `<repository-home>`;
-   - when repository identity is unambiguous, derive the logical source name from that repository/source identity;
-   - when the active project clearly supplies useful mapping calibration, use it without making the project the map
-     identity;
-   - when a known structural source change already establishes a bounded refresh concern, carry that evidence into
-     the refresh proposal rather than rediscovering the whole source merely to name the focus;
-   - when project association is obviously intended for a newly created map, propose it as a post-creation
-     association rather than making it a map-identity requirement.
-6. Resolve the proposed map identity from the source universe, not the consuming project. Never silently choose
-   among several plausible source identities or snapshots.
-7. Inspect only the named map entry or directory metadata needed to determine whether the generated map exists,
-   whether its identity aligns, and which known files are map-owned. A colocated non-map file does not prove a map
-   exists.
-8. Resolve or identify the corresponding repository-local map workspace independently. A same-name generated map
-   does not prove workspace validity, and a same-name workspace does not prove a usable generated map.
-9. Resolve source-specific calibration only when it can materially improve the selected action. For a repository
-   checkout, check `<source-repository>/.bonsai/maps/<source>/map_calibration.md`. Use another calibration location
-   only when the human explicitly supplied it for the selected source.
-10. Read relevant project memory only when an active project exists and that memory can materially calibrate the
-    selected action. Absence of active project is not an ambiguity or blocker for mapping.
-11. Load `skills/agent_context.md` only when stable source locations, relevant map selection, or another qualifying
-    operational rule may need to be applied or maintained.
+1. Retain invoking Bonsai workflow/gate, including repository-entry with no project.
+2. Resolve active map store without creating/modifying it.
+3. Resolve requested lifecycle action; if none, return to **Manage Code Maps**.
+4. Identify actual source independently from active project: logical name, source type, exact location, and smallest useful snapshot evidence such as version, Git revision, artifact coordinate, or checksum.
+5. For Create/Extend/Refresh, prefer established current-session context over repetition:
+   - current repository may default source location to `<repository-home>` when intended;
+   - derive logical source name from unambiguous repository/source identity;
+   - use clearly relevant active-project calibration without making project the map identity;
+   - carry trustworthy known structural-change evidence into refresh rather than rediscovering unrelated source;
+   - when project association is obviously intended for a new map, propose it as post-creation association, not map identity.
+6. Resolve map identity from source universe. Never silently choose among plausible source identities/snapshots.
+7. Inspect only named map entry/directory metadata needed for existence, alignment, and known map-owned files. Colocated non-map files do not prove a map exists.
+8. Resolve corresponding repository-local workspace independently. Same-name map does not prove workspace validity; same-name workspace does not prove map usability.
+9. Resolve source-specific calibration only when materially useful. For repository checkout use `<source-repository>/.bonsai/maps/<source>/map_calibration.md`; use other locations only when explicitly supplied for that source.
+10. Read project memory only when an active project exists and materially calibrates the selected action. No active project is not a mapping ambiguity/blocker.
+11. Load `skills/agent_context.md` only when stable source locations, relevant map selection, or another qualifying operational rule may need application/maintenance.
 
-If the source location, map store, map identity, source snapshot, or ownership boundary remains materially
-ambiguous, stop and ask the human to resolve only that ambiguity. Do not invent a source resolver, downloader,
-registry, manifest schema, dependency-to-map matcher, or source-location convention.
+If source location, map store, map identity, source snapshot, or ownership boundary remains materially ambiguous, stop and ask the human to resolve only that ambiguity. Do not invent resolvers, downloaders, registries, manifest schemas, dependency-to-map matching, or source-location conventions.
 
-If **Create Code Map** resolves to an existing usable `code_map.md`, do not overwrite it as creation. Offer
-**Extend Code Map**, **Refresh Code Map**, a separately gated **Rebuild Code Map**, or a distinct source identity as
-appropriate.
+If **Create Code Map** finds an existing usable `code_map.md`, do not overwrite it as creation. Offer Extend, Refresh, separately gated Rebuild, or a distinct source identity as appropriate.
 
 ## Lifecycle Intent Boundaries
 
-Treat create, extend, refresh, and rebuild as distinct lifecycle intents even though their executable source-backed
-work ultimately uses the same bounded mapping-unit model.
+| Intent | Meaning |
+| --- | --- |
+| **Create** | Establish a reusable map for a source identity with no usable map. |
+| **Extend** | Add useful coverage beyond prior intended scope. Human may name subsystem, cross-cutting concern, caller/extension surface, or other bounded concern. A requested subsystem is a focus, not a command to create a same-named generated subsystem. |
+| **Refresh** | Reconcile represented mapped knowledge after material source change, preserving identity and existing coverage where practical; target the bounded concern made stale. |
+| **Rebuild** | Replace substantial generated representation or broadly restructure ownership; always separately gated as more destructive. |
 
-- **Create** establishes a suitable reusable map for a source identity that does not yet have one.
-- **Extend** broadens the useful mapping scope of an existing map. The human may name a subsystem, a cross-cutting
-  concern, a caller or extension surface, or another bounded source-backed concern. A requested subsystem is a
-  mapping focus, not a command to create a same-named generated subsystem.
-- **Refresh** reconciles existing mapped knowledge after represented source changes materially. It preserves the
-  intended map identity and existing coverage where possible and targets the bounded mapped concern made stale by
-  the change.
-- **Rebuild** replaces substantial generated representation or performs broad ownership restructuring. It remains
-  separately and explicitly gated because it is materially more destructive than extension or refresh.
-
-A completed map is complete only for its current mapping scope and represented source state. Completion does not
-prevent later extension or refresh from reactivating the same compatible map workspace.
-
-Do not disguise scope expansion as refresh. When new reusable coverage is desired beyond the map's prior intended
-scope, use **Extend Code Map**. Do not disguise broad replacement or ownership restructuring as extension or
-refresh; use the separately gated rebuild path.
+Do not disguise scope expansion as Refresh. Do not disguise substantial replacement/ownership restructuring as Extend or Refresh.
 
 ## Mapping Proposal Gate
 
-Whenever **Active Map Workspace Execution** requires this gate, and for any generated-map lifecycle action not
-already validly authorized through continuation of one selected mapping unit, present this information before
-substantive source inspection or mutation:
+Use whenever Active Map Workspace Execution requires it and for any generated-map lifecycle action not already authorized by continuation of the same selected unit.
 
-- **Action:** selected lifecycle action or bounded mapping unit;
-- **Source:** logical name, type, location, and available snapshot identity;
+Before substantive source inspection or mutation, present:
+
+- **Action:** lifecycle action or bounded unit;
+- **Source:** logical name, type, location, available snapshot identity;
 - **Map identity:** selected named source map;
-- **Map workspace:** existing compatible workspace to reuse, exact new repository-local workspace to create, or
-  `Not required` for a read-only/non-workspace action;
-- **Map store:** resolved generated-map store;
-- **Mapping focus:** the bounded source-backed concern being authorized;
-- **Generated-output envelope:** the standard Markdown map layers available to represent that focus, plus any
-  separately proposed optional or destructive targets;
-- **Project association:** active project to add after a usable map exists, `None`, or `Not applicable`;
+- **Map workspace:** compatible workspace to reuse, exact new repository-local workspace, or `Not required` for read-only/non-workspace action;
+- **Map store:** resolved store;
+- **Mapping focus:** bounded concern;
+- **Generated-output envelope:** standard Markdown layers available for that focus plus separately proposed optional/destructive targets;
+- **Project association:** project to add after usability, `None`, or `Not applicable`;
 - **Alignment:** `Aligned`, `Mismatch`, `Insufficient evidence`, or `Not applicable for new map`;
-- **Inputs:** actual source plus any project or human calibration that will be consulted;
-- **Success condition:** the observable condition that completes this mapping unit;
-- **Risks / uncertainties:** only those that can change the proposed unit or require another human decision.
+- **Inputs:** source plus project/human calibration to consult;
+- **Success condition:** observable completion condition;
+- **Risks / uncertainties:** only items that can change the unit or require another human decision.
 
-Known likely standard targets may be shown when useful, but they are not a required pre-discovery contract.
+Known likely standard targets may be shown but are not a required pre-discovery contract.
 
-Load `skills/menu.md` and offer concrete choices to select or revise the mapping focus, discuss a material
-ambiguity, cancel, or otherwise resolve the applicable gate. Wait for explicit human direction.
+Load `skills/menu.md`; offer concrete choices to approve/select or revise focus, discuss material ambiguity, cancel, or resolve the applicable gate. Wait for explicit human direction.
 
-Approval establishes the displayed source, map identity, workspace disposition, project-association choice,
-mapping focus, current source/mapping scope, and normal generated-output envelope. When **Create Code Map** shows
-creation of the corresponding map workspace, that workspace creation is part of the approved code-map action and
-must not trigger a second standalone workspace-creation gate.
+Approval establishes displayed source, map identity, workspace disposition, project-association choice, mapping focus, current source/mapping scope, and normal output envelope. If **Create Code Map** includes corresponding workspace creation, that creation is part of the approved action and gets no second standalone workspace gate.
 
-Approval does not authorize a later destructive rebuild, removal, material scope expansion, materially different
-source/map identity, generated-map ownership restructuring, source mutation, costly optional artifact, or creation
-or material expansion of an optional lookup/index artifact.
+Approval does **not** authorize later destructive rebuild/removal, material scope expansion, materially different source/map identity, ownership restructuring, source mutation, costly optional artifacts, or optional lookup/index creation/material expansion.
 
-When the current mapping scope is already complete, say so and do not invent another objective merely to continue.
+If current mapping scope is complete, say so. Do not invent another objective.
 
 ## Map and Source Alignment
 
-`code_map.md` is the normal identity and routing entry. Use the smallest available evidence that prevents an
-incompatible snapshot from being silently trusted.
+`code_map.md` is the normal identity/routing entry. Use the smallest evidence that prevents silently trusting an incompatible snapshot.
 
-Classify alignment as:
+- **Aligned:** map identity and selected source snapshot agree sufficiently for intended use.
+- **Mismatch:** evidence shows different version, revision, coordinate, source type, or artifact.
+- **Insufficient evidence:** a non-obvious alignment claim cannot be established.
+- **Not applicable for new map:** no prior entry; creation will record observed identity.
 
-- **Aligned:** the map identity and selected source snapshot agree sufficiently for the intended use;
-- **Mismatch:** available evidence shows a different version, revision, coordinate, source type, or artifact;
-- **Insufficient evidence:** alignment cannot be established for a non-obvious claim;
-- **Not applicable for new map:** no prior entry exists and creation will record identity from observed source.
-
-On mismatch or insufficient evidence, do not rely on non-obvious map claims. Present concrete choices to inspect
-the source, update the existing map, request a gated rebuild, select another map, select another source, or stop.
-Do not assume an active development checkout matches a released dependency.
+On Mismatch/Insufficient evidence, do not rely on non-obvious map claims. Offer concrete choices to inspect source, update map, request gated rebuild, select another map/source, or stop. Never assume a development checkout matches a released dependency.
 
 ## Action: Create Code Map
 
-**Create Code Map** is the normal user-facing creation path.
+Normal user-facing creation path.
 
-After the proposal is approved:
+After proposal approval:
 
-1. Resolve the approved corresponding map workspace before generated output:
-   - when a compatible same-name workspace already exists, validate and reuse it;
-   - when no workspace files exist at the approved repository-local target, create the workspace automatically;
-   - when a partial, invalid, incompatible, or ownership-ambiguous workspace exists, stop without generated-output
-     mutation.
-2. Automatic workspace creation writes only:
+1. Resolve corresponding workspace before generated output:
+   - validate/reuse compatible same-name workspace;
+   - if approved repository-local target has no workspace files, create workspace automatically;
+   - if partial, invalid, incompatible, or ownership-ambiguous, stop before generated-output mutation.
+2. Automatic creation writes only:
 
    ```text
    <repository-home>/.bonsai/maps/<map>/workspace.md
@@ -664,414 +481,264 @@ After the proposal is approved:
    <repository-home>/.bonsai/maps/<map>/agent_state.md
    ```
 
-   Preserve every existing colocated generated artifact, calibration file, source input, and unknown file. Use the
-   same ownership and overlap safety rules as **Create Map Workspace**, but do not require a separate human-supplied
-   workspace objective, scope, or source identity when the approved code-map proposal already establishes them.
-3. Initialize the automatically created workspace from the approved code-map proposal:
-   - map objective: create and maintain reusable navigation knowledge for the selected source;
-   - current mapping scope: the approved bounded creation scope;
-   - selected mapping focus: the approved initial bounded focus;
-   - source identity: the approved logical source, type, exact location, and available snapshot evidence;
-   - roadmap: one bounded active initial mapping unit plus only justified pending work;
-   - state: one safe exact next mapping unit, success condition, blockers, and `Ready to execute` only when evidence
-     is sufficient.
-   Do not create `map_calibration.md`, a scoped plan, or `plan/` as a side effect.
-4. Establish the validated or newly created map workspace as the active `map` workspace in current-session context
-   only. Do not persist an active-map pointer.
-5. Treat the approved initial mapping focus as the authorization boundary. Do not require its exact standard
-   generated-map targets to be known before discovery.
-6. Inspect actual source for orientation and then for the selected focus. Use build structure, representative
-   source, tests, examples, and call sites only as needed for that mapping unit.
-7. Treat relevant project truth and applicable `map_calibration.md` as calibration, not source proof. Preserve
-   material disagreements as uncertainty.
-8. Preserve every pre-existing human-owned or otherwise unowned file, including calibration or supplied source
-   physically colocated with the target map. Treat source-local calibration outside the active map store as
-   read-only input.
-9. Use discovery to determine the exact standard generated-map layers needed to represent the approved initial
-   focus.
-10. Instantiate or update only justified standard Markdown artifacts from `<bonsai-home>/templates/`:
-    - `code_map_template.md` for the required entry when needed;
-    - `subsystem_map_template.md` for each architectural subsystem justified by the focus;
-    - `api_pub_template.md` and `api_ext_template.md` when non-obvious reusable mechanics discovered within the
-      focus justify them.
-11. Do not create `namespace_router.tsv`, `manifest.tsv`, or `symbol_index.tsv` merely because discovery suggests
-    they could be useful. Creating or materially expanding optional lookup/index output requires its applicable
-    explicit authorization.
-12. Record the logical source and the smallest useful snapshot identity in `code_map.md`. Keep drill-down links
-    relative to the named source map.
-13. Complete all standard map effects of the selected initial focus before selecting another mapping focus. The
-    focus may legitimately affect one subsystem, several subsystems, or no standalone subsystem of the same name.
-14. When apparent design and actual use may differ, check at least one representative production use, test,
-    example, call site, or extension before recording the mechanic as durable.
-15. Validate the completed mapping unit under the structural and completion rules below.
-16. If the approved proposal included adding the completed map to an active project, perform that association only
-    after `<active-map-store>/<map>/code_map.md` is usable. Delegate the canonical project-context mutation to
-    `skills/agent_context.md`; do not make association a condition for map identity or workspace validity.
-17. Reconcile the completed bounded mapping unit through `skills/handoff.md`. Do not continue into another mapping
-    unit under the same authorization.
+   Preserve all colocated generated artifacts, calibration, source/input, and unknown files. Use explicit workspace-creation ownership/overlap safety rules, but the approved code-map proposal already supplies objective, scope, and source identity, so no second human workspace-definition gate is required.
+3. Initialize workspace from approved proposal:
+   - objective: create/maintain reusable navigation knowledge for selected source;
+   - current mapping scope: approved bounded creation scope;
+   - selected focus: approved initial bounded focus;
+   - source identity: approved logical source/type/location/snapshot evidence;
+   - roadmap: one bounded active initial unit plus only justified pending work;
+   - state: one safe exact next unit, success condition, blockers, and `Ready to execute` only with sufficient evidence.
+   Do not create calibration, scoped plan, or `plan/` as a side effect.
+4. Activate validated/new workspace only in current-session context.
+5. Treat approved initial focus as authorization boundary; exact standard output targets remain discovery-resolved.
+6. Inspect actual source for orientation and selected focus only as needed.
+7. Project truth/calibration guide interpretation but never prove behavior; preserve material disagreement as uncertainty.
+8. Preserve all pre-existing human-owned/unowned files, including colocated calibration/source. Source-local calibration outside map store is read-only input.
+9. Determine exact standard layers from source-backed ownership.
+10. Instantiate/update only justified standard Markdown artifacts from `<bonsai-home>/templates/`:
+    - `code_map_template.md` when entry is needed;
+    - `subsystem_map_template.md` for justified architectural subsystems;
+    - `api_pub_template.md` / `api_ext_template.md` when non-obvious reusable mechanics justify them.
+11. Do not create `namespace_router.tsv`, `manifest.tsv`, or `symbol_index.tsv` merely because useful. Their creation/material expansion requires explicit authorization.
+12. Record logical source and smallest useful snapshot identity in `code_map.md`; keep drill-down links relative to the named map.
+13. Complete all standard map effects of the selected focus before another focus. One focus may affect one subsystem, several, or none of the same name.
+14. Where apparent design and actual use may differ, check at least one representative production use, test, example, call site, or extension before recording durable mechanics.
+15. Validate under mapping/completion rules below.
+16. If approved proposal included active-project association, perform it only after `<active-map-store>/<map>/code_map.md` is usable. Delegate canonical context mutation to `skills/agent_context.md`; association is not map identity/workspace validity.
+17. Reconcile through `skills/handoff.md`; do not continue into another mapping unit under the same authorization.
 
-Creating a map store or named source directory after approval does not transfer ownership of existing contents.
-Template presence never authorizes optional output.
+Creating the map store/directory after approval does not transfer ownership of existing contents. Template presence never authorizes optional output.
 
-Before creating a costly optional artifact or materially expanding an optional index, show why its repeated
-navigation value exceeds its maintenance cost, identify the exact output and scope, and stop for explicit human
-approval.
+Before costly optional artifact creation/material expansion, explain expected repeated navigation value versus maintenance cost, identify exact output/scope, and stop for explicit approval.
 
 ## Action: Extend Code Map
 
-Use **Extend Code Map** when the human wants useful new coverage in an existing compatible map.
+Use for useful new coverage in an existing compatible map.
 
-1. Select or resolve the usable generated map and its corresponding repository-local map workspace independently.
-2. Validate map/source alignment before relying on non-obvious existing map claims. A materially incompatible
-   source identity stops extension until the identity issue is resolved.
-3. Reuse and reactivate the existing compatible map workspace. Do not create a duplicate map merely because new
-   coverage is requested.
-4. Establish one bounded extension focus. The human may:
-   - name an architectural subsystem;
-   - name a cross-cutting concern such as persistence, event handling, serialization, lifecycle, or tracking;
-   - name a reusable caller or extension concern; or
-   - explicitly ask Bonsai to review current map coverage and suggest valuable additions.
-5. When the human asks for suggestions, inspect the existing map only enough to understand current coverage, then
-   inspect authoritative source only as needed to identify a small number of high-value missing concerns. Prefer
-   foundational, reused, cross-boundary, risky, or repeatedly non-obvious knowledge. Do not turn suggestion mode
-   into an exhaustive source survey.
-6. Present the selected or proposed bounded focus through the **Mapping Proposal Gate**. Existing generated output
-   remains unchanged until the focus is authorized.
-7. After authorization, treat the selected focus as the mapping-unit boundary. Discovery may determine that the
-   durable result belongs in one subsystem, several existing subsystems, a newly justified subsystem, or no
-   standalone subsystem with the focus's name.
-8. Preserve existing generated output outside the authorized focus. Ordinary extension may add or update justified
-   standard Markdown layers, but it does not authorize destructive replacement, broad ownership restructuring, or
-   optional-index creation or material expansion.
-9. Validate the complete mapping unit and reconcile the reactivated map workspace through `skills/handoff.md`.
-   Do not select another extension focus under the same authorization.
+1. Resolve usable generated map and corresponding workspace independently.
+2. Validate map/source alignment before relying on non-obvious map claims; material incompatibility blocks extension.
+3. Reuse/reactivate compatible workspace. Do not duplicate the map for new coverage.
+4. Establish one bounded extension focus: subsystem, cross-cutting concern, reusable caller/extension concern, or human-requested review for valuable additions.
+5. In suggestion mode, inspect existing map only enough to understand coverage and source only enough to identify a small number of high-value missing concerns. Prefer foundational, reused, cross-boundary, risky, or repeatedly non-obvious knowledge; never turn suggestion mode into exhaustive survey.
+6. Present selected/proposed focus through Mapping Proposal Gate. Existing generated output stays unchanged until authorization.
+7. After authorization, focus is the unit boundary; discovery decides architectural ownership and exact standard layers.
+8. Preserve output outside focus. Ordinary extension may add/update justified standard Markdown, but not destructive replacement, broad ownership restructuring, or optional-index creation/material expansion.
+9. Validate full unit and reconcile reactivated workspace through `skills/handoff.md`. Do not select another focus under this authorization.
 
-A contextual implementation recommendation to preserve newly discovered reusable knowledge enters this same
-action when a compatible map already exists. The recommendation supplies evidence for a candidate focus; it does
-not bypass the mapping proposal or map/source alignment rules.
+A contextual implementation recommendation enters this same action when a compatible map exists. It supplies evidence for a candidate focus but bypasses neither proposal nor alignment rules.
 
 ## Action: Inspect Code Map
 
 Inspection is read-only.
 
-1. When no map was named by the human, present the already-discovered usable code-map names in stable lexical
-   order only as the selection for this inspection; do not rescan or pre-read every map.
-2. Load the selected map's `code_map.md` first.
-3. When source-dependent claims or identity matter, resolve the selected source and classify map/source alignment.
-4. Load only the subsystem, API, namespace, manifest, symbol, or identity facet needed for the inspection question.
-5. Use actual source to verify non-obvious behavior; report map claims as navigation, not authority.
-6. Report missing, stale, mismatched, uncertain, or malformed data without changing it.
+1. If no map was named, present already-discovered usable names in stable lexical order as the inspection choices; do not rescan/pre-read all maps.
+2. Load selected `code_map.md` first.
+3. Resolve selected source and alignment only when source-dependent claims/identity matter.
+4. Load only the subsystem/API/namespace/manifest/symbol/identity facet needed.
+5. Verify non-obvious behavior against actual source; map claims remain navigation, not authority.
+6. Report missing, stale, mismatched, uncertain, or malformed data without mutation.
 
-Inspection does not normalize existing files, update identity metadata, or preserve context unless the human
-separately authorizes the applicable action. An explicit **Inspect Map/Source Identity** request is handled as this
-same read-only inspection path with identity/alignment as the selected facet.
+Inspection never normalizes files, updates identity metadata, or preserves context unless a separate action is authorized. Explicit **Inspect Map/Source Identity** uses this same read-only path with identity/alignment as the facet: read map identity, inspect source only enough for source/snapshot identity, keep source location/source identity/map identity/project/map store distinct, classify alignment, and report evidence/uncertainty/safe follow-ups. Do not write metadata to make inspection conclusive or invent a universal registry/schema.
 
 ## Action: Refresh Code Map
 
-Use **Refresh Code Map** when represented source changed materially and existing mapped knowledge needs to be
-reconciled without broad destructive replacement.
+Use when represented source changed materially and mapped knowledge needs bounded reconciliation without broad replacement. May be human-requested or accepted from contextual maintenance after authorized project work changed represented source.
 
-A refresh may be requested directly by the human or may originate from a contextual maintenance recommendation
-after authorized project work changed source represented by a known relevant map.
+1. Resolve usable map, represented source, and workspace.
+2. Establish bounded affected mapped concern. Reuse trustworthy change evidence from invoking work; do not rescan unrelated source merely to rediscover the reason.
+3. Verify identity/alignment. Expected drift caused by the known change motivates refresh but does not make unrelated stale claims trustworthy.
+4. Reuse/reactivate compatible workspace; apply Mapping Proposal Gate unless the same focus is already authorized through active-map continuation.
+5. Refresh focus is the authorization boundary; discovery selects required standard Markdown changes within it.
+6. Improve justified existing artifacts in place and update standard map-owned artifacts whose durable content changed. Preserve established ownership/structure unless restructuring is separately authorized.
+7. Maintain already-present dependent lookup artifacts only as needed to keep contracted routing correct. No optional lookup/index creation/material expansion without separate gate.
+8. Recheck representative usage when reusable caller/extension/lifecycle/ownership/persistence/serialization/event/tracking mechanics changed.
+9. Validate and reconcile the complete refresh unit before another focus.
 
-1. Select or resolve the usable generated map, represented source, and corresponding repository-local map workspace.
-2. Establish the bounded mapped concern affected by the source change. Reuse concrete change evidence already
-   available from the invoking implementation workflow when trustworthy; do not rescan unrelated source merely to
-   rediscover why maintenance was proposed.
-3. Verify map/source identity and classify alignment. Expected source drift caused by the known change is the reason
-   to refresh, not permission to trust unrelated stale map claims.
-4. Reuse and reactivate the compatible existing map workspace and present the bounded refresh focus through the
-   **Mapping Proposal Gate** unless that same focus has already been explicitly established and authorized through
-   normal active-map continuation.
-5. Treat the refresh focus as the authorization boundary. Discovery may determine which standard Markdown map
-   layers inside that focus require changes.
-6. Improve justified existing artifacts in place and update standard map-owned artifacts whose durable content
-   changed. Preserve established ownership and structure unless restructuring was separately authorized.
-7. Update already-present dependent lookup artifacts only when bounded maintenance is necessary to keep their
-   contracted routing correct. Do not create or materially expand optional lookup/index artifacts without their
-   separate gate.
-8. Re-check representative usage when caller, extension, lifecycle, ownership, persistence, serialization, event,
-   tracking, or similar reusable mechanics changed.
-9. Validate and reconcile the complete refresh mapping unit before selecting another focus.
+Routine bug fixes, private refactors, tests, cosmetic cleanup, and ordinary churn do not by themselves justify refresh. Bonsai does not continuously scan for drift or silently refresh after edits.
 
-Routine bug fixes, private refactors, tests, cosmetic cleanup, and ordinary churn do not justify refresh by
-themselves. Bonsai does not continuously scan for drift or silently refresh maps after source changes.
-
-If the required work materially broadens useful coverage beyond the prior map scope, stop and route that portion
-through **Extend Code Map**. If safe reconciliation requires substantial replacement, destructive removal, or broad
-generated-map ownership restructuring, stop and route through **Rebuild Code Map**.
+If work broadens useful coverage beyond prior scope, route that portion through **Extend Code Map**. If safe reconciliation requires substantial replacement, destructive removal, or broad ownership restructuring, route through **Rebuild Code Map**.
 
 ## Action: Rebuild Code Map
 
-A rebuild intentionally replaces substantial generated representation and always requires its own explicit gate.
-Selecting **Rebuild Code Map** or arriving there from another lifecycle action does not itself authorize mutation.
+Rebuild replaces substantial generated representation and always requires its own explicit destructive gate. Selecting Rebuild, including from another lifecycle action, does not authorize mutation.
 
-Before that gate:
+Before approval:
 
-1. resolve and display every existing agent-owned target that would be replaced or removed;
-2. display every known preserved item in the target map, including `map_calibration.md`, supplied source inputs, and
-   other unowned files;
-3. show the source snapshot, map identity, rebuild scope, proposed replacement artifacts, ownership changes when
-   any, and validation plan; and
+1. resolve/display every existing agent-owned target to replace/remove;
+2. display every known preserved item, including calibration, supplied source, and other unowned files;
+3. show source snapshot, map identity, rebuild scope, proposed replacement artifacts, ownership changes if any, and validation plan;
 4. stop for explicit approval, revision, discussion, or cancellation.
 
-After approval, replace only the displayed agent-owned targets. Never delete the named source directory as a
-shortcut. Never move, rename, modify, or delete a supplied source artifact. If safe replacement cannot be completed
-within the approved target set, stop with the existing unowned content preserved.
+After approval, replace only displayed agent-owned targets. Never delete the named source directory as a shortcut; never move, rename, modify, or delete supplied source. If safe replacement cannot stay within approved targets, stop with unowned content preserved.
 
 ## Action: Remove Code Map
 
 Removal is destructive and always requires its own explicit gate.
 
-Before the gate:
+Before approval:
 
-1. inspect the selected named map without mutation;
-2. resolve the exact agent-owned artifact paths proposed for removal;
-3. distinguish and list preserved human-owned calibration, supplied source inputs, and other unowned files;
-4. report ambiguity rather than claiming ownership from directory location; and
-5. show the exact verification that will confirm preserved files remain unchanged.
+1. inspect selected map without mutation;
+2. resolve exact agent-owned paths to remove;
+3. list preserved calibration, supplied source, and other unowned files separately;
+4. report ownership ambiguity rather than inferring ownership from location;
+5. show exact verification proving preserved files remain unchanged.
 
-Load `skills/menu.md` and offer approval of the exact removal target set, revision of that set, discussion, or
-cancellation and return. Stop for explicit approval.
+Load `skills/menu.md`; offer approval of exact removal set, revision, discussion, or cancellation; wait for explicit approval.
 
-After approval, remove only the displayed map-owned artifacts. Do not recursively delete the named source
-directory. Verify the preserved target set still exists and that no transient inspection data entered the durable
-map store. Report the map removed only when no usable agent-owned `code_map.md` remains for that selected map.
-
-## Action: Inspect Map/Source Identity
-
-This action is read-only.
-
-1. read the selected map's identity from `code_map.md`;
-2. inspect the selected source only enough to establish its logical and snapshot identity;
-3. keep source location, source identity, map identity, consuming project, and map-store location distinct;
-4. classify alignment using this skill's alignment states; and
-5. report the evidence, uncertainty, and safe follow-up choices.
-
-Do not write identity metadata merely to make inspection conclusive. If richer universal metadata or automatic
-resolution appears necessary, report that as a design question instead of inventing a registry or schema.
+After approval, remove only displayed map-owned artifacts. Never recursively delete the named source directory. Verify preserved targets remain and no transient inspection data entered durable map store. Report map removed only when no usable agent-owned `code_map.md` remains.
 
 ## Mapping and Editing Rules
 
 ### Layer responsibilities
 
-- `code_map.md`: compact source identity, orientation, and drill-down routing.
-- `subsystems/<subsystem>/map.md`: one durable architectural domain, not a folder or module inventory.
-- `api_pub.md`: optional decision-ready caller mechanics.
-- `api_ext.md`: optional decision-ready extension mechanics.
-- `namespace_router.tsv`: optional fuller namespace ownership routing.
-- `manifest.tsv`: optional compact subsystem/path registry, never the sole identity proof.
-- `symbol_index.tsv`: optional selective high-value symbol routing, never an exhaustive index.
+| Layer | Responsibility |
+| --- | --- |
+| `code_map.md` | Compact source identity, orientation, drill-down routing |
+| `subsystems/<subsystem>/map.md` | One durable architectural domain, not folder/module inventory |
+| `api_pub.md` | Optional decision-ready caller mechanics |
+| `api_ext.md` | Optional decision-ready extension mechanics |
+| `namespace_router.tsv` | Optional fuller namespace ownership routing |
+| `manifest.tsv` | Optional compact subsystem/path registry; never sole identity proof |
+| `symbol_index.tsv` | Optional selective high-value symbol routing; never exhaustive |
+| workspace plan/state | Mapping continuation only, never another generated-map layer |
 
-Repository-local `agent_plan.md`, `agent_state.md`, and scoped plans own mapping continuation. They are not another
-generated-map layer.
-
-Do not duplicate one layer in another. Prefer durable navigation and recurring non-obvious mechanics over source
-extraction. Smaller reusable memory is better than a comprehensive-looking map.
+Do not duplicate one layer in another. Prefer durable navigation and recurring non-obvious mechanics over source extraction. Smaller reusable memory is better than comprehensive-looking output.
 
 ### Mapping focus and subsystem ownership
 
-A generated subsystem must represent a demonstrated architectural responsibility, ownership boundary, lifecycle,
-data or execution concern, reusable API/extension surface, or other durable architectural domain. A directory,
-module, source root, package group, or human-selected mapping focus is evidence, not automatically a subsystem.
+A generated subsystem requires demonstrated architectural responsibility, ownership boundary, lifecycle, data/execution concern, reusable API/extension surface, or another durable architectural domain. Directory, module, source root, package group, or human-selected focus is evidence, not automatic subsystem identity.
 
-A bounded mapping focus is a unit of work, not necessarily a generated-map ownership boundary.
+Prioritize owner-weighted, foundational, developer-facing, cross-boundary, widely reused, risky, or repeatedly misunderstood concerns. Deprioritize generated code, narrow helpers, leaf utilities, shallow inventories, obvious details, and non-representative examples.
 
-A focus may concern:
+Complete all standard architecture/API effects directly justified by the selected focus before selecting another. Do not force unrelated caller/extension analysis merely because an affected subsystem has other surfaces.
 
-- one architectural subsystem;
-- one caller or extension surface;
-- a cross-cutting behavior;
-- persistence;
-- event handling;
-- serialization;
-- lifecycle;
-- tracking; or
-- another bounded source-backed concern.
+New human-selected focus or material scope expansion requires human direction. A newly justified subsystem/API map found while representing the existing focus does not.
 
-Discovery determines which generated architectural domains own the resulting durable knowledge. One focus may
-therefore update one subsystem, several existing subsystems, or a newly justified subsystem, and may determine that
-no standalone subsystem corresponding to the focus should exist.
-
-Prioritize owner-weighted, foundational, developer-facing, cross-boundary, widely reused, risky, or repeatedly
-misunderstood concerns. Deprioritize generated code, narrow helpers, leaf utilities, shallow inventories, obvious
-details, and non-representative examples.
-
-Complete the selected mapping focus, including all standard architecture and API-map effects directly justified by
-that focus, before selecting another focus. Do not force unrelated caller or extension analysis merely because an
-affected subsystem has other surfaces.
-
-A new human-selected mapping focus or material scope expansion requires human direction. A newly justified
-subsystem or API map discovered while representing the already-selected focus does not by itself require another
-gate.
-
-Fresh-session boundaries should normally occur between bounded mapping units. When a mapping unit accumulates
-enough context to reduce confidence or compression quality, finish and reconcile that unit when practical before
-moving to the next focus. Do not deliberately split discovery from standard generated-map production merely to
-create a session boundary.
+Fresh-session boundaries should normally fall between bounded units. If a unit grows enough to reduce confidence/compression quality, finish and reconcile it when practical before the next focus. Do not deliberately split discovery from standard map production merely to create a session boundary.
 
 ### Evidence discipline
 
-Use these labels when a non-obvious claim's status matters:
+Use when claim status matters:
 
-- **Observed:** confirmed directly from source, tests, examples, build files, or representative use;
-- **Inferred:** reasoned from observed structure but not directly established;
-- **Uncertain:** requires verification before reliance.
+- **Observed:** directly confirmed from source, tests, examples, build files, or representative use.
+- **Inferred:** reasoned from observed structure but not directly established.
+- **Uncertain:** verification required before reliance.
 
-Do not overstate confidence. Correct stale map content when authorized; otherwise make the mismatch or uncertainty
-visible.
+Never overstate confidence. Correct stale content when authorized; otherwise expose mismatch/uncertainty.
 
 ### TSV discipline
 
-For `namespace_router.tsv`, `manifest.tsv`, and `symbol_index.tsv`:
+For `namespace_router.tsv`, `manifest.tsv`, `symbol_index.tsv`:
 
-1. preserve the canonical header and column order;
-2. use literal tab characters between fixed columns;
-3. keep one logical record per physical line;
-4. use no multiline cells, ad hoc columns, prose blocks, or tabs/newlines inside cell values;
-5. keep notes terse; and
-6. validate the header, separators, and consistent column count after material edits.
+1. preserve canonical header/column order;
+2. use literal tabs between fixed columns;
+3. one logical record per physical line;
+4. no multiline cells, ad hoc columns, prose blocks, or tabs/newlines inside values;
+5. terse notes;
+6. after material edits, validate header, separators, and consistent column count.
 
-Move detail that does not fit the fixed shape into the appropriate Markdown layer.
+Put detail that does not fit fixed shape in the appropriate Markdown layer.
 
 ### Compression and drift prevention
 
 When an artifact grows, cut before adding:
 
-- keep `code_map.md` startup-sized and move fuller namespace routing to its optional TSV;
-- keep subsystem maps architectural rather than exhaustive;
+- keep `code_map.md` startup-sized; move fuller namespace routing to optional TSV;
+- keep subsystem maps architectural, not exhaustive;
 - keep API maps focused on mechanics that prevent recurring mistakes;
-- keep lookup tables selective and structurally boring; and
+- keep lookup tables selective and structurally boring;
 - remove duplicated, stale, wrong-layer, obvious, or low-value content.
 
-Do not structurally normalize an existing map during routine maintenance. Do not create optional artifacts because
-a template exists. Do not turn maps into project/session guides, API manuals, filesystem mirrors, prose indexes,
-or hand-maintained language-server databases.
+Routine maintenance must not structurally normalize an existing map. Template existence never justifies optional artifacts. Do not turn maps into project/session guides, API manuals, filesystem mirrors, prose indexes, or hand-maintained language-server databases.
 
 ## Agent Context During Mapping
 
-Use `skills/agent_context.md` only for qualifying durable operational facts, such as a stable source checkout
-location, an established source-selection rule, or a reusable project-to-map association.
+Use `skills/agent_context.md` only for qualifying durable operational facts such as stable source checkout location, established source-selection rule, or reusable project-to-map association.
 
-Do not store active-project selection, active-map selection, transient extraction paths, one-run inspection
-locations, speculative source identity, map workflow state, or map content in agent context. Context maintenance
-grants no permission to broaden the mapping action.
+Do not store active project/map selection, transient extraction/inspection locations, speculative source identity, map workflow state, or map content in agent context. Context maintenance never broadens mapping authorization.
 
 ## Contextual First Use, Extension, and Refresh
 
-Project implementation may surface code-map work at a natural boundary, but it must not silently mutate reusable
-maps or expand source inspection merely to search for mapping opportunities.
+Project implementation may surface map work at a natural boundary, but must not silently mutate reusable maps or expand source inspection merely to search for opportunities.
 
 ### First useful map
 
-- A substantial existing source without a useful map may receive one contextual **Create Code Map** action.
-- If the human declines, return that result to the invoking workflow so creation moves under **See more options**
-  rather than interrupting again in the same context. Do not create a placeholder map or state file for a decline.
+- Substantial existing source without a useful map may receive one contextual **Create Code Map** offer.
+- If declined, return disposition to invoking workflow so creation moves under **See more options** rather than interrupting again in the same context. Create no placeholder map/state for a decline.
 - Greenfield source with little stable structure receives no map pressure.
 
 ### Mapping opportunity discovered during project work
 
-When authorized project work already required source inspection and that inspection established reusable,
-non-obvious, architecturally significant knowledge that is not adequately represented by a useful map, Bonsai may
-recommend preserving it as code-map coverage.
+When already-authorized project inspection establishes reusable, non-obvious, architecturally significant knowledge not adequately mapped, Bonsai may recommend preserving it:
 
-- If no suitable map exists, recommend **Create Code Map**.
-- If a compatible map exists but lacks the concern, recommend **Extend Code Map** with one bounded candidate focus.
-- Explain the implicated source or map, proposed focus, what reusable knowledge was costly or non-obvious to
-  establish, and why it is useful beyond the current project.
-- Base the recommendation only on evidence encountered for the authorized project work. Do not inspect unrelated
-  source to manufacture recommendations.
-- Closely related observations should become one recommendation rather than several interruptions.
-- A recommendation does not create or mutate a map, reactivate a workspace, or change project execution scope until
-  the human accepts it.
-- If declined or deferred, return that disposition to the invoking workflow and do not repeatedly resurface the
-  same recommendation during the same work merely because it remains possible.
+- no suitable map: recommend **Create Code Map**;
+- compatible map missing the concern: recommend **Extend Code Map** with one bounded candidate focus;
+- explain implicated source/map, focus, costly/non-obvious knowledge, and reuse value;
+- use only evidence encountered during authorized project work; inspect no unrelated source to manufacture recommendations;
+- combine closely related observations into one recommendation;
+- recommendation alone does not create/mutate map, reactivate workspace, or change project scope;
+- if declined/deferred, return disposition and do not repeatedly resurface the same recommendation during that work merely because it remains possible.
 
 ### Known map maintenance after source change
 
-When authorized project work materially changed source represented by a known relevant map and the existing map
-coverage is now affected, Bonsai may recommend **Refresh Code Map**.
+When authorized project work materially changed source represented by a known relevant map and mapped coverage is affected, Bonsai may recommend **Refresh Code Map**.
 
-A known relevant map is one already selected for the project, already loaded or used by the current work, or cheaply
-identifiable from the current source identity without surveying the entire map store.
+A known relevant map is already selected for the project, already loaded/used by current work, or cheaply identifiable from current source identity without surveying the map store.
 
-- Carry the known source-change evidence and bounded affected concern into the refresh proposal.
-- Do not enumerate and inspect every reusable map after routine source edits.
-- Routine local edits, narrow bug fixes, private refactors, formatting, tests, and other changes that do not
-  materially alter mapped knowledge do not trigger refresh.
-- The recommendation itself does not authorize map mutation. Accepted maintenance enters the normal refresh action
-  and bounded mapping-unit workflow.
+- carry known change evidence and bounded affected concern into refresh proposal;
+- do not enumerate/inspect every reusable map after routine edits;
+- local/narrow bug fixes, private refactors, formatting, tests, and other changes that do not materially alter mapped knowledge do not trigger refresh;
+- recommendation does not authorize mutation; accepted maintenance enters normal Refresh and bounded-unit flow.
 
-Preserve a longer-lived source or selection rule only when it independently qualifies under
-`skills/agent_context.md`.
+Persist longer-lived source/selection rules only when they independently qualify under `skills/agent_context.md`.
 
 ## Transient Source Inspection
 
-Inspect a supplied archive directly when practical. If extraction or another inspection area is needed:
+Inspect supplied archive directly when practical. If extraction/inspection workspace is needed:
 
-- keep it outside the durable map store;
-- treat it as disposable and non-authoritative working state;
-- do not copy it into a project merely to enable mapping;
-- do not preserve it in agent context or map data; and
-- remove or abandon it without modifying the supplied source artifact.
+- keep it outside durable map store;
+- treat as disposable, non-authoritative working state;
+- do not copy into a project merely to enable mapping;
+- do not preserve in agent context or map data;
+- remove/abandon it without modifying supplied source.
 
-The physical location of one supplied archive never establishes a general source-location convention. Create,
-update, rebuild, and removal preserve that archive even when it is colocated with map artifacts.
+One archive's location never establishes a general source-location convention. Create/update/rebuild/removal must preserve supplied archives even when colocated with map artifacts.
 
 ## Completion Checks
 
-Before reporting an authorized mapping unit or mapping scope complete:
+Before reporting an authorized mapping unit or scope complete, verify:
 
-1. verify `code_map.md` identifies the source sufficiently for intended alignment and remains compact;
-2. verify entry, subsystem, API, calibration, state, and lookup content stays in its contracted layer;
-3. verify every subsystem created or updated by the work has a demonstrated architectural responsibility and
-   source-backed owning paths;
-4. verify the standard architecture or API layers directly implicated by the selected mapping focus were created,
-   updated, or deliberately found unnecessary;
-5. verify non-obvious claims are source-backed or visibly inferred/uncertain;
-6. verify relative links and optional-artifact references match files that actually exist;
-7. validate every materially edited TSV header, literal-tab separator, fixed column count, and one-line row;
-8. verify every generated-map mutation was either inside the selected focus's standard output envelope or
-   separately authorized;
-9. verify no destructive work, ownership restructuring, optional-index creation, or material optional-index
-   expansion occurred without its required gate;
-10. verify supplied source, every consulted `map_calibration.md`, and other unowned files remain unchanged;
-11. verify no transient inspection became durable map data;
-12. reconcile the map-wide roadmap, active scoped plan when present, and current resume state through shared
-    handoff; and
-13. maintain only qualifying agent context through `skills/agent_context.md`.
+1. `code_map.md` sufficiently identifies source for intended alignment and remains compact;
+2. entry, subsystem, API, calibration, state, and lookup content remains in contracted layers;
+3. each created/updated subsystem has demonstrated architectural responsibility and source-backed owning paths;
+4. standard architecture/API layers directly implicated by selected focus were created, updated, or deliberately found unnecessary;
+5. non-obvious claims are source-backed or visibly Inferred/Uncertain;
+6. relative links and optional-artifact references match existing files;
+7. every materially edited TSV has valid header, literal tabs, fixed column count, and one-line rows;
+8. every generated-map mutation was inside selected focus's standard envelope or separately authorized;
+9. no destructive work, ownership restructuring, optional-index creation, or material optional-index expansion occurred without required gate;
+10. supplied source, every consulted calibration, and other unowned files remain unchanged;
+11. no transient inspection state became durable map data;
+12. map-wide roadmap, active scoped plan if any, and current resume state were reconciled through shared handoff;
+13. only qualifying agent context was maintained through `skills/agent_context.md`.
 
-Completing source discovery alone does not complete an executable mapping unit when justified standard
-generated-map updates remain.
-
-If the current mapping scope has no real next focus or other required work, mark it complete rather than inventing
-more mapping work.
+If no real next focus/work remains in current scope, mark it complete rather than inventing more mapping.
 
 ## Completion and Invoking-Gate Return
 
-At completion of substantive work for an active map workspace:
+After substantive active-map work:
 
-1. report the mapping unit, source, map identity, bounded result, changed map-owned files, checks actually
-   performed, preserved unowned files, remaining uncertainty, and whether qualifying agent context changed;
-2. reconcile repository-local `agent_plan.md`, `agent_state.md`, any active scoped plan, generated output, and
-   source/map identity through `skills/handoff.md`; reconcile qualifying agent context when applicable;
-3. do not silently revise human-owned `map_calibration.md`, project final truth, or project execution memory;
-4. let shared handoff derive and present the refreshed active-map completion, blocker, next-focus selection, or
-   continuation gate; and
-5. do not also restore the older repository-entry or **Manage Code Maps** gate after active workspace execution.
+1. report mapping unit, source, map identity, bounded result, changed map-owned files, checks actually performed, preserved unowned files, remaining uncertainty, and whether qualifying agent context changed;
+2. reconcile `agent_plan.md`, `agent_state.md`, active scoped plan if any, generated output, and source/map identity through `skills/handoff.md`; reconcile qualifying agent context when applicable;
+3. never silently revise human calibration, project final truth, or project execution memory;
+4. let shared handoff present refreshed active-map completion, blocker, next-focus selection, or continuation gate;
+5. do not also restore older repository-entry or **Manage Code Maps** gate after active workspace execution.
 
-For cancellation, a declined contextual offer, or non-mutating inspection that did not complete an active map
-workspace exact action, return control to the retained invoking workflow. When an active project exists, let its
-owning workflow reconcile project execution state; when none exists, do not manufacture project state. Load
-`skills/menu.md` and re-present that refreshed invoking gate unless the mapping action created a new required
-blocker, design, final-truth, or review gate.
+For cancellation, declined contextual offer, or non-mutating inspection that did not complete an active-map exact action, return control to retained invoking workflow. If a project is active, its owning workflow reconciles project execution state; if none, create none. Load `skills/menu.md` and re-present the refreshed invoking gate unless the mapping action created a required blocker/design/final-truth/review gate.
 
-Do not silently end the parent workflow because mapping completed or was cancelled. Do not silently select or
-execute a new mapping focus. A completed unit may surface concrete next-focus choices, but the human selects the
-next focus before another mapping unit becomes authorized.
+Do not silently end the parent workflow because mapping completed/cancelled. Do not silently select or execute another focus. A completed unit may surface concrete next-focus choices, but the human selects before another unit becomes authorized.
 
 ## Output Style
 
-Use concise wording, exact paths, stable headings, explicit uncertainty, and no filler. Distinguish observed facts
-from inference. Do not claim a source, map, identity, mutation, removal, or check that was not actually inspected or
-performed.
+Use concise wording, exact paths, stable headings, explicit uncertainty, and no filler. Distinguish observation from inference. Never claim a source, map, identity, mutation, removal, or check that was not actually inspected or performed.

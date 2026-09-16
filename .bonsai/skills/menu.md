@@ -2,78 +2,47 @@
 
 ## Purpose
 
-Present Bonsai human gates consistently while leaving each invoking workflow in control of its decisions,
-authorization, and durable state.
+Present Bonsai human gates consistently. The invoking workflow owns gate meaning, applicability, authorization, execution decisions, and durable state. This skill owns presentation only.
 
 ## When to Load
 
-Load this skill when a workflow must present a human decision or a contextual secondary-action menu.
+Load for a human decision or contextual secondary-action menu.
 
-The invoking workflow supplies:
-
-- the gate being presented;
-- the concrete choices currently available;
-- the secondary actions that are applicable and available;
-- any normally secondary action promoted into the primary menu and, when relevant, the concrete reason for that
-  promotion;
-- whether the host already supplies a free-form choice; and
-- the current-session active workspace type and name when pointer rendering requires them; and
-- when relevant, whether this is the first continuation boundary of a newly entered session with no substantive
-  work yet performed.
+The invoking workflow supplies the gate; available concrete choices; applicable/available secondary actions; any promoted secondary action and, when relevant, its reason; host free-form-input availability; active workspace type/name when pointer rendering needs it; and, when relevant, whether this is the first continuation boundary after fresh-session entry with no substantive work yet performed.
 
 ## Primary Menu
 
-1. Keep the primary menu limited to the decision immediately required by the invoking workflow.
-2. Name choices as concrete actions using the actual artifact or next step when useful.
-3. Use a supported structured-choice mechanism when the host provides one; otherwise use concrete numbered
-   choices.
-4. Say **Approve** for a reviewed artifact or contract. Say **Proceed**, **Continue**, or another accurate action
-   verb for an action the human is authorizing.
-5. When a primary choice means only that the human is leaving the current gate without taking the offered action,
-   label it **Exit for now**. Do not vary that meaning among `Stop`, `Stop here`, `Do not continue`, or
-   `Do not continue right now`.
-6. When both current-session and fresh-session continuation are contextually useful, do not make them unequal
-   recommendations. They are peer choices. The fresh-session choice should state that the exact next action will
-   execute automatically in the fresh session. Do not include fresh-session continuation merely by default. If
-   the current session was itself entered through fresh-session continuation and no substantive work has occurred
-   since that entry, omit another fresh-session choice at the first resulting continuation gate unless the human
-   explicitly requests it. This is session-local presentation context and must not be persisted in workspace
-   memory.
-7. After presenting a gate, stop for the human's choice. Rendering a menu does not authorize an action.
+1. Show only the decision immediately required by the invoking workflow.
+2. Name concrete actions; use the actual artifact/next step when useful.
+3. Use supported structured choices when available; otherwise concrete numbered choices.
+4. Use **Approve** for a reviewed artifact/contract. Use **Proceed**, **Continue**, or another accurate verb for an action being authorized.
+5. A choice that only leaves the gate without taking the offered action is **Exit for now**. Do not substitute `Stop`, `Stop here`, `Do not continue`, or `Do not continue right now` for that meaning.
+6. When both current-session and fresh-session continuation are useful, present them as peer choices, not unequal recommendations. The fresh-session choice must say the exact next action will execute automatically there. Do not offer fresh-session continuation by default. If this session itself began through fresh-session continuation and no substantive work has occurred, omit another fresh-session choice at the first resulting continuation gate unless the human requests it. This is session-local presentation context; never persist it in workspace memory.
+7. After presenting a gate, stop for the human choice. Rendering never authorizes action.
 
 ## Repository Entry Gate
 
-When the invoking workflow supplies a repository entry gate because no active workspace is selected:
+When supplied because no active workspace is selected:
 
-1. present each available project directory in stable lexical order as a numbered primary choice;
-2. present **Manage Code Maps** as a peer primary choice after the project choices;
-3. keep **Manage Projects** and other less-frequent repository actions under **See more options** when supplied;
-4. do not treat the absence of an active project as `Design required`; and
-5. after project selection, let the invoking workflow establish current-session active project and replace this
-   gate with that project's normal startup orientation.
-
-**Manage Code Maps** is intentionally primary at this gate even though it is normally secondary during project
-implementation. The invoking workflow owns that promotion; this skill does not infer other repository-level
-promotions from it.
+1. List available project directories in stable lexical order as numbered primary choices.
+2. Put **Manage Code Maps** after projects as a peer primary choice. This is an invoking-workflow-owned exception to its normally secondary placement; infer no other repository-level promotions from it.
+3. Keep supplied **Manage Projects** and other less-frequent repository actions under **See more options**.
+4. Do not interpret no active project as `Design required`.
+5. After project selection, let the invoking workflow establish the current-session active project and replace this gate with that project's normal startup orientation.
 
 ## Exit for Now
 
-**Exit for now** has one consistent session-boundary meaning across Bonsai gates.
+**Exit for now** has one Bonsai-wide session-boundary meaning. When selected:
 
-When the human selects it:
+1. Do not authorize, approve, discard, execute, or otherwise resolve the action/gate being left.
+2. Do not change durable state merely to record the exit.
+3. Present the ordinary canonical startup pointer, never the auto-execute continuation prompt, introduced by `You can resume later with:`.
+4. Active project: omit the qualifier only if unqualified startup deterministically resolves that same project; otherwise append only `Active project: <project>.` using the project directory name.
+5. Active map: always append only `Active map: <map>.` using the map directory name.
+6. No active workspace: use the unqualified pointer; normal startup routing resolves the next gate.
+7. Stop.
 
-1. do not authorize, approve, discard, execute, or otherwise resolve the action or gate being left;
-2. do not change durable state merely to record that the human exited;
-3. present the ordinary canonical startup pointer, never the auto-execute continuation prompt, and introduce it
-   with `You can resume later with:`;
-4. when an active project exists, omit the qualifier only when unqualified startup would deterministically resolve
-   that same project; otherwise append only `Active project: <project>.` using the project directory name;
-5. when an active map exists, always append only `Active map: <map>.` using the map directory name;
-6. when no active workspace exists, use the unqualified canonical pointer and let normal startup routing resolve
-   the next gate; and
-7. stop.
-
-The lead-in is presentation text, not part of the pointer. The copyable pointer must therefore be exactly one of:
+The lead-in is not part of the copyable pointer. The pointer must be exactly one of:
 
 ```text
 Read .bonsai/start.md and follow its instructions.
@@ -87,84 +56,50 @@ Read .bonsai/start.md and follow its instructions. Active project: <project>.
 Read .bonsai/start.md and follow its instructions. Active map: <map>.
 ```
 
-Starting a new host session remains the human's action. The ordinary pointer carries no execution authorization.
-Unqualified startup follows the ordinary bootstrap selection rules; it is not a shortcut for resuming a map or a
-non-default project. Formatting the pointer must not load or modify workspace memory. A later session reconstructs
-canonical durable state and reaches the applicable gate or execution condition normally.
+Starting a new host session remains the human's action. The pointer grants no execution authorization. Unqualified startup follows ordinary bootstrap selection, not map/non-default-project resume. Pointer formatting must not load or modify workspace memory. A later session reconstructs canonical durable state and normally reaches the applicable gate or execution condition.
 
 ## See More Options
 
-Put less-frequent actions under **See more options**. Include that choice only when at least one secondary action is
-applicable and available in the current context.
+Put less-frequent actions under **See more options**; include it only if at least one secondary action is currently applicable and available.
 
-**See more options** is a navigation choice, not a description or summary of its child actions. Render it as a
-standalone primary-menu choice. Do not append, preview, summarize, or inline secondary-action names into its label,
-including when exactly one secondary action is available.
+It is standalone navigation, never a child-action summary. Do not append, preview, summarize, or inline child names in its label, even when only one exists.
 
-When the human selects **See more options**, retain the invoking gate and present a separate contextual secondary
-menu containing only the secondary actions supplied by the invoking workflow. A single available secondary action
-still uses this submenu; do not collapse the submenu into the primary menu. The secondary menu must provide a way
-to return to the invoking gate without taking a secondary action.
+When selected, retain the invoking gate and show a separate contextual submenu containing only supplied secondary actions. Keep the submenu even for one action, and provide a return path to the invoking gate without taking an action.
 
-Possible secondary actions include Manage Projects, Manage Code Maps, Create Bonsai Home, Dry Run, diagnostics,
-and maintenance. This is not a fixed list to display. Include only actions supplied by the invoking workflow; do
-not turn the submenu into a catalog of every Bonsai capability.
+Manage Projects, Manage Code Maps, Create Bonsai Home, Dry Run, diagnostics, and maintenance are examples, not a fixed display list. Never turn the submenu into a capability catalog.
 
-A normally secondary action may appear directly in the primary menu when the invoking workflow says it is
-necessary or directly relevant to the current decision. Do not duplicate it under **See more options** when
-promoted. This skill presents the supplied promotion; it does not independently infer that an action should be
-promoted.
+A normally secondary action may be primary only when the invoking workflow says it is necessary or directly relevant. Do not duplicate a promoted action under **See more options**. This skill renders supplied promotions; it does not infer them.
 
-### Dry Run presentation
+### Dry Run Presentation
 
-When the invoking workflow supplies Dry Run as an ordinary applicable secondary action, keep it under **See more
-options**.
+- Ordinary applicable Dry Run: keep under **See more options**.
+- Invoking-workflow-promoted Dry Run because previewing the exact next step would materially reduce mechanical execution risk: put it in the primary menu; present the supplied concrete reason concisely with or immediately before the choices; do not duplicate it under **See more options**; do not call it required, default-recommended, or an approval gate.
+- The invoking workflow owns that risk assessment. Importance, size, complexity, or architectural significance alone never causes promotion.
 
-When the invoking workflow promotes Dry Run because previewing the current exact next step would materially reduce
-mechanical execution risk:
-
-- place Dry Run directly in the primary menu;
-- present the supplied concrete reason concisely with the choice or immediately before the choices;
-- do not duplicate Dry Run under **See more options**; and
-- do not describe Dry Run as required, recommended by default, or an approval gate.
-
-The invoking workflow owns the execution-risk assessment. This skill must not promote Dry Run merely because the
-work sounds important, large, complex, or architecturally significant.
-
-Naming an action in a menu does not implement or authorize its workflow. Do not present an unavailable subordinate
-workflow as executable, and do not report it as completed merely because it was selected.
+Naming an action does not implement or authorize its workflow. Never present an unavailable subordinate workflow as executable or report it complete merely because selected.
 
 ## Host Free-Form Input
 
-When the host already provides a free-form choice such as `Other (type your answer)`, do not add a generic `Other`
-menu item. Preserve the host's free-form path without duplicating it.
+If the host already provides free-form input such as `Other (type your answer)`, preserve it without adding generic `Other`.
 
-When no host free-form path exists and open-ended input is required, the invoking workflow must ask a concrete
-question; this skill does not manufacture a generic catch-all choice.
+If no host free-form path exists and open-ended input is required, the invoking workflow must ask a concrete question; this skill does not manufacture a catch-all choice.
 
 ## Subordinate Workflows
 
-The invoking workflow remains the owner of the parent gate and any authorization or durable-memory changes.
+The invoking workflow retains the parent gate and ownership of authorization/durable-memory changes.
 
-When the human selects **See more options**, retain the identity of the invoking gate while presenting its contextual
-secondary actions.
+After **See more options** and a secondary-action selection:
 
-When the human then selects a secondary action:
+1. Retain parent-gate identity.
+2. Delegate only to the selected available workflow.
+3. Let it complete, decline, or stop at its own required gate.
+4. Reconcile execution-state changes under the owning workflow's rules.
+5. Recompute the parent gate and return with refreshed choices.
 
-1. retain the identity of the invoking gate;
-2. delegate only to the selected available workflow;
-3. let that workflow complete, decline, or stop at its own required gate;
-4. reconcile any execution-state changes under the owning workflow's rules;
-5. recompute the parent gate and return to it with refreshed choices.
-
-Replace the parent gate only when the subordinate action creates a new required gate or materially changes the
-execution state. Otherwise, completing, declining, or cancelling subordinate work must not make the parent gate
-disappear.
+Replace the parent gate only if subordinate work creates a new required gate or materially changes execution state. Otherwise completion, decline, or cancellation must not make it disappear.
 
 ## Boundaries
 
-- This skill owns presentation mechanics, not the meaning of a gate.
-- It does not decide which actions are authorized or applicable.
-- It does not discover, inspect, validate, enumerate, read, or write domain state merely to render a menu. The
-  invoking workflow supplies any status summary and the applicable choices.
-- It delegates only to the subordinate workflow selected by the human.
+- Presentation only: this skill does not define gate meaning or decide authorization/applicability.
+- Do not discover, inspect, validate, enumerate, read, or write domain state merely to render a menu. The invoking workflow supplies status summaries and applicable choices.
+- Delegate only to the human-selected subordinate workflow.
