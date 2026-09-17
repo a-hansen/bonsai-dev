@@ -235,7 +235,7 @@ Repository-local, read-only Bonsai bootstrap. It is not a Bonsai Home entry poin
 
 - Retain the human's complete startup request as natural language. An explicit active project or map is session identity; after resolving identity, pass the remaining request through unchanged. Do not require or invent startup command syntax.
 - At most one workspace may be explicit. If both project and map are named, stop and ask the human to choose; do not choose precedence.
-- A repository-level workflow needing no active workspace, such as **Manage Code Maps** or **Create Bonsai Home**, leaves workspace identity unresolved unless explicitly supplied. Preserve the request for the implementation kernel; do not force ordinary project selection first.
+- A repository-level workflow needing no active workspace, such as **Manage Code Maps**, leaves workspace identity unresolved unless explicitly supplied. Preserve the request for the implementation kernel; do not force ordinary project selection first.
 
 ## Bootstrap Location Guard
 
@@ -259,16 +259,16 @@ Use host tools for deterministic facts when available.
 
 1. **Repository home:** Parent of the `.bonsai` containing this file. Never substitute process working directory when they differ.
 2. **Bonsai Home:** Bootstrap-valid iff `specification.md` and `prompts/implementation.md` exist and are accessible. Check existence/accessibility only; do not read `specification.md`.
-   - Valid `BONSAI_HOME` defined: use it.
-   - Otherwise, valid repository-local `.bonsai`: use it as embedded standard.
-   - Otherwise stop and ask the human to configure or identify Bonsai Home. Report a defined but invalid `BONSAI_HOME`; do not broadly search for another installation, substitute a one-session path for missing environment configuration, or persist a guessed location.
+    - Valid `BONSAI_HOME` defined: use it.
+    - Otherwise, valid repository-local `.bonsai`: use it as embedded standard.
+    - Otherwise stop and ask the human to configure or identify Bonsai Home. Report a defined but invalid `BONSAI_HOME`; do not broadly search for another installation, substitute a one-session path for missing environment configuration, or persist a guessed location.
 3. **Workspace candidates:** Enumerate only established immediate child workspaces of `<repository-home>/.bonsai/projects/` and `<repository-home>/.bonsai/maps/`, each in stable lexical order. A child is established only when both `agent_plan.md` and `agent_state.md` exist and are accessible. Keep types separate. The containing `projects/` or `maps/` path determines workspace type. Never infer a workspace from unrelated files or generated map output.
 4. **Active workspace:** Resolve at most one:
-   - Explicit project: select `<repository-home>/.bonsai/projects/<project>` only if that immediate directory is an established project workspace; otherwise stop and report whether it is absent or present but incomplete, then ask for a corrected name or choice from available established projects.
-   - Explicit map: select `<repository-home>/.bonsai/maps/<map>` only if that immediate directory is an established map workspace; otherwise stop and report whether it is absent or present but incomplete, then ask for a corrected name or choice from available established maps.
-   - No explicit workspace + repository-level workflow needing none: leave unresolved; continue to handoff.
-   - Otherwise use project-oriented startup: `projects/main` if present; else sole project candidate; else, if several, stop and present numbered choices in stable lexical order and accept the corresponding number; else leave unresolved for implementation-kernel repository-entry routing.
-   - Never infer a map from unqualified startup merely because map candidates exist.
+    - Explicit project: select `<repository-home>/.bonsai/projects/<project>` only if that immediate directory is an established project workspace; otherwise stop and report whether it is absent or present but incomplete, then ask for a corrected name or choice from available established projects.
+    - Explicit map: select `<repository-home>/.bonsai/maps/<map>` only if that immediate directory is an established map workspace; otherwise stop and report whether it is absent or present but incomplete, then ask for a corrected name or choice from available established maps.
+    - No explicit workspace + repository-level workflow needing none: leave unresolved; continue to handoff.
+    - Otherwise use project-oriented startup: `projects/main` if present; else sole project candidate; else, if several, stop and present numbered choices in stable lexical order and accept the corresponding number; else leave unresolved for implementation-kernel repository-entry routing.
+    - Never infer a map from unqualified startup merely because map candidates exist.
 
 If an explicit workspace is invalid, present only same-type candidates in stable lexical order. Never substitute `main`, a sole candidate, or the other workspace type.
 
@@ -299,7 +299,7 @@ After repository home and Bonsai Home are resolved, and any selected workspace i
 
 With no active workspace, pass unresolved identity and candidates so the implementation kernel owns repository-entry routing. Do not manufacture workspace execution readiness in bootstrap.
 
-Do not execute requested project, map, Bonsai Home, code-map, or implementation workflows here. Preserve the request for the implementation kernel; it must report unavailable delegated workflows without claiming success.
+Do not execute requested project, map, code-map, repository-level, or implementation workflows here. Preserve the request for the implementation kernel; it must report unavailable delegated workflows without claiming success.
 ````
 
 The bootstrap is standard framework content, not map calibration or execution memory. If the canonical bootstrap
