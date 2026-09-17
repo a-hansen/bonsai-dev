@@ -4,97 +4,253 @@
 
 Current release: **v2.0.0**
 
-Bonsai is a Markdown-based memory system and workflow for developers who use AI to design, build, and evolve software across many sessions.
+Bonsai helps AI stay useful across the life of a real software project, not just for one chat session.
 
-It helps you:
+It keeps durable project truth, execution state, operational knowledge, and source-navigation memory in plain Markdown close to the code. A new AI session can reconstruct what matters without depending on chat history or requiring another hand-written recap.
 
-* preserve product and architecture truth outside chat history
-* start fresh AI sessions without re-explaining the project
-* keep requirements, architecture, execution planning, current state, and operational knowledge separate
-* let coding agents maintain execution memory without surrendering human control of what is being built
-* plan and execute work through explicit, reviewable phase boundaries
-* carry one exact next action safely across a fresh-session boundary
-* guide agents through large or multi-repository source trees with reusable code maps
-* preserve useful environment and tooling discoveries so they do not need to be rediscovered every session
+Bonsai helps you:
+
+- preserve product and architecture truth outside chat history;
+- start fresh AI sessions without re-explaining the project;
+- separate human-owned design truth from agent-maintained execution state;
+- carry one exact next action safely across session boundaries;
+- preserve useful environment and tooling discoveries;
+- navigate large and multi-repository source trees with reusable code maps;
+- keep meaningful human approval gates without approving every file edit.
 
 Bonsai is plain Markdown plus a small set of prompts, skills, and templates.
 
-No server.  
-No database.  
-No external memory service.  
-No agent framework lock-in.
+**No server. No database. No external memory service. No agent framework lock-in.**
 
-It is a workflow built by a developer for developers who want AI to remain useful over the life of a real project, not just for one good chat.
-
-For the complete operating guide, including installation models, migration, Bonsai Home, embedded use, project management, and detailed workflows, see [.bonsai/README.md](.bonsai/README.md).
+For the complete operating guide, see [`.bonsai/README.md`](.bonsai/README.md). For the authoritative Bonsai operating model, see [`.bonsai/specification.md`](.bonsai/specification.md).
 
 ---
 
-# What's New in Bonsai 2.0
+## What's New in 2.0
 
-Bonsai 2.0 is a substantial redesign rather than an incremental update to 1.x.
+Bonsai 2.0 is a redesign of the 1.x workflow. The main changes are:
 
-The biggest changes are:
+- **Reusable Bonsai Home** through `BONSAI_HOME`, allowing one cloned standard to serve many repositories.
+- **An authoritative Bonsai specification** that defines framework behavior while prompts, skills, templates, and bootstrap files implement it.
+- **Structural project and map workspaces**, with workspace type determined by `.bonsai/projects/<name>/` or `.bonsai/maps/<name>/` rather than a workspace manifest.
+- **Fresh-session one-step continuation** that reconstructs canonical state instead of carrying volatile chat summaries forward.
+- **Integrated reusable code maps** with resumable mapping work and source-backed create/extend/refresh/rebuild lifecycles.
+- **Lazy context loading**, so adding more durable knowledge does not automatically increase every session's context cost.
 
-* **A reusable Bonsai Home with `BONSAI_HOME`.** Bonsai no longer has to carry the full framework inside every repository. A shared Bonsai Home can provide the current standard, prompts, skills, templates, reusable context, and a central code-map store. Upgrade Bonsai once and participating repositories can use the new version without copying the framework into each repo.
+Bonsai 2.0 is also self-hosting: continued Bonsai development uses Bonsai's own persistent project memory and workflow.
 
-* **A formal Bonsai specification.** `specification.md` is now the authoritative human-owned truth for Bonsai itself. Prompts, skills, templates, bootstrap files, and other framework artifacts implement that specification rather than defining behavior independently. This gives Bonsai development a clear source of truth and makes framework changes much easier to reason about.
+---
 
-* **Bonsai now develops itself.** Bonsai 2.0 was designed, implemented, validated, and promoted through the persistent `bonsai-dev` project using Bonsai's own workflow. That project remains the durable development memory for continued Bonsai evolution.
+## Install
 
-* **One canonical startup path.** Coding sessions begin with:
+The preferred installation is to clone this repository and use its `.bonsai` directory as your **Bonsai Home**.
 
-  ```text
-  Read .bonsai/start.md and follow its instructions.
-  ```
+```text
+git clone https://github.com/a-hansen/bonsai-dev.git
+```
 
-  The small repository-local bootstrap resolves the Bonsai Home, repository, and active project or map workspace before loading the standard implementation workflow.
+Configure `BONSAI_HOME` to point to the clone's `.bonsai` directory:
 
-* **Fresh-session continuation can execute the exact next step immediately.** At an appropriate boundary, Bonsai can generate a fresh-session prompt that reconstructs canonical state and executes the already-authorized exact next action without stopping at the normal startup gate. Independent approval, review, blocker, and final-truth gates still remain intact.
+```text
+BONSAI_HOME=<path-to-bonsai-dev>/.bonsai
+```
 
-* **Code maps are reusable Bonsai assets.** Maps are integrated into the normal Bonsai workflow and stored centrally under Bonsai Home when one is active. They are tied to the source they describe rather than to a particular Bonsai project, so multiple projects can reuse the same map and multi-repository work becomes much cleaner.
+Make the variable available to the AI coding environments where you use Bonsai. The exact environment-variable setup is host-specific.
 
-* **Web UI workflows produce repository-ready workspaces.** Project and map creation produce ZIPs meant to be extracted directly at the repository root. Projects preserve design truth and execution memory; maps preserve resumable mapping memory and optional human-owned calibration without generating reusable map output during creation.
+A single Bonsai Home can serve many repositories. Each source repository keeps only its local bootstrap and local project/map memory, while the shared Bonsai standard, reusable context, and generated code maps live in the cloned Bonsai repository.
 
-# Try Bonsai First
+To update Bonsai later:
 
-This repository includes two examples with different purposes.
+```text
+cd <path-to-bonsai-dev>
+git pull
+```
 
-## Bonsai Testbed
+Embedded Bonsai is also supported when a repository needs to carry a complete standard locally. The shared Bonsai Home model is the normal installation path.
 
-`bonsai-testbed-project.zip` is the quickest way to see the Bonsai 2.0 workflow itself.
+---
 
-The application is deliberately tiny so the interesting part is Bonsai:
+## Quick Start
 
-* project-memory startup
-* Phase 1 planning
-* execution gates
-* agent-maintained state
-* contract-first work when appropriate
-* fresh-session continuation
-* operational context
-* later-phase planning
-* correct phase and body-of-work completion
+### 1. Design the project
 
-The testbed is also the fixture used while dogfooding Bonsai 2.0. It exists to make workflow behavior easy to observe without a substantial application getting in the way.
+Product and architecture design often works best in a normal Web UI AI conversation. Discuss the project naturally before forcing it into documents.
 
-Extract the ZIP into a throwaway repository root, then start with:
+When the design is mature enough to preserve, use:
+
+```text
+$BONSAI_HOME/prompts/create_project.md
+```
+
+Paste that prompt into the design conversation. Bonsai produces a repository-ready package containing `.bonsai/start.md` and durable project memory.
+
+### 2. Extract the project memory
+
+For a typical project:
+
+```text
+repo/
+└── .bonsai/
+    ├── start.md
+    └── projects/
+        └── main/
+            ├── requirements.md
+            ├── architecture.md
+            ├── agent_plan.md
+            └── agent_state.md
+```
+
+`main` is the conventional default project name. A repository can also contain multiple named projects.
+
+### 3. Start the coding agent
+
+Open the repository in your coding agent and say:
 
 ```text
 Read .bonsai/start.md and follow its instructions.
 ```
 
-The repository still needs access to a valid Bonsai 2.0 standard, either through your configured Bonsai Home or an Embedded Bonsai installation. See [.bonsai/README.md](.bonsai/README.md) for setup details.
+That is the normal Bonsai entry point.
 
-## Task Tracker
+For a named project:
 
-The included Task Tracker is a fuller example of Bonsai project memory around a small application.
+```text
+Read .bonsai/start.md and follow its instructions. Active project: <project>.
+```
 
-It shows what requirements, architecture, execution planning, and state look like when Bonsai is attached to a real piece of software rather than a workflow test fixture.
+Bonsai reconstructs the current workspace state, determines the applicable gate or exact next action, and loads deeper context only when the work needs it.
 
-See:
+The startup prompt stays small because the durable memory does the remembering.
 
-[Task Tracker Example](.bonsai/projects/task-tracker/README.md)
+---
+
+## The Core Model
+
+A Bonsai project deliberately separates different kinds of truth and state.
+
+| File | Purpose | Ownership |
+| --- | --- | --- |
+| `requirements.md` | Product behavior, constraints, workflows, scope | Human-owned |
+| `architecture.md` | Intended system structure and durable architectural decisions | Human-owned |
+| `agent_plan.md` | Implementation roadmap and phase progression | Agent-owned |
+| `agent_state.md` | Current resume state and exact next action | Agent-owned |
+| `agent_context.md` | Durable project-specific operational knowledge, when useful | Agent-owned |
+
+Requirements are not a progress log. Architecture does not silently mutate to match whatever code was written. Execution state is not chat history. Operational context is not a troubleshooting diary.
+
+Additional requirements, architecture, detailed plans, context, and an icebox are created only when useful. Bonsai is intended to grow structure as the project needs it rather than front-loading a documentation system.
+
+---
+
+## Fresh Sessions Are Normal
+
+Long AI sessions accumulate stale decisions, abandoned approaches, debugging history, duplicated context, and assumptions that no longer matter.
+
+Bonsai is designed around a different model:
+
+> **Keep durable memory in the project. Start clean sessions whenever it is useful.**
+
+`agent_state.md` carries the current execution condition and exact next action. At a natural boundary, Bonsai can either continue in the current session or provide a fresh-session prompt that reconstructs canonical state and executes the already-established next action.
+
+A fresh session does not need a hand-written summary of the previous chat.
+
+Approval, review, blocker, contract, and design gates are not bypassed merely because execution moves to a new session.
+
+---
+
+## Human Control Without Constant Babysitting
+
+Bonsai is designed for meaningful human control, not approval of every internal implementation step.
+
+The coding agent maintains execution memory and routine operational knowledge. The human retains authority over product and architecture truth.
+
+During implementation, proposed changes to project final truth are classified as:
+
+- **None**: the current requirements and architecture already support the work;
+- **Clarification**: the intended design is unchanged, but final truth should be stated more precisely;
+- **Revision**: product behavior, architecture, constraints, or system boundaries need to change.
+
+A revision stops for human approval before it becomes the new direction.
+
+For durable contracts such as public APIs, schemas, protocols, persistent formats, or extension surfaces, Bonsai can also use contract-first execution: review the smallest useful contract surface first, then implement beneath the approved contract.
+
+The goal is simple:
+
+> **Let the agent manage execution. Keep the developer in control of what is being built and why.**
+
+---
+
+## Code Maps
+
+Project memory answers questions such as:
+
+- What are we building?
+- What architecture are we aiming for?
+- What work is active?
+- What happens next?
+
+Large codebases add another recurring problem:
+
+- Where is the relevant code?
+- Which subsystem owns this behavior?
+- What callers or extension points matter?
+- What should the agent inspect before changing it?
+
+Bonsai code maps preserve selective structural knowledge for source navigation.
+
+Maps belong to the **source they describe**, not to whichever project first created them. That makes one map reusable across projects and especially useful when a project's source universe spans several repositories.
+
+Actual source remains authoritative. Maps help the agent reach the right source faster rather than replacing source inspection.
+
+Normal map operations include **Create**, **Extend**, **Refresh**, and **Rebuild**. Substantial mapping work uses repository-local resumable map memory while reusable generated map output lives in the active Bonsai map store.
+
+To begin code mapping from a Bonsai session, use **Manage Code Maps** or ask Bonsai to create a code map for the current source. For deliberate Web UI calibration before mapping, use:
+
+```text
+$BONSAI_HOME/prompts/create_map.md
+```
+
+See [`.bonsai/README.md`](.bonsai/README.md) for the full mapping workflow.
+
+---
+
+## Operational Memory
+
+Not every durable discovery belongs in requirements or architecture.
+
+During real work an agent may establish facts such as:
+
+- the correct build command in the current environment;
+- a stable external source location;
+- which reusable code maps matter to a project;
+- a filesystem or tooling limitation;
+- another environment-specific working rule.
+
+When a discovery is durable, actionable, sufficiently supported, and likely to matter again, Bonsai can preserve the useful rule in `agent_context.md` at the appropriate developer, repository, or project scope.
+
+That turns repeated rediscovery into reusable operational knowledge without polluting product truth.
+
+---
+
+## Try Bonsai
+
+This repository includes two examples with different purposes.
+
+### Bonsai Testbed
+
+`bonsai-testbed-project.zip` is a deliberately small fixture for observing the Bonsai workflow itself: startup, Phase 1 planning, gates, execution state, fresh-session continuation, operational context, and later-phase progression.
+
+After configuring `BONSAI_HOME`, extract the ZIP into a throwaway repository root and start with:
+
+```text
+Read .bonsai/start.md and follow its instructions.
+```
+
+### Task Tracker
+
+The included Task Tracker is a fuller example of Bonsai project memory around a small application. It shows requirements, architecture, planning, and execution state attached to real application code.
+
+See [Task Tracker Example](.bonsai/projects/task-tracker/README.md).
 
 Start it with:
 
@@ -104,403 +260,45 @@ Read .bonsai/start.md and follow its instructions. Active project: task-tracker.
 
 ---
 
-# The Prompt You Will Use a Lot
+## Bonsai Is Not an Agent Framework
 
-For normal implementation work:
+Bonsai does not replace your coding agent, IDE, `AGENTS.md`, repository instructions, coding standards, or development methodology.
 
-```text
-Read .bonsai/start.md and follow its instructions.
-```
+It focuses on a narrower problem: **durable structured memory and controlled execution continuity across AI sessions**.
 
-That prompt is intentionally boring.
-
-You do not need to reconstruct the correct implementation instructions every time you open a coding session. You do not need to summarize the previous session. You do not need to remember which project files, plans, context, maps, or skills the agent should load.
-
-The local `start.md` establishes the repository anchor and routes the session into the active Bonsai standard. Bonsai then reconstructs the current workspace state and determines the next applicable gate or exact action.
-
-For a repository with multiple named projects, you may specify one directly:
-
-```text
-Read .bonsai/start.md and follow its instructions. Active project: <project>.
-```
-
-If you do not, Bonsai can resolve `main`, select the only available project, or ask you to choose among multiple projects.
-
-Workspace memory carries the continuity. The startup prompt stays small.
-
-To resume a named map workspace instead, be explicit:
-
-```text
-Read .bonsai/start.md and follow its instructions. Active map: <map>.
-```
+Use it with one assistant, an IDE coding agent, a CLI agent, or a larger agent system. The memory remains plain Markdown in the repository or Bonsai Home.
 
 ---
 
-# How Bonsai Organizes Project Memory
+## Why Bonsai Exists
 
-A normal Bonsai project begins with a workspace entry and four core memory files:
+Bonsai grew out of the friction of using AI on real software projects.
 
-```text
-.bonsai/projects/main/
-├── workspace.md
-├── requirements.md
-├── architecture.md
-├── agent_plan.md
-└── agent_state.md
-```
+The problem was not that the models could not write code. The problem was continuity.
 
-They have deliberately different jobs.
-
-| File | Purpose | Ownership |
-| --- | --- | --- |
-| `workspace.md` | Stable project type and implementation-route declaration | Declarative workspace entry |
-| `requirements.md` | Product behavior, scope, and constraints | Human-owned |
-| `architecture.md` | Intended system architecture and durable technical decisions | Human-owned |
-| `agent_plan.md` | Implementation roadmap and phase-level execution state | Agent-maintained |
-| `agent_state.md` | Current resume state and exact next step | Agent-maintained |
-
-That separation is central to Bonsai.
-
-Requirements should not turn into a progress log. Architecture should not quietly mutate to match whatever code happened to get written. Execution state should not become a diary of previous sessions.
-
-Optional memory appears only when it is useful:
-
-```text
-.bonsai/projects/main/
-├── agent_context.md
-├── icebox.md
-├── plan/
-│   └── agent_plan_phase_1.md
-├── requirements/
-│   └── requirements_<AREA>.md
-└── architecture/
-    └── architecture_<SUBSYSTEM>.md
-```
-
-Bonsai also supports repository-level and reusable developer-level context, but those details belong in the operating guide.
-
----
-
-# Design a Project in the Web UI
-
-Bonsai assumes that product and architecture design often begin in a Web AI conversation.
-
-Discuss the project normally:
-
-* what you are building
-* requirements and workflows
-* scope and constraints
-* architecture
-* alternatives and tradeoffs
-* implementation strategy
-
-Do not force the conversation into Bonsai documents prematurely.
-
-When the design is mature enough to preserve, use:
-
-```text
-prompts/create_project.md
-```
-
-in that same conversation.
-
-For a new project, the workflow resolves the project name and generates a ZIP meant to be extracted directly at the repository root.
-
-Its core shape is:
-
-```text
-.bonsai/
-├── start.md
-└── projects/
-    └── <project>/
-        ├── workspace.md
-        ├── requirements.md
-        ├── architecture.md
-        ├── agent_plan.md
-        └── agent_state.md
-```
-
-Additional project memory appears only when the design genuinely needs it.
-
-Extract the ZIP into the target repository root, review the generated human-owned final truth, and then begin implementation with:
-
-```text
-Read .bonsai/start.md and follow its instructions.
-```
-
-For a normal simple repository, `main` is the conventional project name. Named projects are useful when one repository contains several independent bodies of work.
-
-The generated `start.md` creates the repository-local Bonsai entry point. The Bonsai standard itself may come from a reusable Bonsai Home or from a complete Embedded Bonsai installation. The detailed setup rules live in [.bonsai/README.md](.bonsai/README.md).
-
----
-
-# Create a Map Workspace in the Web UI
-
-Source inspection is authoritative, but a repository owner often knows things that are expensive or unreliable for an agent to infer from source alone.
-
-For example:
-
-* which subsystems actually matter
-* which entry points show representative usage
-* which large areas are misleading or low-value
-* where extension surfaces live
-* what should be mapped deeply
-* what should remain out of scope
-
-Use:
-
-```text
-prompts/create_map.md
-```
-
-to create resumable repository-local mapping memory before building a reusable code map.
-
-The workflow produces a repository-root ZIP containing map workspace memory and optional human-owned calibration:
-
-```text
-.bonsai/
-└── maps/
-    └── <source>/
-        ├── workspace.md
-        ├── agent_plan.md
-        ├── agent_state.md
-        └── map_calibration.md    # optional
-```
-
-Extract it at the repository root.
-
-The workspace records the mapping roadmap and current resume state. Calibration is optional guidance, not source truth, execution state, or the map itself. Bonsai's coding-agent mapping workflow later combines relevant context with actual source to create or update reusable generated map output.
-
-A source does not need Bonsai project memory in order to be mapped.
-
----
-
-# Fresh Sessions Are a Feature
-
-Long AI sessions tend to accumulate noise:
-
-* stale decisions
-* abandoned approaches
-* old debugging branches
-* duplicated context
-* assumptions that were true earlier but no longer matter
-
-Bonsai is designed around a different model:
-
-> **Keep durable memory in the project. Start clean sessions whenever it is useful.**
-
-`agent_state.md` acts as the baton pass.
-
-It records only the current execution condition, blockers or risks that still matter, resume-critical files, the exact next step, and the success condition.
-
-At a natural boundary, Bonsai can also offer to continue one exact next action in a fresh session. The continuation prompt does not carry a handwritten summary of volatile state. The new session reconstructs canonical workspace state before it acts.
-
-If you exit instead, Bonsai gives you the ordinary startup prompt so you can resume later without changing durable state merely to record that you stopped.
-
----
-
-# Keep Final Truth Separate from Execution
-
-Software development is messy.
-
-Requirements sharpen. APIs change. Early designs turn out to be wrong. Implementation exposes assumptions that were never written down.
-
-That is normal.
-
-What Bonsai tries to prevent is allowing those discoveries to silently redefine the project.
-
-`requirements.md` and `architecture.md` describe the intended system. During implementation, Bonsai distinguishes between:
-
-* **None:** the current final truth already covers the work
-* **Clarification:** the intended design is unchanged, but the truth should be stated more precisely
-* **Revision:** product behavior, architecture, constraints, or system boundaries actually need to change
-
-A revision requires human approval before it becomes the new direction.
-
-The goal is for mature project memory to describe the system you ultimately decided to build, not every detour taken to discover it.
-
-That gives Bonsai another useful property:
-
-> **A mature project can be rebuilt from its final intended form rather than from the scars of its prototype history.**
-
----
-
-# Human Control Without Constant Babysitting
-
-Bonsai is intentionally human-centered, but it does not require approval for every file edit.
-
-The coding agent maintains execution memory such as `agent_plan.md`, `agent_state.md`, phase plans, and qualifying operational context.
-
-The human retains authority over product and architecture truth.
-
-Every phase has an execution basis. Phase 1 always begins with a detailed plan review. Later phases still pass through planning, but Bonsai creates a detailed phase plan only when the work benefits from one.
-
-For durable contracts such as externally consumed APIs, schemas, protocols, persistent formats, or extension surfaces, Bonsai can use contract-first two-pass execution:
-
-1. produce the smallest useful reviewable contract surface
-2. stop for human approval
-3. implement beneath the approved contract
-
-At meaningful boundaries, Bonsai stops and asks for a decision instead of treating the initial prompt as unlimited permission to continue.
-
-The goal is simple:
-
-> **Let the agent manage execution. Keep the developer in control of what is being built and why.**
-
----
-
-# Large Repositories Need Navigation Memory Too
-
-Project memory answers questions such as:
-
-* What are we building?
-* What architecture are we aiming for?
-* What phase are we in?
-* What happens next?
-
-Large codebases introduce another recurring problem:
-
-* Where is the relevant code?
-* Which subsystem owns this behavior?
-* What callers or extension points matter?
-* What should the agent inspect before changing it?
-
-Bonsai includes layered code maps for that problem.
-
-Maps are named for the source they represent, not for whichever Bonsai project happened to create them. That makes them reusable across projects and especially useful when one project's source universe spans several repositories.
-
-Optional human-owned `map_calibration.md` can tell the mapping workflow what deserves attention, what is misleading, and what should remain out of scope. Actual source remains authoritative.
-
-Map workspace memory lives with the source repository under `.bonsai/maps/<map>/`; reusable generated maps live in the active map store. In Embedded Bonsai those paths can overlap physically, but their ownership remains separate.
-
-Projects can retain explicit reusable-map selections in project `agent_context.md` using a compact `Useful code maps:` list. Add and remove those selections through **Manage Code Maps**; changing a selection does not modify either the generated map or its map workspace.
-
-The maps are not a substitute for reading source code. They help the agent find the right source code faster and avoid rediscovering the same repository structure every session.
-
----
-
-# Bonsai Learns Operational Context Too
-
-Not every useful discovery belongs in requirements, architecture, or execution state.
-
-During real work an agent may discover facts such as:
-
-* the correct build command in this environment
-* a stable external source location
-* a reusable code map
-* a filesystem or tool limitation
-* an environment-specific working rule
-
-When a discovery is durable, actionable, sufficiently supported, and likely to matter again, Bonsai can preserve the current working rule in `agent_context.md`.
-
-Agent context can be scoped to the developer environment, repository, or individual project.
-
-That turns useful discovery into reusable operational memory without polluting product truth or preserving troubleshooting history.
-
----
-
-# Bonsai Is Not an Agent Framework
-
-Bonsai does not try to orchestrate a fleet of agents.
-
-It does not replace `AGENTS.md`, repository instructions, coding standards, or your preferred AI tool.
-
-Those solve different problems.
-
-Bonsai focuses on durable project memory and execution continuity:
-
-* product truth
-* architecture truth
-* execution roadmap
-* current resume state
-* operational context
-* deeper project detail when needed
-* repository navigation knowledge
-
-Use it with one assistant, an IDE coding agent, a CLI agent, or a larger multi-agent system.
-
-Better project memory helps all of them.
-
----
-
-# Embedded Bonsai and Bonsai Home
-
-Bonsai 2.0 supports two installation models.
-
-A repository can contain a complete **Embedded Bonsai** standard inside its own `.bonsai` directory.
-
-Or a reusable **Bonsai Home** can provide the shared standard, prompts, skills, templates, developer context, agent context, and reusable maps while each repository keeps only its local bootstrap and repository/project memory.
-
-The implementation workflow is the same either way.
-
-The details matter, especially for setup, migration, multi-repository work, and `BONSAI_HOME`, but they are operating-guide material rather than landing-page material.
-
-See [.bonsai/README.md](.bonsai/README.md).
-
----
-
-# Who Bonsai Is For
-
-Bonsai is for developers who use AI as an engineering collaborator rather than only as autocomplete.
-
-It becomes especially useful when:
-
-* a project spans many AI sessions
-* design and implementation happen in different tools
-* you are tired of re-explaining the project to every new session
-* the codebase is large enough that repository rediscovery costs real time
-* the useful source universe spans multiple repositories
-* you want the agent to manage execution without surrendering product or architecture control
-* the project is likely to evolve, pivot, and accumulate deeper detail over time
-* you want project memory to live close to the code instead of disappearing into chat history
-
-If you have ever started a new coding session and thought:
-
-> “I know the AI can help, but now I have to teach it the project again.”
-
-Bonsai is meant to remove that part.
-
----
-
-# Why Bonsai Exists
-
-I built Bonsai out of the friction of using AI on real software projects.
-
-The problem was not that the models could not write code.
-
-The problem was continuity.
-
-One session would contain important design decisions. Another would discover a better architecture. A coding agent would make progress, but the next session would need a careful recap. Large repositories would get rediscovered repeatedly. Old conversation context would become more expensive and less useful at the same time.
+One session contained important design decisions. Another discovered a better architecture. A coding agent made progress, but the next session needed a careful recap. Large repositories were rediscovered repeatedly. Old conversation context became more expensive and less useful at the same time.
 
 The obvious answer seemed to be more context.
 
-For me, the better answer turned out to be **better-structured context**.
+The better answer was **better-structured context**.
 
-Bonsai keeps that structure in plain Markdown because Markdown is easy to inspect, diff, edit, version, copy, and hand to almost any AI tool.
+Bonsai keeps that structure in Markdown because Markdown is easy to inspect, diff, edit, version, copy, and hand to almost any AI tool.
 
 The technology is deliberately boring.
 
-The workflow is the product.
+**The workflow is the product.**
 
 ---
 
-# Status
+## Documentation
 
-Bonsai 2.0 was developed using Bonsai itself.
-
-The persistent `bonsai-dev` project carried the redesign through planning, implementation, validation, promotion, and subsequent workflow improvements. The self-hosting project remains active so later Bonsai changes can continue through the same project-memory and execution model the framework provides to its users.
-
-The separate Bonsai Testbed was used to exercise and refine the v2 workflow against deliberately small code, making lifecycle and interaction defects easier to expose.
-
-Bonsai will keep evolving as real use exposes places where the workflow helps or gets in the way.
-
-The core idea is stable:
-
-> **Keep durable project memory structured, selective, current, and close to the code.**
+- [Practical user guide](.bonsai/README.md)
+- [Authoritative specification](.bonsai/specification.md)
+- [Task Tracker example](.bonsai/projects/task-tracker/README.md)
 
 ---
 
-# Name
+## Name
 
 A bonsai is not wild growth.
 

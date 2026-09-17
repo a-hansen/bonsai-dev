@@ -2,11 +2,11 @@
 
 ## Purpose
 
-Stable implementation kernel after `start.md` resolves Bonsai Home, repository home, optional active workspace type/name/home, applicable `workspace.md`, project/map candidates, and the natural-language startup request.
+Stable implementation kernel after `start.md` resolves Bonsai Home, repository home, optional active workspace type/name/home, project/map candidates, and the natural-language startup request.
 
 - No active workspace: own repository entry/routing.
 - Active workspace: determine minimum current execution condition; load only triggered context/workflows; preserve human gates.
-- Bootstrap identity, loaded workspace entry, and workspace candidates are inputs only; do not persist them here.
+- Bootstrap identity and workspace candidates are inputs only; do not persist them here.
 
 ## Authority and Ownership
 
@@ -25,14 +25,14 @@ If the retained startup request explicitly asks for **Manage Code Maps** or a sp
 
 Otherwise load `skills/menu.md` and show a primary menu headed equivalently to `Choose what you want to work with:`:
 
-1. each immediate project directory, stable lexical order, individually numbered;
+1. each established immediate project workspace, stable lexical order, individually numbered;
 2. **Manage Code Maps**;
 3. **Exit for now**;
 4. **See more options** only if secondary repository actions apply, normally **Manage Projects** and, when applicable, **Create Bonsai Home**.
 
 **Manage Code Maps** is a peer primary action, never hidden behind **See more options** at repository entry.
 
-Project selection requires the directory still exists and has readable, bootstrap-valid `workspace.md`. Load only that entry, set it active in current-session context only, do not persist selection, then perform read-only startup orientation.
+Project selection requires the directory still exists under `<repository-home>/.bonsai/projects/` and both `agent_plan.md` and `agent_state.md` remain accessible. The containing `projects/` path establishes type. Set it active in current-session context only, do not persist selection, then perform read-only startup orientation.
 
 **Manage Code Maps** delegates with active workspace unset and retains repository entry as invoking gate.
 
@@ -42,24 +42,25 @@ A startup request requiring workspace execution but supplying no resolvable work
 
 ## Read-Only Startup Orientation
 
-Applies only after an active workspace and valid `workspace.md` are established.
+Applies only after an active workspace is structurally established.
 
-`<workspace-home>` must be the supplied concrete directory under:
+`<workspace-home>` must be the supplied concrete directory under exactly one of:
 
 ```text
 <repository-home>/.bonsai/projects/<active-workspace>
 <repository-home>/.bonsai/maps/<active-workspace>
 ```
 
-Loaded type/route must match directory kind. Mismatch = `Blocked`; do not reinterpret/fallback.
+The containing `projects/` or `maps/` path is authoritative for workspace type. The supplied active type must match that structural kind. Mismatch = `Blocked`; do not reinterpret/fallback or infer type from workspace contents.
 
 Before workspace-specific classification:
 
-1. Read `agent_state.md` if present.
-2. Read `agent_plan.md` if present; compare overlapping common truth: roadmap area/statuses, applicable execution mode and detailed-plan identity/status, readiness, blockers, exact-next-step authority, completion claims.
-3. Read a detailed plan only if state names it or it is needed to establish the current planning/contract/review/execution/blocker gate. Never scan `plan/` to guess.
-4. Derive readiness/exact next step from minimum loaded state. Never repair missing execution memory from chat history, generated maps, unrelated files, or the other workspace type's model.
-5. Load additional truth, source guidance, developer/agent context, maps, or skills only when required by workspace type, exact step, startup request, impact assessment, or inconsistency.
+1. Read required `agent_state.md`.
+2. Read required `agent_plan.md`; compare overlapping common truth: roadmap area/statuses, applicable execution mode and detailed-plan identity/status, readiness, blockers, exact-next-step authority, completion claims.
+3. If either required shared execution-memory file became missing/inaccessible after bootstrap or repository-entry selection, classify `Blocked`; do not reconstruct it from other artifacts.
+4. Read a detailed plan only if state names it or it is needed to establish the current planning/contract/review/execution/blocker gate. Never scan `plan/` to guess.
+5. Derive readiness/exact next step from minimum loaded state. Never repair missing execution memory from chat history, generated maps, unrelated files, or the other workspace type's model.
+6. Load additional truth, source guidance, developer/agent context, maps, or skills only when required by workspace type, exact step, startup request, impact assessment, or inconsistency.
 
 Orientation is read-only: no memory repair or workspace artifact creation.
 
@@ -96,7 +97,7 @@ For `map`, use common workspace state plus map behavior only. Do not apply proje
 
 Require `agent_state.md` and `agent_plan.md`; read a scoped `plan/` file only if state identifies it or the current map action requires it. `Blocked` if either required file is missing, a named detailed plan is absent, roadmap/state conflict, or completion claim is unsupported. Report the concrete deficiency; never reconstruct from `map_state.md`, generated output, project memory, or directory contents.
 
-Before active map execution/reconciliation, require the owning map workflow to support `workspace.md`, `agent_plan.md`, `agent_state.md`, and optional scoped plans. If it still depends on legacy `map_state.md` or otherwise cannot:
+Before active map execution/reconciliation, require the owning map workflow to support structurally identified map workspaces, `agent_plan.md`, `agent_state.md`, and optional scoped plans. If it still depends on `workspace.md`, legacy `map_state.md`, or otherwise cannot:
 
 - report map workflow unavailable at the current gate;
 - do not invoke it, fabricate lifecycle state, or substitute project behavior.
@@ -210,11 +211,11 @@ Normally stop at startup gate. A preserved startup request may authorize the exa
 
 ## Project Management
 
-Inline subordinate workflow, normally under **See more options**. Use host filesystem tools; resolve only immediate directories under `<repository-home>/.bonsai/projects/`.
+Inline subordinate workflow, normally under **See more options**. Use host filesystem tools; resolve only immediate directories under `<repository-home>/.bonsai/projects/`. A project workspace is established only when both `agent_plan.md` and `agent_state.md` exist and are accessible; its `projects/` path establishes type.
 
-- **List Projects:** stable lexical directory names; no mutable current-project inference. Number only when asking for selection.
-- **Switch Project:** enumerate stable lexical choices; for multiple choices, number them and accept the number. Require project + valid `workspace.md`; activate only in current-session context; rerun read-only orientation; never persist selection.
-- **Create Project:** require human-supplied, unused single directory name. Reject empty, `.`/`..`, absolute path, drive prefix, path separators, control characters, or targets outside project area. Preflight exact target, present name for explicit confirmation, then stop before mutation. After confirmation create only the directory; invent no requirements/architecture/plans/state/design; report `Design required`; switch only if the human separately chooses to.
+- **List Projects:** stable lexical names of established project workspaces; no mutable current-project inference. Number only when asking for selection.
+- **Switch Project:** enumerate established project workspaces in stable lexical order; for multiple choices, number them and accept the number. Require the selected directory plus readable `agent_plan.md` and `agent_state.md`; activate only in current-session context; rerun read-only orientation; never persist selection.
+- **Create Project:** require human-supplied, unused single directory name. Reject empty, `.`/`..`, absolute path, drive prefix, path separators, control characters, or targets outside project area. Preflight exact target, present name for explicit confirmation, then stop before mutation. After confirmation create the directory plus only the minimum agent-owned `agent_plan.md` and `agent_state.md` needed to establish the project workspace as `Design required`. Do not invent requirements, architecture, product design, implementation design, phases, or executable work. Switch only if the human separately chooses to.
 
 If design must be synthesized, direct the human to Web UI `<bonsai-home>/prompts/create_project.md` or accept explicitly human-provided project memory. Never invoke that Web UI workflow inside the coding session or treat referral as completed design.
 

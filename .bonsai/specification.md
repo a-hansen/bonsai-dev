@@ -170,10 +170,12 @@ normally load only when current work needs them.
 Projects and maps both use:
 
 ```text
-workspace.md
 agent_plan.md
 agent_state.md
 ```
+
+Workspace type is structural: `.bonsai/projects/<name>/` is a project and
+`.bonsai/maps/<name>/` is a map. Do not duplicate that identity in a workspace-local manifest.
 
 Both support exact-next-step resumption, execution readiness, human gates when required,
 current/fresh-session continuation, fresh-session one-step auto-execution, `Exit for now`, and
@@ -268,26 +270,7 @@ repo/.bonsai = Bonsai Home + repository Bonsai memory
 Embedded mode uses the same workspace semantics. When map-workspace memory and generated-map storage
 physically overlap, their conceptual ownership remains distinct.
 
-## 3.3 Creating a Bonsai Home
-
-**Create Bonsai Home** is available through **See more options** and by explicit startup request:
-
-```text
-Read .bonsai/start.md and follow its instructions. Create a Bonsai Home.
-```
-
-Requirements and constraints:
-
-- `BONSAI_HOME` must already be defined; it identifies the intended reusable location and the
-  directory need not yet exist.
-- If undefined, stop and tell the human to configure it.
-- Do not silently substitute a session-only path or store Bonsai Home in `agent_context.md`; it is
-  environment identity, not learned project knowledge.
-- Do not modify shell startup files, machine configuration, or other developer-owned environment
-  configuration without explicit authorization.
-- When both valid `BONSAI_HOME` and an embedded standard exist, prefer the Bonsai Home standard.
-
-## 3.4 Repository home and local memory
+## 3.3 Repository home and local memory
 
 The **repository home** is the source-repository root containing the local `.bonsai` anchor.
 `.bonsai/start.md` establishes that anchor for normal AI sessions.
@@ -301,7 +284,6 @@ repo/.bonsai/
 ├── developer_context.md                 # optional local human context
 ├── agent_context.md                     # optional local agent context
 ├── projects/<project>/
-│   ├── workspace.md
 │   ├── requirements.md
 │   ├── architecture.md
 │   ├── agent_plan.md
@@ -312,14 +294,13 @@ repo/.bonsai/
 │   ├── requirements/requirements_<AREA>.md
 │   └── architecture/architecture_<SUBSYSTEM>.md
 └── maps/<map>/
-    ├── workspace.md
     ├── agent_plan.md
     ├── agent_state.md
     ├── map_calibration.md               # optional human input
     └── plan/                            # optional detailed map plans
 ```
 
-## 3.5 Reusable developer material
+## 3.4 Reusable developer material
 
 Bonsai Home may hold cross-repository developer context, operational knowledge, source locations,
 and generated maps. Their meaning remains distinct from repository/workspace memory even when
@@ -332,30 +313,37 @@ physically colocated.
 ## 4.1 Workspace model
 
 A Bonsai workspace is a repository-local durable unit of resumable agent work. Exactly two concrete
-types exist:
+structural types exist:
 
 ```text
 project → repo/.bonsai/projects/<project>/
 map     → repo/.bonsai/maps/<map>/
 ```
 
-Do not introduce a generic repository-level `workspaces/` directory.
+The containing `projects/` or `maps/` path is authoritative for workspace type. Do not create or
+require a workspace-local manifest merely to restate type, name, routing, or standard type-specific
+behavior; a file inside a workspace cannot override its structural type. Do not introduce a generic
+repository-level `workspaces/` directory.
 
-Every workspace contains:
+Every established workspace contains:
 
 ```text
-workspace.md
 agent_plan.md
 agent_state.md
 ```
 
-`workspace.md` is the small stable declarative entry document. It identifies workspace type and
-provides enough routing information to choose workspace-specific workflow/artifacts. It is not
-execution state. Volatile progress, blockers, readiness, exact next action, and active detailed-plan
-identity belong in `agent_state.md`; roadmap structure belongs in `agent_plan.md`.
+These shared execution-memory artifacts, together with the structural path, distinguish an
+established workspace from a merely present directory. This matters especially in Embedded Bonsai,
+where a generated-map directory may physically occupy `.bonsai/maps/<map>/` without yet being a
+resumable map workspace.
 
 `agent_plan.md` is the workspace-wide roadmap. `agent_state.md` is the current resume state.
-Workspace-specific sections may extend those roles without changing ownership.
+Volatile progress, blockers, readiness, exact next action, and active detailed-plan identity belong
+in `agent_state.md`; roadmap structure belongs in `agent_plan.md`. Workspace-specific sections may
+extend those roles without changing ownership.
+
+Standard project-vs-map loading/routing behavior belongs in the implementation kernel and triggered
+skills, not duplicated inside each workspace.
 
 ## 4.2 Canonical startup
 
@@ -376,24 +364,24 @@ Natural-language qualifiers may be appended, for example:
 ```text
 Active project: configuration-runtime.
 Active map: niagara4.
-Create a Bonsai Home.
 Manage Code Maps.
 ```
 
 No formal startup-command language is required.
 
 `start.md` should remain small. It establishes environment identity, resolves an active workspace
-when needed, loads that workspace's `workspace.md`, and hands control to the Bonsai Home or embedded
-implementation kernel.
+when needed, derives workspace type from its structural path, verifies the selected workspace is
+established, and hands control to the Bonsai Home or embedded implementation kernel.
 
 Bootstrap responsibilities:
 
 1. establish repository home from local `.bonsai`;
 2. resolve Bonsai Home;
-3. resolve active workspace type/name when applicable;
-4. read that workspace's `workspace.md`;
-5. retain Bonsai Home, repository home, active workspace identity, and startup request as session
-   context;
+3. resolve active workspace type/name/path when applicable, with type derived from `projects/` or
+   `maps/`;
+4. verify the selected workspace directory and required shared execution-memory artifacts exist;
+5. retain Bonsai Home, repository home, active workspace identity/path, and startup request as
+   session context;
 6. load `<bonsai-home>/prompts/implementation.md`;
 7. continue under the standard implementation workflow.
 
@@ -420,10 +408,12 @@ Active map: <map>.
 ```
 
 Selection is session-local and must not be persisted merely because one session chose it.
+Workspace type comes from the selected structural path and is not separately declared or inferred
+from workspace contents.
 
 Without explicit identity, implementation may choose a deterministic conventional entry such as
-`projects/main`, a sole valid project, or another unambiguous repository condition. It must not
-silently choose among several plausible workspaces.
+an established `projects/main`, a sole established project, or another unambiguous repository
+condition. It must not silently choose among several plausible workspaces.
 
 ---
 
@@ -602,7 +592,6 @@ Initial synthesis produces a repository-root extractable package normally contai
 .bonsai/
 ├── start.md
 └── projects/<project>/
-    ├── workspace.md
     ├── requirements.md
     ├── architecture.md
     ├── agent_plan.md
@@ -676,7 +665,6 @@ Initial output normally contains:
 .bonsai/
 ├── start.md
 └── maps/<map>/
-    ├── workspace.md
     ├── agent_plan.md
     ├── agent_state.md
     └── map_calibration.md     # optional human-owned guidance
@@ -694,7 +682,8 @@ workspace does not require a Bonsai project for that source.
 
 ## 7.1 Implementation kernel
 
-After bootstrap resolves session identity and loads the selected `workspace.md`, continue through:
+After bootstrap resolves session identity and verifies the selected workspace is established,
+continue through:
 
 ```text
 <bonsai-home>/prompts/implementation.md
@@ -702,11 +691,11 @@ After bootstrap resolves session identity and loads the selected `workspace.md`,
 
 The kernel:
 
-1. receives Bonsai Home, repository home, active workspace type/name/home, and retained startup
+1. receives Bonsai Home, repository home, active workspace type/name/path, and retained startup
    request;
 2. loads minimum active workspace state;
 3. determines exact next step and execution readiness;
-4. routes through the workspace-specific workflow named by `workspace.md`;
+4. routes by structural workspace type to project- or map-specific behavior;
 5. loads additional project truth, generated maps, plans, context, or skills only as required;
 6. identifies blockers/inconsistencies;
 7. applies project final-truth classification when project final truth is implicated;
@@ -1485,7 +1474,8 @@ mandate for a particular test harness.
 1. A normal `projects/main` repository starts with `Read .bonsai/start.md and follow its
    instructions.`
 2. Explicit named project resolves that project workspace.
-3. `Active map: <map>` resolves that map workspace and loads its `workspace.md`.
+3. `Active map: <map>` resolves an established `.bonsai/maps/<map>/` as a map workspace from its
+   path and shared execution memory without requiring a workspace manifest.
 4. Active workspace identity remains session-local and is not written to `agent_context.md`.
 5. Startup does not eagerly load full project truth, full generated maps, or detailed map plans.
 
@@ -1511,7 +1501,8 @@ mandate for a particular test harness.
 
 17. Map-workspace execution memory remains repository-local.
 18. Reusable generated map output remains in the active map store.
-19. Embedded Bonsai may physically overlap those locations without confusing roles.
+19. Embedded Bonsai may physically overlap those locations without confusing roles; generated map
+    output alone does not establish a resumable map workspace without shared execution memory.
 20. Legacy generated-map state is absent from the active execution model; map
     `agent_plan.md`/`agent_state.md` own continuation.
 21. `map_calibration.md` remains human-owned input, not execution state.
@@ -1524,10 +1515,10 @@ mandate for a particular test harness.
 
 ## Creation workflows
 
-25. `create_project.md` creates `workspace.md` plus project memory and repository bootstrap for
-    initial synthesis.
-26. `create_map.md` creates `workspace.md`, `agent_plan.md`, `agent_state.md`, optional
-    `map_calibration.md`, and repository bootstrap.
+25. `create_project.md` creates project memory under `.bonsai/projects/<project>/` plus repository
+    bootstrap for initial synthesis; the path establishes project workspace type.
+26. `create_map.md` creates `agent_plan.md`, `agent_state.md`, optional `map_calibration.md`, and
+    repository bootstrap under `.bonsai/maps/<map>/`; the path establishes map workspace type.
 27. `create_map.md` does not generate `code_map.md`, subsystem maps, or lookup tables.
 
 ## Code-map creation interaction

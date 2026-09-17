@@ -56,23 +56,11 @@ Supply only the artifacts that become relevant to the design.
 
 ## Use One Bonsai Home
 
-Framework artifacts used together during design should normally come from the same Bonsai Home as the supplied `specification.md`.
+Bonsai development should normally use the `.bonsai` directory from the current `bonsai-dev` checkout as `BONSAI_HOME`. This keeps the specification, prompts, skills, templates, and self-development project on the same checked-out Bonsai version.
 
-Depending on the environment, the Bonsai Home may be:
+Framework artifacts used together during design should normally come from that same Bonsai Home as the supplied `specification.md`.
 
-```text
-$BONSAI_HOME/
-```
-
-or an Embedded Bonsai standard under:
-
-```text
-repo/.bonsai/
-```
-
-The physical location does not change the workflow.
-
-When intentionally comparing Bonsai versions, artifacts from another Bonsai Home may also be supplied, but the distinction should be explicit.
+Embedded Bonsai remains supported when intentionally working that way. When intentionally comparing Bonsai versions, artifacts from another Bonsai Home may also be supplied, but the distinction should be explicit.
 
 ## Additional Design Context
 
@@ -102,14 +90,13 @@ A typical update may include:
 
 ```text
 .bonsai/projects/bonsai-dev/
-    workspace.md
     requirements.md
     architecture.md
     agent_plan.md
     agent_state.md
 ```
 
-Not every change requires all five files, but the live project workspace memory should remain internally consistent and describe the current project and current body of work.
+Not every change requires all four files, but the live project workspace memory should remain internally consistent and describe the current project and current body of work.
 
 The Web UI workflow produces a repository-root ZIP containing the canonical bootstrap and project workspace:
 
@@ -138,13 +125,9 @@ Read .bonsai/start.md and follow its instructions. Active project: bonsai-dev.
 
 Bonsai should reconstruct the current project state from durable memory.
 
-For a newly designed body of work, the normal first implementation gate is:
+For a newly designed body of work, implementation normally begins by drafting and reviewing the Phase 1 plan.
 
-```text
-Execution Readiness: Phase planning required
-```
-
-The coding agent then drafts:
+The coding agent drafts:
 
 ```text
 plan/agent_plan_phase_1.md

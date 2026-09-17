@@ -13,6 +13,7 @@
 build/
 
 #bonsai
+.bonsai/agent_context.md
 .bonsai/developer_context.md
 .bonsai-backups/
 .bonsai/maps
