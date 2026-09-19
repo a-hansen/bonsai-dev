@@ -70,7 +70,7 @@ Association maintenance is entered only through **Manage Code Maps**. The invoki
 
 Immediately before writing, revalidate all identities:
 
-- project home is one immediate child of `<repository-home>/.bonsai/projects/`; readable `workspace.md` declares exactly `Type: project` and `Route: Project workspace behavior`;
+- project home is one immediate child of `<repository-home>/.bonsai/projects/` and contains readable `agent_plan.md` and `agent_state.md`; the containing `projects/` path establishes project type without a workspace-local manifest;
 - map name is one directory component; its immediate active-map-store directory contains readable agent-owned `code_map.md`;
 - repository-local map workspaces, including same-named ones, are never association evidence or substitutes for the generated-map check.
 

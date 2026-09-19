@@ -24,12 +24,9 @@ Use your normal shell or operating-system mechanism to make that environment var
 
 This gives you one reusable Bonsai standard for all repositories. Prompts, skills, templates, reusable context, and generated code maps live under that Bonsai Home rather than being copied into every source repository.
 
-To update Bonsai later, update the checkout normally:
+## Updating Bonsai
 
-```text
-cd <path-to-bonsai-dev>
-git pull
-```
+When Bonsai Home is a Git checkout, update the shared Bonsai standard with a normal `git pull` in that checkout. Repository-local project and map workspace memory remains with the repositories that own it.
 
 ## Embedded Bonsai
 
@@ -51,9 +48,9 @@ repo/
 
 Project and map workspaces are added beneath that local `.bonsai` directory as needed.
 
-If you create project memory with `prompts/create_project.md`, the generated package includes the appropriate `.bonsai/start.md`. For a repository that does not yet need project memory, place the Bonsai distribution's canonical `start.md` at `.bonsai/start.md`.
+If you create project memory with `<bonsai-home>/prompts/create_project.md`, the generated package includes the appropriate `.bonsai/start.md`. For a repository that does not yet need project memory, place the Bonsai distribution's canonical `start.md` at `.bonsai/start.md`.
 
-The repository-local `.bonsai` directory holds repository and workspace memory. The shared Bonsai standard remains in `BONSAI_HOME`.
+In Bonsai Home mode, the repository-local `.bonsai` directory holds repository and workspace memory while the shared standard remains in the configured Bonsai Home. In Embedded mode, the local `.bonsai` directory holds both.
 
 ---
 
@@ -152,7 +149,7 @@ Product and architecture design is usually best handled conversationally in a We
 Work through the design normally. When it is mature enough to preserve, use:
 
 ```text
-$BONSAI_HOME/prompts/create_project.md
+<bonsai-home>/prompts/create_project.md
 ```
 
 Paste that prompt into the design conversation. The workflow produces an extractable repository-root package containing `.bonsai/start.md` and the selected project memory.
@@ -217,7 +214,7 @@ A phase touching several files is not by itself a reason to create a detailed ph
 
 ## Execution readiness
 
-`agent_state.md` records the actual current execution condition. Common states include design required, planning required, awaiting review, blocked, ready to execute, and complete.
+`agent_state.md` records the actual current execution condition. Common states include `Design required`, `Phase planning required`, `Awaiting human review`, `Blocked`, `Ready to execute`, and `Complete`.
 
 A plan existing does not mean implementation is authorized. `Ready to execute` means one safe exact action is established and no independent human-decision gate remains.
 
@@ -249,11 +246,11 @@ For a meaningful design change, update the affected final-truth documents, revie
 
 # Developer Context and Agent Context
 
-Bonsai separates intentionally supplied developer guidance from operational knowledge learned during work.
+Bonsai keeps human-supplied guidance separate from operational knowledge learned while working.
 
 ## Developer context
 
-`developer_context.md` is human-owned reusable guidance such as coding preferences, testing philosophy, local conventions, SDK locations, runtime constraints, or AI working preferences.
+`developer_context.md` is human-owned guidance supplied intentionally to Bonsai. It can describe coding preferences, testing philosophy, local conventions, required tools or SDKs, runtime constraints, and AI working preferences.
 
 Bonsai Home mode may use both:
 
@@ -262,13 +259,17 @@ $BONSAI_HOME/developer_context.md
 repo/.bonsai/developer_context.md
 ```
 
-Repository-specific guidance is more specific when the two overlap. Developer context does not override approved project requirements or architecture.
+Bonsai Home context applies broadly; repository context is more specific when the two overlap. Developer context does not override approved project requirements or architecture.
 
 ## Agent context
 
-`agent_context.md` is agent-owned durable operational memory. Examples include a reliable build command, a source checkout location, an environment-specific working rule, or which reusable code maps matter to a project.
+`agent_context.md` is agent-owned reusable knowledge discovered during actual work.
 
-Possible scopes are:
+For example, an agent might discover that a repository requires `python3` rather than `python`, identify the reliable build or test command, locate an external source checkout, learn an environment-specific tool constraint, or determine which reusable code maps are useful to a project.
+
+Instead of rediscovering that information in later sessions, Bonsai preserves useful conclusions in agent context and reuses them when relevant.
+
+Agent context may be maintained at Bonsai Home, repository, or project scope depending on where the knowledge applies:
 
 ```text
 $BONSAI_HOME/agent_context.md
@@ -276,9 +277,11 @@ repo/.bonsai/agent_context.md
 repo/.bonsai/projects/<project>/agent_context.md
 ```
 
-Use the narrowest scope that remains reusable.
+Bonsai manages that scope as part of maintaining operational memory. Users normally do not need to create, organize, or edit agent-context files.
 
-Agent context stores the useful conclusion, not troubleshooting history. Active project or map identity does not belong there, and secrets must never be stored there.
+Agent context contains concise reusable conclusions, not troubleshooting history or session transcripts. Active project or map identity does not belong there, and secrets must never be stored there.
+
+Like other Bonsai context, agent context is loaded when relevant rather than automatically increasing every session's startup cost.
 
 ---
 
@@ -331,7 +334,7 @@ When enough context is already known, Bonsai derives sensible defaults for the c
 For deliberate Web UI preparation or calibration before mapping, use:
 
 ```text
-$BONSAI_HOME/prompts/create_map.md
+<bonsai-home>/prompts/create_map.md
 ```
 
 That workflow prepares the repository-local map workspace and optional `map_calibration.md`. It does not generate the reusable code map itself. Mapping happens later against actual source.
@@ -349,7 +352,7 @@ Mapping is executed as bounded, human-selected focuses. Once a focus is authoriz
 
 ## Project associations
 
-A project can record the reusable maps that are useful to it in project `agent_context.md`:
+Bonsai can associate reusable maps with a project when they are useful to that work. The association is stored in project `agent_context.md`:
 
 ```text
 Useful code maps:
@@ -357,7 +360,7 @@ Useful code maps:
 - library-b
 ```
 
-Manage Code Maps can add or remove these associations. The association changes only project operational context; it does not modify the generated map.
+Use **Manage Code Maps** to add or remove an association. Bonsai maintains the agent-context entry; the association does not modify the generated map.
 
 ## Source alignment
 
@@ -414,12 +417,12 @@ Do not paste a previous chat summary into every fresh session. Durable Bonsai me
 A normal project rhythm is:
 
 1. Design or revise product/architecture in a Web UI AI conversation when needed.
-2. Preserve mature design with `prompts/create_project.md` or update the existing human-owned final truth.
+2. Preserve mature design with `<bonsai-home>/prompts/create_project.md` or update the existing human-owned final truth.
 3. Start the coding agent with `Read .bonsai/start.md and follow its instructions.`
 4. Review the current state and any required planning or approval gate.
 5. Execute one authorized bounded action.
 6. Let Bonsai load deeper project truth, maps, context, or skills only when they become relevant.
-7. Preserve reusable operational discoveries in agent context.
+7. Let Bonsai preserve reusable operational discoveries in the appropriate agent-context scope.
 8. Stop before material final-truth revisions.
 9. Preserve out-of-scope observations only when you choose to keep them.
 10. Let Bonsai reconcile roadmap and resume state at natural boundaries.
@@ -447,7 +450,7 @@ For mapping work, the same lifecycle applies at bounded mapping-unit boundaries 
                └────────────────┼────────────────┘
                                 │
                                 ▼
-              $BONSAI_HOME/prompts/implementation.md
+              <bonsai-home>/prompts/implementation.md
                                 │
                                 ▼
                        Bonsai workflow

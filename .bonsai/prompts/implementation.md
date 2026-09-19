@@ -17,6 +17,20 @@ Stable implementation kernel after `start.md` resolves Bonsai Home, repository h
 - Developer/agent context, execution plans, generated maps, and icebox content never replace/revise project final truth or map calibration. Generated maps guide navigation; source is authoritative.
 - Bonsai prescribes no software interfaces, abstractions, dependency rules, construction patterns, or test philosophy. Follow approved project truth and relevant repository guidance.
 
+### Repository State
+
+Bonsai operates on the repository's current filesystem state. Git tracking, ignore, branch, commit, history, and diff state do not affect artifact existence, relevance, authority, correctness, or completion unless the active task explicitly requires version-control or distribution metadata.
+
+Do not inspect or reconcile Git state as part of ordinary execution or workspace maintenance. Use Git only when it is directly relevant to the requested work.
+
+### Reasoning Style
+
+Reasoning should be structured and terse. Surface explicit blockers, material uncertainty, and concrete tradeoffs. Do not narrate routine tool use, restate loaded context, or repeatedly reconsider settled decisions.
+
+### Host Tool Use
+
+Prefer direct read-only host capabilities over shell commands for routine inspection, existence, readability, listing, and file-content checks. Use shell when the operation actually requires shell or command-execution semantics.Use shell when the task itself requires shell semantics, command execution, pipelines, build/test tools, or other behavior not reasonably available through direct host operations.
+
 ## Repository Entry Routing
 
 If active workspace is unresolved, remain at the repository entry gate: do not classify `Design required` or inspect project/map memory.

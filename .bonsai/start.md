@@ -26,13 +26,13 @@ A repository-local embedded installation remains valid even when its `.bonsai` a
 
 ## Resolve Identity
 
-Use host tools for deterministic facts when available.
+Resolve Bonsai Home, repository identity, and workspace candidates using ordinary read-only host filesystem/environment capabilities when available. Do not use a generated shell script or compound shell command merely to perform existence, readability, or directory-enumeration checks.
 
 1. **Repository home:** Parent of the `.bonsai` containing this file. Never substitute process working directory when they differ.
-2. **Bonsai Home:** Bootstrap-valid iff `specification.md` and `prompts/implementation.md` exist and are accessible. Check existence/accessibility only; do not read `specification.md`.
-   - Valid `BONSAI_HOME` defined: use it.
-   - Otherwise, valid repository-local `.bonsai`: use it as embedded standard.
-   - Otherwise stop and ask the human to configure or identify Bonsai Home. Report a defined but invalid `BONSAI_HOME`; do not broadly search for another installation, substitute a one-session path for missing environment configuration, or persist a guessed location.
+2. **Bonsai Home:** Bootstrap-valid iff `prompts/implementation.md` exists and is accessible.
+    - Valid `BONSAI_HOME` defined: use it.
+    - Otherwise, valid repository-local `.bonsai`: use it as embedded standard.
+    - Otherwise stop and ask the human to configure or identify Bonsai Home. Report a defined but invalid `BONSAI_HOME`; do not broadly search for another installation, substitute a one-session path for missing environment configuration, or persist a guessed location.
 3. **Workspace candidates:** Enumerate only established immediate child workspaces of `<repository-home>/.bonsai/projects/` and `<repository-home>/.bonsai/maps/`, each in stable lexical order. A child is established only when both `agent_plan.md` and `agent_state.md` exist and are accessible. Keep types separate. The containing `projects/` or `maps/` path determines workspace type. Never infer a workspace from unrelated files or generated map output.
 4. **Active workspace:** Resolve at most one:
    - Explicit project: select `<repository-home>/.bonsai/projects/<project>` only if that immediate directory is an established project workspace; otherwise stop and report whether it is absent or present but incomplete, then ask for a corrected name or choice from available established projects.

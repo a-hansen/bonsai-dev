@@ -18,7 +18,7 @@ specification.md
 
 from the Bonsai Home you intend to modify, then describe the change you want to make.
 
-`specification.md` is the authoritative description of Bonsai's current behavior and operating model. It should provide enough context for the design AI to determine what additional framework artifacts are relevant.
+`specification.md` is the authoritative description of Bonsai's current behavior and operating model. It should provide enough context for the design AI to determine what additional framework artifacts are relevant. The `bonsai-dev` project memory describes the change being developed and its implementation constraints; it should not duplicate framework behavior already owned by `specification.md`.
 
 Do not preload the entire Bonsai standard.
 
@@ -111,9 +111,7 @@ Review the generated human-owned project truth before adopting it, then extract 
 
 The design workflow does not create the detailed Phase 1 implementation plan.
 
-If design establishes useful generated code maps, `create_project.md` may seed their identities in the project's
-canonical `Useful code maps:` list. Later additions and removals go through **Manage Code Maps** and change only
-project `agent_context.md`.
+If design establishes useful generated code maps, `create_project.md` may associate them with the project. Later associations are managed through **Manage Code Maps**; Bonsai maintains the corresponding project operational context.
 
 ## Starting Implementation
 
@@ -125,9 +123,9 @@ Read .bonsai/start.md and follow its instructions. Active project: bonsai-dev.
 
 Bonsai should reconstruct the current project state from durable memory.
 
-For a newly designed body of work, implementation normally begins by drafting and reviewing the Phase 1 plan.
+If this is a newly designed body of work, implementation normally begins by drafting and reviewing the Phase 1 plan. If work is already in progress, the same startup prompt resumes from durable state.
 
-The coding agent drafts:
+For new work, the coding agent drafts:
 
 ```text
 plan/agent_plan_phase_1.md
@@ -163,11 +161,7 @@ Completed-work history may be preserved separately from living project truth. Cu
 
 ## Context Discipline
 
-The same context principle used by Bonsai implementation applies when designing Bonsai itself:
-
-> Start with the smallest authoritative context and load additional context only when it becomes useful.
-
-For framework design, that normally means:
+When designing Bonsai, start with the smallest authoritative context and load additional context only when it becomes useful:
 
 ```text
 specification.md
@@ -179,4 +173,4 @@ specific framework artifact
 source, maps, or other context when needed
 ```
 
-This keeps design sessions focused while still allowing the AI to inspect the exact current behavior relevant to the change.
+This keeps design sessions focused without sacrificing access to the exact current behavior relevant to the change.

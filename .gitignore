@@ -15,7 +15,7 @@ build/
 #bonsai
 .bonsai/agent_context.md
 .bonsai/developer_context.md
-.bonsai-backups/
+archive/
 .bonsai/maps
 external-src/
 tests/

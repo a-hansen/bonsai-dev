@@ -31,7 +31,7 @@ Keep these concepts distinct even when Embedded Bonsai colocates them physically
 
 | Role | Owned content |
 | --- | --- |
-| Map workspace | `workspace.md`, `agent_plan.md`, `agent_state.md`, optional `plan/agent_plan_<scope>.md` |
+| Map workspace | `agent_plan.md`, `agent_state.md`, optional `plan/agent_plan_<scope>.md` |
 | Human calibration | `map_calibration.md` |
 | Generated map | `code_map.md`, subsystem/API maps, optional generated lookup/index artifacts |
 | Source/input | repository checkout, source tree/archive, supplied artifacts |
@@ -113,7 +113,6 @@ A repository-local child is only a **workspace candidate** until workspace entry
 In Embedded Bonsai, `<repository-home>/.bonsai/maps/<map>/` may physically hold both workspace and generated output. Classify by role:
 
 ```text
-workspace.md                     # workspace entry
 agent_plan.md                    # map-wide roadmap
 agent_state.md                   # current resume state
 map_calibration.md               # optional human-owned input
@@ -223,7 +222,7 @@ Available only when the invoking context supplies one active `project` workspace
 
 Before offering Add/Remove:
 
-1. Revalidate project home as one immediate child of `<repository-home>/.bonsai/projects/`; readable `workspace.md` must contain exactly one `Type: project` and one `Route: Project workspace behavior`.
+1. Revalidate project home as one immediate child of `<repository-home>/.bonsai/projects/` with readable `agent_plan.md` and `agent_state.md`; the structural path establishes project type.
 2. Resolve active generated-map store independently. A selectable map is one immediate child with readable agent-owned `code_map.md`.
 3. Load `skills/agent_context.md`; read only the selected project's `agent_context.md` if present. Canonical `Useful code maps:` entries are project selections, not usability proof.
 4. **Add:** list usable, unselected maps. **Remove:** list only selected identities still usable. Stable lexical order; accept corresponding number.
@@ -253,23 +252,22 @@ The name must be one directory component. Reject empty, `.`, `..`, absolute path
 
 "Unused" means no valid or partial workspace already owns that name; a same-name generated map may exist.
 
-Preflight exact target without mutation. If it exists, inspect enough items for safety. Embedded overlap may make an existing same-name generated directory correct. Permit creation there only when `workspace.md`, `agent_plan.md`, and `agent_state.md` are all absent and nothing makes ownership ambiguous. Preserve `code_map.md`, generated artifacts, `map_calibration.md`, and all other colocated files unchanged. If any required workspace file already exists without a complete valid workspace, stop as conflicting; creation does not overwrite, complete, or repair it.
+Preflight exact target without mutation. If it exists, inspect enough items for safety. Embedded overlap may make an existing same-name generated directory correct. Permit creation there only when `agent_plan.md` and `agent_state.md` are both absent and nothing makes ownership ambiguous. Preserve `code_map.md`, generated artifacts, `map_calibration.md`, and all other colocated files unchanged. If either required workspace file already exists without a complete valid workspace, stop as conflicting; creation does not overwrite, complete, or repair it.
 
-Before mutation, report name, repository-local target, source identity, initial scope, exact three files to create, every known preserved colocated item, and whether target overlaps generated-map store. Load `skills/menu.md`; offer creation of exactly that workspace, revision, discussion, or cancellation; wait for explicit confirmation.
+Before mutation, report name, repository-local target, source identity, initial scope, the exact two files to create, every known preserved colocated item, and whether target overlaps generated-map store. Load `skills/menu.md`; offer creation of exactly that workspace, revision, discussion, or cancellation; wait for explicit confirmation.
 
 After approval, create only:
 
 ```text
-<repository-home>/.bonsai/maps/<map>/workspace.md
 <repository-home>/.bonsai/maps/<map>/agent_plan.md
 <repository-home>/.bonsai/maps/<map>/agent_state.md
 ```
 
-`workspace.md` is a small declarative map entry with exactly one `Type: map` and one `Route: Map workspace behavior`. `agent_plan.md` is the map-wide roadmap for approved objective/scope. `agent_state.md` records current scope, source/map identity evidence, readiness, one exact next step or concrete blocker, success condition, and only resume-critical files.
+The containing `maps/` path establishes map type. `agent_plan.md` is the map-wide roadmap for approved objective/scope. `agent_state.md` records current scope, source/map identity evidence, readiness, one exact next step or concrete blocker, success condition, and only resume-critical files.
 
 Do not add project phases/passes/final-truth/contract state or active-workspace pointers. Set `Ready to execute` only when the action has sufficient evidence and no independent gate; otherwise record the concrete `Blocked` condition.
 
-Do not create/modify `map_calibration.md`, generated-map output, scoped plans, or `plan/` as a side effect. If all three required files cannot be created without changing a pre-existing item, stop and report the partial result rather than claiming a valid workspace.
+Do not create/modify `map_calibration.md`, generated-map output, scoped plans, or `plan/` as a side effect. If both required files cannot be created without changing a pre-existing item, stop and report the partial result rather than claiming a valid workspace.
 
 Validate the completed workspace, activate it only in current-session context, then use **Select or Resume a Map Workspace** behavior below.
 
@@ -279,8 +277,8 @@ For resume, list candidates in stable lexical order. When selection is needed, u
 
 Validate in this order:
 
-1. readable `workspace.md` with exactly one unambiguous `Type: map` and one `Route: Map workspace behavior`;
-2. readable `agent_state.md` and `agent_plan.md`;
+1. confirm the selected directory is one immediate child of `<repository-home>/.bonsai/maps/`; the structural path establishes map type;
+2. require readable `agent_state.md` and `agent_plan.md`;
 3. read state first, plan second; compare overlapping mapping scope, roadmap status, readiness, blocker, active scoped-plan identity, exact next step, and completion claims;
 4. read one flat `plan/agent_plan_<scope>.md` only when state names it or it is required to establish the current gate; reject missing named plan or any path outside the workspace;
 5. classify missing required files, conflicting common truth, unsafe exact step, or unsupported completion as `Blocked` rather than guessing/repairing.
@@ -476,7 +474,6 @@ After proposal approval:
 2. Automatic creation writes only:
 
    ```text
-   <repository-home>/.bonsai/maps/<map>/workspace.md
    <repository-home>/.bonsai/maps/<map>/agent_plan.md
    <repository-home>/.bonsai/maps/<map>/agent_state.md
    ```

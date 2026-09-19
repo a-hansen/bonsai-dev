@@ -126,10 +126,10 @@ A repository-local embedded installation remains valid even when its `.bonsai` a
 
 ## Resolve Identity
 
-Use host tools for deterministic facts when available.
+Resolve Bonsai Home, repository identity, and workspace candidates using ordinary read-only host filesystem/environment capabilities when available. Do not use a generated shell script or compound shell command merely to perform existence, readability, or directory-enumeration checks.
 
 1. **Repository home:** Parent of the `.bonsai` containing this file. Never substitute process working directory when they differ.
-2. **Bonsai Home:** Bootstrap-valid iff `specification.md` and `prompts/implementation.md` exist and are accessible. Check existence/accessibility only; do not read `specification.md`.
+2. **Bonsai Home:** Bootstrap-valid iff `prompts/implementation.md` exists and is accessible.
     - Valid `BONSAI_HOME` defined: use it.
     - Otherwise, valid repository-local `.bonsai`: use it as embedded standard.
     - Otherwise stop and ask the human to configure or identify Bonsai Home. Report a defined but invalid `BONSAI_HOME`; do not broadly search for another installation, substitute a one-session path for missing environment configuration, or persist a guessed location.

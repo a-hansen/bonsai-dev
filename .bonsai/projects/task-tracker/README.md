@@ -1,6 +1,6 @@
 # Task Tracker Example Project
 
-This is Bonsai's canonical Getting Started project. It demonstrates the v2 workflow with a small Java command-line application while keeping one reviewable source of project truth.
+This is Bonsai's canonical Getting Started project. It demonstrates the current workflow with a small Java command-line application while keeping one reviewable source of project truth.
 
 The project can be used in two ways:
 
@@ -14,7 +14,7 @@ The included memory is intentionally at a clean post-design checkpoint. Requirem
 Start a Web UI design conversation with the Task Tracker prompt below. When the design is mature, use Bonsai's project-memory workflow:
 
 ```text
-$BONSAI_HOME/prompts/create_project.md
+<bonsai-home>/prompts/create_project.md
 ```
 
 That workflow creates a repository-root package with the canonical `.bonsai/start.md` bootstrap and a project workspace under `.bonsai/projects/<project>/`.
@@ -52,7 +52,7 @@ From the repository root, start a fresh coding-agent session with:
 Read .bonsai/start.md and follow its instructions. Active project: task-tracker.
 ```
 
-The agent should resolve the active Bonsai Home, select `task-tracker`, read `requirements.md`, `architecture.md`, `agent_plan.md`, and `agent_state.md`, and report the normal startup gate.
+The agent should resolve the active Bonsai Home, select `task-tracker`, read `agent_state.md` and `agent_plan.md`, and report the normal startup gate. Requirements, architecture, and the phase-plan template load only when the authorized planning action needs them.
 
 The initial checkpoint is deliberately waiting on Phase 1 planning:
 
@@ -60,6 +60,6 @@ The initial checkpoint is deliberately waiting on Phase 1 planning:
 - Mode: Two-pass contract-first
 - Exact next step: draft `plan/agent_plan_phase_1.md` for human review
 
-After authorization, the agent creates the Phase 1 plan from `$BONSAI_HOME/templates/plan_phase_template.md`, updates `agent_plan.md` and `agent_state.md`, and stops at the phase-plan approval gate. Pass A contract review and Pass B implementation follow only after their required approvals.
+After authorization, the agent creates the Phase 1 plan from `<bonsai-home>/templates/plan_phase_template.md`, updates `agent_plan.md` and `agent_state.md`, and stops at the phase-plan approval gate. Pass A contract review and Pass B implementation follow only after their required approvals.
 
 The checked-in example is project memory, not a completed application.

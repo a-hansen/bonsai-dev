@@ -2,7 +2,7 @@
 
 **Structured project memory and execution workflow for AI-assisted software development.**
 
-Current release: **v2.0.0**
+Version: **v2.0.0**
 
 Bonsai helps AI stay useful across the life of a real software project, not just for one chat session.
 
@@ -30,14 +30,15 @@ For the complete operating guide, see [`.bonsai/README.md`](.bonsai/README.md). 
 
 Bonsai 2.0 is a redesign of the 1.x workflow. The main changes are:
 
-- **Reusable Bonsai Home** through `BONSAI_HOME`, allowing one cloned standard to serve many repositories.
-- **An authoritative Bonsai specification** that defines framework behavior while prompts, skills, templates, and bootstrap files implement it.
-- **Structural project and map workspaces**, with workspace type determined by `.bonsai/projects/<name>/` or `.bonsai/maps/<name>/` rather than a workspace manifest.
-- **Fresh-session one-step continuation** that reconstructs canonical state instead of carrying volatile chat summaries forward.
-- **Integrated reusable code maps** with resumable mapping work and source-backed create/extend/refresh/rebuild lifecycles.
-- **Lazy context loading**, so adding more durable knowledge does not automatically increase every session's context cost.
+* **Reusable Bonsai Home** through `BONSAI_HOME`, allowing one cloned Bonsai installation to serve many repositories and provide shared resources such as code maps.
+* **Fresh-session continuation** that reconstructs project state and automatically continues the next authorized step when no human decision is required.
+* **Persistent environment knowledge** through `agent_context.md`, allowing Bonsai to retain useful repository and development-environment lessons instead of rediscovering them in later sessions.
+* **Integrated reusable code maps** that give agents durable knowledge of unfamiliar codebases, with resumable mapping and create, extend, refresh, and rebuild workflows.
+* **Lower context overhead** through lazy loading, so Bonsai loads detailed workflows and supporting material only when they are actually needed.
+* **Standardized project memory** through `projects/main` for normal repositories, with named projects available when multiple independent bodies of work are needed.
+* **Stronger human control across sessions**, preserving approval gates, final-truth ownership, and explicitly authorized work even when execution continues in a fresh session.
 
-Bonsai 2.0 is also self-hosting: continued Bonsai development uses Bonsai's own persistent project memory and workflow.
+Bonsai 2.0 is also self-hosting: continued Bonsai development uses Bonsai's own persistent project memory, code maps, operational context, and workflow.
 
 ---
 
@@ -57,7 +58,7 @@ BONSAI_HOME=<path-to-bonsai-dev>/.bonsai
 
 Make the variable available to the AI coding environments where you use Bonsai. The exact environment-variable setup is host-specific.
 
-A single Bonsai Home can serve many repositories. Each source repository keeps only its local bootstrap and local project/map memory, while the shared Bonsai standard, reusable context, and generated code maps live in the cloned Bonsai repository.
+A single Bonsai Home can serve many repositories. Each source repository keeps its local bootstrap plus repository and project/map memory, while the shared Bonsai standard, reusable context, and generated code maps live in the cloned Bonsai repository.
 
 To update Bonsai later:
 
@@ -79,7 +80,7 @@ Product and architecture design often works best in a normal Web UI AI conversat
 When the design is mature enough to preserve, use:
 
 ```text
-$BONSAI_HOME/prompts/create_project.md
+<bonsai-home>/prompts/create_project.md
 ```
 
 Paste that prompt into the design conversation. Bonsai produces a repository-ready package containing `.bonsai/start.md` and durable project memory.
@@ -207,7 +208,7 @@ Normal map operations include **Create**, **Extend**, **Refresh**, and **Rebuild
 To begin code mapping from a Bonsai session, use **Manage Code Maps** or ask Bonsai to create a code map for the current source. For deliberate Web UI calibration before mapping, use:
 
 ```text
-$BONSAI_HOME/prompts/create_map.md
+<bonsai-home>/prompts/create_map.md
 ```
 
 See [`.bonsai/README.md`](.bonsai/README.md) for the full mapping workflow.
@@ -248,7 +249,7 @@ Read .bonsai/start.md and follow its instructions.
 
 ### Task Tracker
 
-The included Task Tracker is a fuller example of Bonsai project memory around a small application. It shows requirements, architecture, planning, and execution state attached to real application code.
+The included Task Tracker is a fuller example of Bonsai project memory around a small application. It shows requirements, architecture, planning, and execution state for a concrete application that has not yet been implemented.
 
 See [Task Tracker Example](.bonsai/projects/task-tracker/README.md).
 

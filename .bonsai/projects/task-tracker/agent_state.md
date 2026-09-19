@@ -8,7 +8,6 @@
 **Current Phase:** Task Behavior Contract
 **Active Phase Plan File:** `None`
 **Phase Plan Status:** `None`
-**Current Phase Pass:** Phase Planning
 **Phase Execution Mode:** Two-pass contract-first
 **Execution Readiness:** Phase planning required
 **Current Objective:** Draft the detailed Phase 1 plan and stop for human review before contract or implementation work.
