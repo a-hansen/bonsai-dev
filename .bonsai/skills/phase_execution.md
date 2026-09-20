@@ -258,13 +258,13 @@ Record all resume-critical truth, then load `skills/menu.md`. Normally present:
 
 If this session itself entered through fresh-session continuation and no substantive work has occurred since entry, omit choice 2 at the first resulting Continuation Gate unless explicitly requested. Keep that fact session-local.
 
-If fresh-session continuation is selected, starting the session remains a human action. Provide:
+If fresh-session continuation is selected, starting the session remains a human action. Always preserve the active project identity in the pointer. Provide:
 
 ```text
-Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate.
+Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate. Active project: <project>.
 ```
 
-Add `Active project: <project>` only when startup identity rules would not otherwise resolve the same project.
+Do not discard known project identity merely because startup could deterministically infer the same project.
 
 This startup request authorizes exactly one next action after canonical state reconstruction. It may authorize planning when planning is that action; it never authorizes a subsequent action or bypasses required planning approval, review, final-truth, contract, design, or blocker gates. Then stop.
 

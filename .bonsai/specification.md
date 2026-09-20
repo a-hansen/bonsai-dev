@@ -803,23 +803,21 @@ durable memory.
 
 ## 7.5 Ordinary resume and Exit for now
 
-Project ordinary resume:
+Ordinary resume always preserves the active workspace identity already known at handoff.
+
+Project:
 
 ```text
-Read .bonsai/start.md and follow its instructions.
+Read .bonsai/start.md and follow its instructions. Active project: <project>.
 ```
 
-Append when needed for deterministic selection:
-
-```text
-Active project: <project>.
-```
-
-Map ordinary resume always uses explicit identity:
+Map:
 
 ```text
 Read .bonsai/start.md and follow its instructions. Active map: <map>.
 ```
+
+Do not discard known project identity merely because startup could deterministically infer the same project.
 
 **Exit for now** preserves the current durable execution condition and presents the applicable
 ordinary startup pointer introduced by wording equivalent to:
@@ -833,24 +831,21 @@ resolves the action/gate. Do not change durable state merely to record that the 
 
 ## 7.6 Fresh-session auto-execute
 
-Use:
+Fresh-session auto-execute always preserves the active workspace identity already known at handoff.
+
+Project:
 
 ```text
-Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate.
+Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate. Active project: <project>.
 ```
 
-Append project identity only when needed; append map identity for map work:
+Map:
 
 ```text
-Active project: <project>.
-Active map: <map>.
+Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate. Active map: <map>.
 ```
 
-Example:
-
-```text
-Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate. Active map: niagara4.
-```
+Do not omit project identity merely because startup could deterministically infer the same project.
 
 The request must not embed rendered phase, mapping unit, pass, readiness, approval state, or
 next-step text. The new session reconstructs canonical durable state and executes the one exact
@@ -1489,101 +1484,102 @@ mandate for a particular test harness.
 8. Project auto-execute reconstruction does not bypass project gates.
 9. Map auto-execute reconstruction does not bypass real human gates/blockers.
 10. `Exit for now` changes no durable state merely because the human exits.
-11. Map resume prompts include explicit `Active map: <map>`.
+11. Project resume and fresh-session prompts include explicit `Active project: <project>`.
+12. Map resume and fresh-session prompts include explicit `Active map: <map>`.
 
 ## Map planning
 
-12. Small map may execute entirely from `agent_plan.md`.
-13. Large mapping unit may create `plan/agent_plan_<scope>.md`.
-14. Larger sub-scope may create another flat scoped plan; no nested plan directories.
-15. `agent_state.md` identifies active detailed plan and exact next step.
-16. Detailed map plans do not become project phases or automatically create phase-review gates.
+13. Small map may execute entirely from `agent_plan.md`.
+14. Large mapping unit may create `plan/agent_plan_<scope>.md`.
+15. Larger sub-scope may create another flat scoped plan; no nested plan directories.
+16. `agent_state.md` identifies active detailed plan and exact next step.
+17. Detailed map plans do not become project phases or automatically create phase-review gates.
 
 ## Map storage and ownership
 
-17. Map-workspace execution memory remains repository-local.
-18. Reusable generated map output remains in the active map store.
-19. Embedded Bonsai may physically overlap those locations without confusing roles; generated map
+18. Map-workspace execution memory remains repository-local.
+19. Reusable generated map output remains in the active map store.
+20. Embedded Bonsai may physically overlap those locations without confusing roles; generated map
     output alone does not establish a resumable map workspace without shared execution memory.
-20. Legacy generated-map state is absent from the active execution model; map
+21. Legacy generated-map state is absent from the active execution model; map
     `agent_plan.md`/`agent_state.md` own continuation.
-21. `map_calibration.md` remains human-owned input, not execution state.
+22. `map_calibration.md` remains human-owned input, not execution state.
 
 ## Project-map associations
 
-22. A project can add/remove useful map selections in project `agent_context.md`.
-23. Association changes do not rebuild, move, or delete generated maps.
-24. Future project sessions can use selections without rediscovering the full map store.
+23. A project can add/remove useful map selections in project `agent_context.md`.
+24. Association changes do not rebuild, move, or delete generated maps.
+25. Future project sessions can use selections without rediscovering the full map store.
 
 ## Creation workflows
 
-25. `create_project.md` creates project memory under `.bonsai/projects/<project>/` plus repository
+26. `create_project.md` creates project memory under `.bonsai/projects/<project>/` plus repository
     bootstrap for initial synthesis; the path establishes project workspace type.
-26. `create_map.md` creates `agent_plan.md`, `agent_state.md`, optional `map_calibration.md`, and
+27. `create_map.md` creates `agent_plan.md`, `agent_state.md`, optional `map_calibration.md`, and
     repository bootstrap under `.bonsai/maps/<map>/`; the path establishes map workspace type.
-27. `create_map.md` does not generate `code_map.md`, subsystem maps, or lookup tables.
+28. `create_map.md` does not generate `code_map.md`, subsystem maps, or lookup tables.
 
 ## Code-map creation interaction
 
-28. Create Code Map may create/reuse the corresponding local map workspace as part of the same
+29. Create Code Map may create/reuse the corresponding local map workspace as part of the same
     approved map action.
-29. Automatic workspace creation preserves existing generated output, calibration, supplied source,
+30. Automatic workspace creation preserves existing generated output, calibration, supplied source,
     and unknown colocated files.
-30. A partial or ownership-ambiguous same-name workspace blocks automatic repair/overwrite.
-31. A newly usable map may be associated with the active project only when that association was part
+31. A partial or ownership-ambiguous same-name workspace blocks automatic repair/overwrite.
+32. A newly usable map may be associated with the active project only when that association was part
     of the approved action or separately selected later.
 
 ## Map completion/reactivation
 
-32. Map completion requires exhausted current scope plus reconciled generated output/source
+33. Map completion requires exhausted current scope plus reconciled generated output/source
     identity.
-33. Completing a scoped map plan returns to the map-wide roadmap, not a project-style phase
+34. Completing a scoped map plan returns to the map-wide roadmap, not a project-style phase
     transition.
-34. A completed map workspace may reactivate for real source change, explicit maintenance, or
+35. A completed map workspace may reactivate for real source change, explicit maintenance, or
     expanded scope without destroying prior generated output.
-35. Handoff does not write project phases, passes, contracts, project final-truth state, icebox
+36. Handoff does not write project phases, passes, contracts, project final-truth state, icebox
     state, active workspace identity, or session history into map memory.
 
 ## Mapping-unit authorization
 
-36. Selecting a bounded focus updates durable map execution memory without substantive source
+37. Selecting a bounded focus updates durable map execution memory without substantive source
     inspection or generated-output mutation.
-37. Once the focus is one executable exact-next-action, current/fresh continuation authorizes the
+38. Once the focus is one executable exact-next-action, current/fresh continuation authorizes the
     complete mapping unit, not discovery alone.
-38. Source discovery may resolve exact standard Markdown targets without another gate.
-39. A cross-cutting focus may update standard layers in several existing subsystems without a
+39. Source discovery may resolve exact standard Markdown targets without another gate.
+40. A cross-cutting focus may update standard layers in several existing subsystems without a
     same-named standalone subsystem.
-40. Discovery may justify `api_pub.md`, `api_ext.md`, or a new subsystem map inside the selected
+41. Discovery may justify `api_pub.md`, `api_ext.md`, or a new subsystem map inside the selected
     focus without second approval merely because paths were unpredictable.
-41. Material source-scope expansion, materially different source/map identity, destructive work,
+42. Material source-scope expansion, materially different source/map identity, destructive work,
     generated-map ownership restructuring, unrelated mapping work, or insufficient evidence stops at
     the applicable human gate.
-42. Creating/materially expanding optional lookup/index artifacts remains separately gated and is
+43. Creating/materially expanding optional lookup/index artifacts remains separately gated and is
     not silently absorbed into standard mapping output.
-43. Mapping handoff normally follows generated-map production/validation, not discovery, unless
+44. Mapping handoff normally follows generated-map production/validation, not discovery, unless
     discovery reaches a blocker/mandatory human decision.
 
 ## Extension, maintenance, and project recommendations
 
-44. Extend Code Map reuses/reactivates the existing compatible workspace and does not duplicate a
+45. Extend Code Map reuses/reactivates the existing compatible workspace and does not duplicate a
     map merely because coverage expands.
-45. A request to map another subsystem becomes a bounded focus; discovery determines justified
+46. A request to map another subsystem becomes a bounded focus; discovery determines justified
     architectural ownership rather than blindly creating a same-named artifact.
-46. A human may request a cross-cutting focus or ask Bonsai to review current coverage and suggest
+47. A human may request a cross-cutting focus or ask Bonsai to review current coverage and suggest
     additions before selecting the next unit.
-47. When Bonsai materially changes source represented by a known relevant map during authorized
+48. When Bonsai materially changes source represented by a known relevant map during authorized
     project work, it surfaces bounded maintenance at a natural project boundary when mapped
     knowledge is affected.
-48. Routine private implementation changes that do not materially alter mapped knowledge do not
+49. Routine private implementation changes that do not materially alter mapped knowledge do not
     trigger maintenance merely because files changed.
-49. If required project work establishes reusable, non-obvious, architecturally significant source
+50. If required project work establishes reusable, non-obvious, architecturally significant source
     knowledge that is inadequately mapped, Bonsai may recommend map creation/extension.
-50. Project implementation does not inspect unrelated source merely to seek mapping opportunities.
-51. A maintenance/opportunity recommendation does not mutate maps or silently expand project scope
+51. Project implementation does not inspect unrelated source merely to seek mapping opportunities.
+52. A maintenance/opportunity recommendation does not mutate maps or silently expand project scope
     before human acceptance.
-52. Accepted maintenance/recommendation enters the normal map-workspace/bounded-unit workflow and
+53. Accepted maintenance/recommendation enters the normal map-workspace/bounded-unit workflow and
     may use current/fresh-session continuation.
-53. Combine closely related mapping observations; do not repeatedly resurface a declined/deferred
+54. Combine closely related mapping observations; do not repeatedly resurface a declined/deferred
     suggestion during the same work merely because it remains possible.
-54. Refresh preserves intended map identity/coverage where possible; rebuild remains separately
+55. Refresh preserves intended map identity/coverage where possible; rebuild remains separately
     gated for destructive replacement or broad ownership restructuring.
