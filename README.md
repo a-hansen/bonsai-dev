@@ -2,6 +2,8 @@
 
 **Structured project memory and execution workflow for serious AI-assisted software development.**
 
+Already using Bonsai? See [What's New in 2.0](#whats-new-in-20).
+
 AI coding tools are remarkably capable inside a session. The harder problem is keeping them useful across the life of a real software project.
 
 Bonsai keeps the project knowledge that matters in structured Markdown close to the code, so a fresh AI session can reconstruct what it needs without relying on chat history or another hand-written recap.
@@ -280,6 +282,8 @@ Bonsai 2.0 is a redesign of the 1.x workflow. The main changes are:
 * **Standardized project memory** through `projects/main` for normal repositories, with named projects available when multiple independent bodies of work are needed.
 
 Bonsai 2.0 is also self-hosting: continued Bonsai development uses Bonsai's own persistent project memory, code maps, operational context, and workflow.
+
+For the complete change list and release notes, see the [Bonsai 2.0.0 GitHub release](https://github.com/a-hansen/bonsai-dev/releases/tag/v2.0.0).
 
 ---
 
