@@ -1,53 +1,47 @@
-# AI Icebox
+# Bonsai Icebox
 
 **Project:** <Project name>  
-**[Meta: Agent-maintained | Human-triaged Deferred Observations | Non-authoritative | Not an Approved Backlog]**
+**[Meta: Human-owned | Human-triaged Deferred Observations | Non-authoritative | Not an Approved Backlog]**
 
 ## Purpose
 
-Preserve selected out-of-scope observations that the human has explicitly chosen to remember for possible
-future consideration.
+Preserve selected out-of-scope observations that the human explicitly chose to retain for possible later triage.
 
-The icebox is not an automatic observation log.
-
-Agents may notice out-of-scope issues during design or implementation, but must not write them here until
-the human chooses to preserve or defer them.
+The icebox is not an automatic observation log, requirement source, architecture source, roadmap, or execution
+plan. Preservation records that an item may be worth reconsidering; it does not authorize implementation.
 
 Do not create a project `icebox.md` merely because this template exists. Create it only when the human first
-chooses to preserve an observation, and instantiate the first approved observation as `ICE-001`.
-
-An item in the icebox is worth remembering, not approved for execution.
+authorizes preservation, and replace the entry below with that observation as `ICE-001`.
 
 ## Entries
 
 ### ICE-001 — <Short observation title>
 
 **Status:** <Deferred | Promoted | Rejected | Superseded>  
-**Observed During:** <Design synthesis | Phase <N> | Pass A | Pass B | Other context>  
+**Observed During:** <Phase, pass, workflow, or other concise context>  
 **Observation:** <Concise independently understandable description>  
 **Why Keep It:** <Why the human chose to preserve it>  
-**Possible Destination:** <requirements.md | architecture.md | plan.md | code/maps | issue tracker | Unknown>
+**Possible Destination:** <Requirements | Architecture | Roadmap | Phase plan | Code or maps | Issue tracker | Unknown>
 
 ## Status Guidance
 
-* **Deferred:** Human chose to preserve the observation for possible future consideration.
-* **Promoted:** Human approved moving the item into authoritative project memory or active execution work.
-* **Rejected:** Human decided not to pursue a previously preserved item.
-* **Superseded:** Later project direction made the preserved item obsolete or redundant.
+- **Deferred:** The human chose to preserve the observation for possible future consideration.
+- **Promoted:** The human authorized moving it through the applicable design, roadmap, planning, or execution gate.
+- **Rejected:** The human decided not to retain or pursue it.
+- **Superseded:** Later project truth or another retained item made it obsolete or redundant.
 
 ## Maintenance Rules
 
-* Add an entry only after the human explicitly chooses to preserve or defer an out-of-scope observation.
-* When creating `icebox.md` from this template, replace the sample `ICE-001` placeholders with the approved
-  observation and project name. Do not leave unused template placeholders in the project file.
-* Do not automatically create icebox entries for bugs, technical debt, missing tests, refactor opportunities,
-  documentation gaps, or speculative improvements discovered during implementation.
-* Do not treat icebox entries as requirements, architecture decisions, roadmap commitments, or authorized work.
-* Keep entries compact, specific, and independently understandable.
-* Prefer one entry per distinct observation rather than combining unrelated ideas.
-* Preserve only enough context for a future human to decide whether the item still matters.
-* When an entry is promoted, update its status and destination.
-* Do not preserve rejected observations merely for historical completeness. Delete them when no continuing
-  value remains.
-* Prune superseded entries when they no longer provide useful project memory.
-* Do not copy icebox entries into `state.md`, phase plans, or handoff summaries unless one becomes active work.
+- Instantiate the project name and every `ICE-001` field when creating `icebox.md`; leave no template
+  placeholders in the project file.
+- Add an entry or change its durable meaning only after explicit human authorization.
+- Do not automatically preserve bugs, technical debt, missing tests, refactor opportunities, documentation gaps,
+  or speculative improvements.
+- Do not treat an entry as approved requirements, architecture, roadmap, planned work, or execution authority.
+- Do not copy entries into `agent_plan.md`, `agent_state.md`, phase plans, or handoff summaries unless an item is
+  separately promoted through its owning gate.
+- Keep entries compact, specific, independently understandable, and distinct.
+- Assign later entries the next unused `ICE-<NNN>` identifier.
+- When an entry is promoted, record its actual destination.
+- Remove rejected entries and prune superseded entries when they have no continuing value; do not preserve
+  valueless history for completeness.

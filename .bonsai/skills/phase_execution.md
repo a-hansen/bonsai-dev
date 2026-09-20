@@ -2,377 +2,281 @@
 
 ## Purpose
 
-Handle phase activation, execution-mode selection, detailed phase planning, contract-first gates, approved
-module-boundary constraints, and review gates during an implementation session.
+Govern phase planning, execution-mode selection, phase-plan lifecycle, contract-first two-pass work, execution memory, and related gates.
 
-This skill is subordinate to `implementation_prompt.md`. Apply its execution rules, final-truth
-reconciliation rules, invoking-gate return rule, and maintenance discipline throughout.
+Subordinate to `prompts/implementation.md`. Manages execution memory/gates only; does not create product architecture or implementation abstractions.
 
-Bonsai manages project memory and execution workflow. It does not create implementation structure merely
-because a phase is being planned or reviewed.
+## Load When
 
-## Required Inputs
+- Phase 1 planning must be drafted/corrected.
+- A later phase becomes current and needs planning.
+- Execution mode is unresolved.
+- An exact step is governed by an active phase plan or approved phase contract.
+- Pass A or Contract Review is active.
+- Phase-plan, pass, approval, or roadmap state is inconsistent.
 
-Before executing this skill, inspect the project memory needed for the current step:
+## Inputs
 
-* `requirements.md`
-* `architecture.md`
-* `plan.md`
-* `state.md`
-* Active `plan/plan_phase_<N>.md`, when one exists
-* `.bonsai/templates/plan_phase_template.md`, when drafting a new phase plan
-* The approved contract, approved dry-run baseline, or recorded exact next step, when applicable
-* Any relevant maps or developer context needed to understand execution constraints
+Read only what the current decision needs:
 
-Do not treat missing optional files as permission to guess. Surface missing or inconsistent project memory
-before substantive execution.
+- `agent_plan.md`;
+- `agent_state.md`;
+- active `plan/agent_plan_phase_<N>.md`, when present or needed to establish the gate;
+- relevant requirements, architecture, and other approved final truth;
+- recorded exact next step;
+- `templates/plan_phase_template.md` only when drafting a detailed phase plan.
 
-## Execution-State Terminology
+Missing/conflicting required memory creates a planning requirement, review state, or blocker. Never reconstruct project truth from chat history, unrelated files, maps, or context.
 
-Use pass labels only when they describe the actual workflow.
+## Execution Semantics
 
-* For single-pass execution, use `Current Phase Pass: Single-pass Implementation`.
-* Reserve `Pass A (Contract)`, `Contract Review`, and `Pass B (Implementation)` for actual two-pass
-  contract-first phases.
-* Never represent a single-pass phase as Pass B.
+### Mode/pass terms
 
-## Phase Execution Mode Assessment
+- Ordinary implementation: `Single-pass Implementation`.
+- Two-pass only: `Pass A (Contract)` -> `Contract Review` -> `Pass B (Implementation)`.
+- Never call single-pass work Pass B.
+- Single-pass has no user-facing pass designation; omit pass fields/labels.
 
-When activating a new phase, or when the current active phase has not yet had its execution mode resolved,
-determine whether it should use:
+### Readiness
 
-* **Single-pass execution**, as the normal mode when the phase can be implemented and reviewed without first
-  approving a separate durable contract.
+| Condition | Value |
+|---|---|
+| Required planning incomplete | `Phase planning required` |
+| Drafted plan/contract awaiting approval | `Awaiting human review` |
+| Approved exact step, no remaining gate | `Ready to execute` |
+| Concrete conflict/impediment | `Blocked` |
 
-* **Two-pass contract-first execution**, only when the phase establishes or materially changes a durable
-  contract or design surface that independently merits human approval before implementation continues.
+A plan's existence is not execution authorization.
 
-Examples that can justify two-pass contract-first execution include:
+### Authorization rule
 
-* an externally consumed API,
-* a schema or persistent format,
-* a protocol or message contract,
-* an extension or plugin contract,
-* an integration surface, or
-* another durable project-specific contract that downstream code or external consumers will rely on and
-  that independently merits a human review gate.
+Planning, plan, lightweight-basis, or contract approval authorizes only that artifact/basis. It never starts newly authorized work in the same authorization step. Persist resulting state and stop at the required next gate, normally the Continuation Gate.
 
-Do not select two-pass contract-first execution merely because the phase:
+Roadmap text, phase titles, or literal next-step commands in agent-owned roadmap/planning memory never substitute for required phase planning or approval.
 
-* is large or complex,
-* touches multiple modules or packages,
-* creates new classes,
-* introduces internal helpers or abstractions,
-* creates or changes internal module organization,
-* changes implementation dependency structure that is not itself an approved durable contract,
-* needs tests,
-* has multiple implementation concerns,
-* would benefit from ordinary code review, or
-* contains a high-leverage implementation decision that does not independently require contract approval.
+## Execution Mode
 
-Existing approved contracts do not require a redundant Bonsai contract gate. If the contract that governs the
-phase has already been explicitly approved outside the current Bonsai pass, the phase may use single-pass
-execution unless it is establishing or materially changing another review-worthy durable contract.
+Default **Single-pass** when implementation/review does not need separate approval of a durable contract.
 
-A Bonsai contract gate must not force Java interfaces, builders, adapters, dependency-injection layers,
-abstract base types, module seams, or other implementation indirection. Those structures exist only when
-approved project truth or the implementation itself genuinely requires them. Source-level contract artifacts
-do not imply abstraction: concrete classes with intentionally unimplemented behavior are valid Pass A
-artifacts when they express the intended contract directly.
+Use **Two-pass contract-first** only when the phase establishes or materially changes a durable surface that independently merits approval before implementation beneath it, e.g. an externally consumed API, schema, persistent format, protocol, extension contract, or durable integration surface.
 
-## Visible Mode Recommendation
+Do not choose two-pass merely for size, complexity, multiple files, new classes, internal reorganization, tests, or ordinary code review. Do not duplicate a Bonsai contract gate for an already-approved contract unless another review-worthy seam is established/materially changed.
 
-If the phase execution mode is unresolved at startup, state the recommended mode and one-sentence rationale
-in the Startup Gate summary.
+If mode is unresolved, report the recommendation plus one-sentence rationale at the current gate. Do not resolve mode or change memory until the human authorizes planning.
 
-Do not resolve the mode, update files, or proceed into planning until the human explicitly asks you to continue.
+## Approved Boundaries
 
-## Approved Boundary Assessment
+When activating a phase, drafting/correcting its plan, or entering Pass A, record only boundaries supported by approved project truth or needed to interpret an approved durable contract. As applicable:
 
-When activating a phase, creating or correcting a phase plan, or entering Pass A, identify only the module or
-dependency boundaries that are already part of approved project truth or are necessary to interpret an
-approved durable contract.
+- implementation scope/out-of-scope;
+- durable APIs, schemas, protocols, formats, extension points, integrations;
+- prescribed dependency direction;
+- forbidden coupling.
 
-Assess, when relevant:
+Do not invent modules, interfaces, layers, adapters, builders, injection seams, dependency rules, or similar structure to formalize planning/contract review. A concrete type, native schema, or direct artifact may be the correct contract surface.
 
-* **Implementation areas in scope:** modules, subsystems, packages, layers, or areas the phase may create or modify.
-* **Implementation areas out of scope:** areas the approved phase must not modify.
-* **Durable seams:** approved APIs, schemas, protocols, extension points, integration surfaces, or other contracts.
-* **Dependency constraints:** dependency direction explicitly prescribed by approved architecture.
-* **Forbidden coupling:** coupling explicitly rejected by approved architecture.
+If a required approved boundary is unclear, classify it as phase-plan correction, final-truth clarification, final-truth revision, or out-of-scope observation. Delegate clarification/revision to `skills/final_truth_update.md` before proceeding.
 
-Do not invent internal seams, module boundaries, layering rules, or dependency restrictions merely to make a
-phase plan more complete.
+## Phase Planning
 
-If an approved architectural boundary required for the next step is genuinely unclear, classify the issue as
-one of:
+Every phase needs an approved execution basis before substantive execution.
 
-1. Phase plan correction
-2. Architecture clarification
-3. Architecture revision
-4. Out-of-scope observation
+- **Phase 1:** always detailed plan.
+- **New later phase:** normally `Phase planning required` unless an applicable approved detailed plan already exists.
+- Later-phase planning first decides detailed vs lightweight basis.
+- Lightweight basis contains objective, execution mode, concrete exact next step, validation/success condition, and approved constraints needed for safe execution. It requires human approval before `Ready to execute`; do not create a phase-plan file solely for lightweight planning.
 
-Use final-truth reconciliation when the issue changes or clarifies human-owned final truth.
+Detailed phase plans are agent-owned execution memory, not product/architecture truth. Create `plan/agent_plan_phase_<N>.md` from `templates/plan_phase_template.md`; instantiate all fields and remove instructions, placeholders, and inapplicable mode structure.
 
-## Phase Plan Creation
+### Phase 1 procedure
 
-Use `.bonsai/templates/plan_phase_template.md` as the canonical structural template whenever creating a new
-`plan/plan_phase_<N>.md`. Instantiate it with project-specific phase content; do not leave template placeholders
-in the project plan.
+For a newly synthesized project, before substantive Phase 1 work:
 
-### Initial Phase
+1. Draft from repository reality, approved final truth, and roadmap.
+2. Set plan status `Ready for Review`.
+3. Reconcile roadmap/state.
+4. Set `Awaiting human review`.
+5. Stop at Phase Plan Approval Gate.
 
-For a newly synthesized project, always create `plan/plan_phase_1.md` before substantive Phase 1 execution.
+This gate reviews execution intent; it does not itself justify two-pass execution.
 
-This is Bonsai's first implementation gate after Web-UI design synthesis, even when Phase 1 is single-pass and
-otherwise straightforward. Use repository reality, approved project truth, and the roadmap to draft the plan,
-set `Plan Status: Ready for Review`, reconcile `plan.md` and `state.md`, and stop at the Phase Plan Approval Gate.
+### Later-phase plan choice
 
-The initial phase-plan gate exists for human review of execution intent. It does not by itself imply
-two-pass contract-first execution.
+Create a detailed later plan only when it materially improves execution/resumption, such as:
 
-### Later Phases
+- sequencing is too detailed for `agent_plan.md`;
+- two-pass contract-first is used;
+- multiple meaningful review/validation gates exist;
+- approved constraints must remain visible across several bounded steps.
 
-When activating Phase 2 or later, determine whether that phase needs a detailed `plan/plan_phase_<N>.md`.
+Multiple files or internal complexity alone are insufficient. If no detailed plan is warranted, use the Lightweight Phase Planning Gate. Roadmap-level design approval does not pre-approve the later-phase execution basis.
 
-Create one before substantive phase execution when preserving detailed execution-level information outside
-`plan.md` materially improves the workflow, such as when the phase:
+### Missing/stale/inconsistent planning
 
-* uses two-pass contract-first execution and therefore needs an explicit contract review gate,
-* requires detailed ordered sequencing that would bloat `plan.md`,
-* has multiple meaningful review or validation gates,
-* has approved scope or architectural constraints that need to remain visible across several bounded steps, or
-* otherwise contains enough execution detail that a dedicated active phase plan materially improves resumption.
+- Missing Phase 1 plan -> drafting it is the exact next step.
+- Newly current later phase without applicable approved detailed plan -> phase planning is the exact next step.
+- Planning decides detailed plan required -> drafting it becomes the exact next step.
+- Incomplete/stale/inconsistent active plan -> correct before substantive execution.
+- Unresolved mode or unapproved lightweight basis -> resolve before execution.
 
-Do not create a later phase plan merely because a phase is complex in the abstract, touches several files or
-modules, creates internal abstractions, or needs ordinary implementation decomposition.
+After drafting/materially correcting a required detailed plan, reconcile roadmap/state and stop for approval. Do not duplicate detailed sequencing into `agent_plan.md`.
 
-Update `plan.md` and `state.md` to reflect the resolved execution mode and the phase plan path when one is created.
-For single-pass phases, set `Current Phase Pass: Single-pass Implementation` only after the applicable phase-plan
-approval gate has completed and implementation becomes the active pass state.
+### Detailed plan content
 
-## Missing or Incomplete Phase Plans
+Include only applicable:
 
-* **Missing Initial Phase Plan:** If Phase 1 is active and `plan/plan_phase_1.md` does not yet exist, treat
-  drafting it from `.bonsai/templates/plan_phase_template.md` as the exact next step before substantive phase
-  execution. After drafting it, use the Phase Plan Approval Gate.
+- objective, bounded scope, explicit out-of-scope;
+- approved boundaries/durable contracts;
+- ordered work/meaningful gates;
+- validation strategy/definition of done;
+- human review focus, risks, dependencies, active questions.
 
-* **Missing Later Phase Plan:** If a later active phase genuinely requires a detailed `plan/plan_phase_<N>.md`
-  but none exists, treat drafting that phase plan from `.bonsai/templates/plan_phase_template.md` as the exact
-  next step before substantive phase execution. After drafting it, use the Phase Plan Approval Gate.
+Use `None`/`Not prescribed` where appropriate; never invent template content.
 
-* **Incomplete Existing Phase Plan:** If `plan/plan_phase_<N>.md` already exists but is incomplete, stale, or
-  inconsistent with current approved project direction, treat completing or correcting that phase plan as the
-  exact next step before substantive phase execution. Do not duplicate partial phase detail in `plan.md`.
-  After updating it, use the Phase Plan Approval Gate.
+- Single-pass plan: implementation structure only.
+- Two-pass plan: Pass A, review stop, Pass B.
+- Code-contract Pass A: smallest useful native source surface plus materially clarifying tests/examples. Contract source and contract-test source must compile before review. Behavioral tests may intentionally fail/remain disabled until Pass B only when the plan says so explicitly.
 
-* **Unresolved Phase Mode:** If the current active phase has not yet had its execution mode resolved, treat
-  determining the mode, updating roadmap/state, and drafting any genuinely required phase plan as the exact
-  next step before substantive phase execution. After that planning update, use the Phase Plan Approval Gate
-  when a phase plan was created or materially changed; otherwise complete the planning step normally.
+## Lightweight Phase Planning Gate
 
-## Phase Plan Content Requirements
+When no detailed later-phase plan is warranted, report the proposed lightweight basis and load `skills/menu.md`:
 
-When drafting or materially correcting a phase plan, preserve only execution detail that is actually relevant
-to the phase.
+1. Approve the named phase execution basis.
+2. Request revisions.
+3. Discuss concerns.
+4. Require a detailed phase plan instead.
 
-A phase plan should identify, when applicable:
+Stop for the human choice.
 
-* implementation scope,
-* approved architecture boundaries,
-* durable contracts established or changed by the phase,
-* ordered work,
-* validation strategy,
-* meaningful review gates,
-* human review focus, and
-* active execution questions.
-
-Do not invent internal seams, interfaces, abstraction layers, module boundaries, dependency rules, or validation
-work merely to fill a template. Use `None` or `Not prescribed` where the approved project does not prescribe them.
-
-If a required approved boundary or durable contract is unresolved, preserve the question in the phase plan and
-route it through the appropriate gate before implementation.
-
-For a code contract, plan Pass A around the native source-level API or structural skeletons and the tests or
-usage examples needed to review them. Do not default to a prose contract document merely because the phase is
-contract-first. Plan for the Pass A contract package, including its contract-test source, to compile successfully
-before the contract review gate. Behavior-focused contract tests do not need to pass in Pass A because substantive
-behavior is intentionally deferred to Pass B.
+On approval: reconcile `agent_plan.md`/`agent_state.md`; persist the approved lightweight basis; record concrete exact next step and `Ready to execute`; omit pass designation for single-pass; stop at Continuation Gate.
 
 ## Phase Plan Approval Gate
 
-After creating or materially correcting a phase plan, STOP before substantive implementation.
+Before the gate report:
 
-State:
+- final-truth impact: `None`, `Clarification`, or `Revision`;
+- affected final-truth documents if not `None`;
+- required final-truth action;
+- material approved-boundary impact;
+- human review focus.
 
-* Final-truth impact: `None`, `Clarification`, or `Revision`.
-* Affected final-truth documents, when impact is not `None`.
-* Any final-truth update required before the next planned work.
-* Approved-boundary impact, when relevant.
-* Human review focus.
+Unresolved revision -> `skills/final_truth_update.md`; implementation is not a bypass. Otherwise load `skills/menu.md`:
 
-For an unresolved `Revision`, use the Final-Truth Reconciliation choices from `implementation_prompt.md`
-instead of authorizing the next planned work.
-
-Otherwise present the phase-plan review choices:
-
-1. Approve the phase plan.
-2. Request revisions to the phase plan.
-3. Discuss concerns before deciding.
+1. Approve the named phase plan.
+2. Request revisions.
+3. Discuss concerns.
 4. Return to roadmap-level planning.
 
-When the human approves the plan:
+Stop for the human choice.
 
-* mark the plan approved,
-* reconcile `plan.md` and `state.md`,
-* record the exact next step and execution readiness,
-* stop before beginning the newly approved implementation or contract pass, and
-* if the next step is executable, present current-session and fresh-session continuation as peer choices.
+On approval: set plan `Approved`; reconcile `agent_plan.md`, `agent_state.md`, phase plan; record concrete exact next step and `Ready to execute`; record pass only for actual two-pass work; stop at Continuation Gate.
 
-Do not recommend one session choice over the other. If the human selects fresh-session continuation, tell the
-human to start it themselves, provide the canonical fresh-session prompt, and stop without beginning the next pass.
-Bonsai does not terminate, reset, or create the session.
+## Pass A and Contract Review
 
-## Two-Pass Contract Gate
-
-Use this gate only when Pass A is active for an actual two-pass contract-first phase.
-
-Pass A should:
-
-1. Produce the reviewable durable contract or design surface being established or changed, preferring the
-   native artifact form developers will ultimately consume when practical.
-2. Preserve approved architecture constraints needed to interpret that contract.
-3. Produce tests, usage examples, signatures, schemas, message examples, or other review artifacts only when
-   they materially clarify the intended contract and fit the project.
-4. Classify final-truth impact and identify affected final-truth documents, when any.
-5. STOP before Pass B.
+Use Pass A only for an approved two-pass phase. Produce the smallest useful native review surface while preserving approved boundaries needed to interpret it. Include tests/examples/signatures/schemas/message examples only when materially clarifying.
 
 For code contracts:
 
-* Prefer minimal source-level API or structural skeletons plus behavior-focused tests or usage examples over a
-  standalone prose contract document.
-* Pass A may establish package placement, names, types, signatures, visibility, failure surface, and structural
-  relationships needed to make the contract directly reviewable.
-* Leave substantive behavior unimplemented until Pass B. Concrete classes with intentionally unimplemented
-  method bodies are valid contract artifacts.
-* The Pass A contract package, including contract-test source, must compile successfully before the contract is
-  presented as ready for review. Use the smallest project-appropriate compile or build check needed to establish
-  that structural validity.
-* Behavior-focused contract tests do not need to pass in Pass A. They may fail because behavior is unimplemented
-  or may be temporarily disabled when that keeps Pass A validation clear. Report their execution status explicitly
-  at the contract gate; do not weaken an approved behavioral expectation merely to obtain a green Pass A test run.
-* Use prose as the primary contract artifact only when important semantics cannot be expressed clearly in the
-  native source and review artifacts. Supplemental prose is allowed when it materially improves review.
+- APIs/skeletons may establish placement, names, types, signatures, visibility, failure surfaces, required structural relationships;
+- concrete classes may contain intentionally unimplemented methods;
+- substantive behavior belongs to Pass B;
+- contract source and contract-test source must compile before review;
+- behavior tests may fail/be disabled while behavior is intentionally absent, but report status and never weaken expectations to make Pass A green;
+- prose is primary only when native artifacts cannot clearly express important semantics.
 
-Pass A does not require implementation interfaces, builders, adapters, module seams, abstraction layers, or
-other indirection unless approved project truth or the contract itself requires them. Do not introduce an
-interface merely to make a contract look more abstract or formal.
-
-Do not begin Pass B until the contract is approved and any required final-truth update is approved and applied.
-
-For an unresolved `Revision`, use the Final-Truth Reconciliation choices from `implementation_prompt.md`
-instead of authorizing Pass B.
-
-Otherwise present:
+After Pass A: classify actual final-truth impact, reconcile execution memory, stop at `Contract Review`. Unresolved revision first delegates to `skills/final_truth_update.md`; otherwise load `skills/menu.md`:
 
 1. Approve the contract.
-2. Request revisions to the contract.
-3. Discuss concerns before deciding.
+2. Request revisions.
+3. Discuss concerns.
 4. Return to the phase plan.
 
-After contract approval:
+Stop for the human choice.
 
-* record the approval,
-* set `Current Phase Pass: Pass B (Implementation)`,
-* recompute the exact next step and execution readiness,
-* stop before Pass B begins, and
-* if Pass B is executable, present current-session and fresh-session continuation as peer choices.
-
-Do not recommend one session choice over the other. If the human selects fresh-session continuation, tell the
-human to start it themselves, provide the canonical fresh-session prompt, and stop without beginning Pass B.
-
-A dry run remains available on request. Do not insert it into the contract-review menu by default.
+On approval: record approval; set `Pass B (Implementation)`; compute concrete exact next step; set readiness appropriately; stop at Continuation Gate. Do not begin Pass B in the approval step.
 
 ## Implementation Discipline
 
-During Pass B or single-pass implementation:
+During Single-pass Implementation or Pass B:
 
-* Preserve approved human-owned project truth.
-* Preserve approved contracts.
-* Respect module or dependency constraints only when they are part of approved project truth or the approved
-  execution basis.
-* Execute only the exact next step and approved scope.
-* Follow project conventions, developer context, source guidance, and applicable external skills for coding
-  and testing style.
+- execute only approved exact step/scope;
+- apply relevant operational context before environment/toolchain-sensitive command syntax; literal commands in agent-owned memory express intent but do not override applicable invocation-context rules;
+- preserve approved final truth, contracts, boundaries;
+- follow project conventions and only relevant source guidance/context;
+- stop if an unapproved contract or final-truth change becomes necessary.
 
-Do not use Bonsai itself as justification for adding interfaces, builders, adapters, dependency-injection
-layers, abstraction boundaries, module seams, convenience restrictions, or test structure.
+For an approved code contract, Pass A tests preserve behavior, not immutable test source. Pass B may change fixtures, fakes, helpers, imports, construction, and other plumbing without renewed review only while approved scenarios, inputs, observable outcomes, and failure expectations remain materially unchanged. Stop for contract review before weakening, removing, contradicting, or materially changing an approved expectation.
 
-For an approved two-pass code contract, Pass A tests preserve behavioral meaning rather than immutable test source.
-During Pass B, test setup, fixtures, fakes, helpers, imports, construction, and other test plumbing may be adapted
-without another contract review when the approved scenarios, inputs, observable outcomes, and failure expectations
-remain materially unchanged. Adding implementation-specific or edge-case tests also does not require contract
-review. STOP for contract review before weakening, removing, contradicting, or materially changing an approved
-behavioral expectation.
+Before Pass B completes, enable every approved expectation and make all approved contract tests pass.
 
-Before Pass B for a code contract is complete, every approved Pass A behavioral expectation must be represented by
-an enabled test and all approved contract tests must pass. Any contract test temporarily disabled in Pass A must be
-enabled by that point.
+## Phase Completion Transition
 
-If required behavior conflicts with approved project truth or an approved contract, STOP before changing that
-truth or contract and route the issue through the appropriate clarification, revision, or planning gate.
+Phase completion closes that phase only, not necessarily the current body of work.
 
-## Boundary Validation
+When a phase reaches its approved definition of done:
 
-At review gates and step completion, report boundary impact only when it materially affects approved
-architecture, a durable contract, dependency direction, rebuildability, or future phase work.
+1. Mark it complete in applicable phase plan and roadmap truth.
+2. Inspect approved roadmap for unfinished phases in the current body of work.
+3. If work remains, identify/activate the next phase and derive its gate:
+   - no applicable approved detailed plan -> `Phase planning required`; planning chooses detailed vs lightweight;
+   - required plan/contract/review artifact awaits approval -> `Awaiting human review`;
+   - concrete inconsistency/impediment -> `Blocked`;
+   - applicable approved detailed plan already supplies one authorized exact next step with no gate -> `Ready to execute`.
+4. Reconcile next phase, applicable plan/pass state, readiness, and exact next step across `agent_plan.md`, `agent_state.md`, and applicable phase plan.
+5. Only when no unfinished approved roadmap work remains may body-of-work completion clear current phase and set `Execution Readiness: Complete`.
 
-When relevant, report:
+Activation records lifecycle truth, not substantive-execution authorization. After establishing the next phase/action:
 
-* approved modules or subsystems materially created or modified,
-* durable public seams created or modified,
-* approved dependency direction preserved or changed,
-* approved boundary violations avoided or discovered, and
-* any architecture clarification or revision required.
+- agent-performable exact action with no independent human-decision gate -> Continuation Gate, including phase planning while `Phase planning required`;
+- approval/review/final-truth/design/blocker action -> corresponding specialized gate.
 
-Do not over-report ordinary file organization or private implementation detail.
+Planning entered through continuation still stops at its resulting approval gate.
 
-## Fresh Session Continuation
+Never persist `Current Phase: None` while an identifiable unfinished roadmap phase remains. If roadmap inconsistency prevents safe next-phase identification, preserve `Blocked`, not complete.
 
-After a completed phase-plan or contract gate leaves an executable next step, offer continuation as peer choices:
+## Execution-Memory Reconciliation
 
-1. Continue with `<concise actual next step>` in the current session.
-2. Continue with `<concise actual next step>` in a fresh session.
-3. Review or change the next step.
-4. Do not continue right now.
+Keep `agent_plan.md`, `agent_state.md`, and active phase plan consistent whenever phase, mode, plan status, pass, review state, blocker state, readiness, or exact-next-step truth changes.
 
-Gate-specific actions may be inserted when needed. Do not encode a generic `Other` option; the host may provide
-its own free-form choice. Do not mark either continuation choice as recommended.
+- Remove superseded state; do not append history.
+- Correct stale plans before further implementation.
+- Compress completed-phase detail when no longer useful for resumption.
+- On phase completion, apply Phase Completion Transition before deriving readiness.
+- Later unfinished roadmap work means body-of-work state is not `Complete`.
+- At exact-step or gate completion boundaries, delegate to `skills/handoff.md` before claiming completion.
 
-If the human selects fresh-session continuation, provide only the canonical pointer for the new session:
+## Continuation Gate
+
+Use when exactly one concrete agent-performable next action exists and no independent human-decision gate is active, including an approved executable step or phase-planning action established after a phase boundary.
+
+Record all resume-critical truth, then load `skills/menu.md`. Normally present:
+
+1. Continue the concrete next step in this session.
+2. Continue it in a fresh session and automatically execute it.
+3. Review/change the next step.
+4. Exit for now.
+
+If this session itself entered through fresh-session continuation and no substantive work has occurred since entry, omit choice 2 at the first resulting Continuation Gate unless explicitly requested. Keep that fact session-local.
+
+If fresh-session continuation is selected, starting the session remains a human action. Always preserve the active project identity in the pointer. Provide:
 
 ```text
-Read .bonsai/implementation_prompt.md and follow its instructions. Active project: <project>
+Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate. Active project: <project>.
 ```
 
-Before providing that prompt, record all next-step, approval, phase, pass, dry-run, required-skill, boundary,
-and stop-condition details in `state.md` and any required planning documents.
+Do not discard known project identity merely because startup could deterministically infer the same project.
 
-Do not embed those details in the fresh-session prompt. Starting the fresh session is a human action, and the
-current session must stop without executing the next step.
-
-Do not offer fresh-session continuation when the next step is not executable. A new session does not bypass a
-planning, contract, final-truth, blocker, or other required gate.
+This startup request authorizes exactly one next action after canonical state reconstruction. It may authorize planning when planning is that action; it never authorizes a subsequent action or bypasses required planning approval, review, final-truth, contract, design, or blocker gates. Then stop.
 
 ## Stop Conditions
 
-STOP and ask for human direction when:
+Stop for human direction when:
 
-* phase execution mode is unresolved and the human has not authorized planning,
-* a genuinely required phase plan is missing, stale, or inconsistent,
-* a phase plan has been created or materially corrected and requires approval,
-* an approved architectural boundary or durable contract required for the next step is unclear,
-* Pass A has produced a contract package,
-* actual work requires a `Revision` to final-truth documents,
-* actual work requires an unapproved change to a durable contract or approved architecture boundary, or
-* the requested next step exceeds the approved phase plan, contract, dry-run baseline, or recorded exact next step.
+- mode is unresolved and planning has not been authorized;
+- a required plan is missing, stale, or inconsistent;
+- a drafted/materially corrected plan awaits approval;
+- a required approved boundary or durable contract is unclear;
+- Pass A has produced its review surface;
+- final-truth clarification/revision is required;
+- work would weaken/materially change an approved contract;
+- requested action exceeds approved plan, contract, or exact next step.

@@ -13,7 +13,12 @@
 build/
 
 #bonsai
+.bonsai/agent_context.md
 .bonsai/developer_context.md
+archive/
+.bonsai/maps
+external-src/
+tests/
 
 # ai
 .codex
