@@ -174,13 +174,9 @@ Authorization rules:
 
 Print a prompt after fresh-session continuation, **Exit for now**, or explicit prompt request. The human starts the new host session.
 
-Qualifier: project omits a qualifier only when `start.md` deterministically resolves the same project; otherwise append only `Active project: <project>.` using directory name. Map always appends `Active map: <map>.` using directory name because ordinary startup never infers map workspace.
+Always preserve the active workspace identity in the fresh-session pointer. Project appends `Active project: <project>.` using the directory name. Map appends `Active map: <map>.` using the directory name. Do not discard known identity merely because `start.md` could infer the same workspace.
 
 Standard fresh-session continuation prompt must be exactly one of:
-
-```text
-Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate.
-```
 
 ```text
 Read .bonsai/start.md, follow its instructions and execute the exact next step without stopping at the startup gate. Active project: <project>.
@@ -201,10 +197,6 @@ You can resume later with:
 Then use the applicable ordinary pointer:
 
 ```text
-Read .bonsai/start.md and follow its instructions.
-```
-
-```text
 Read .bonsai/start.md and follow its instructions. Active project: <project>.
 ```
 
@@ -212,7 +204,7 @@ Read .bonsai/start.md and follow its instructions. Active project: <project>.
 Read .bonsai/start.md and follow its instructions. Active map: <map>.
 ```
 
-Use project qualifier only when explicit selection is required; map qualifier always. For an explicitly requested ordinary fresh-session pointer without auto-execution, use the same pointer without the **Exit for now** lead-in.
+Always include the active workspace qualifier. For an explicitly requested ordinary fresh-session pointer without auto-execution, use the same pointer without the **Exit for now** lead-in.
 
 Never append workspace path, phase, mapping scope, pass, readiness, rendered next step, approval state, dry-run state, workflow name, required skills, blockers, or prior-session summary. Put resume-critical facts in `agent_state.md` before presenting the pointer.
 

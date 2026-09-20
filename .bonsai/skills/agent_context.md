@@ -8,11 +8,13 @@ This skill owns optional `agent_context.md` files at developer, repository, and 
 
 ## When to Load
 
-Load this skill when entering an operational facet that may be governed by durable working knowledge, including build, test, run, inspection, tooling, filesystem, environment, source-location, or code-map navigation behavior.
+Before choosing or executing a build, test, run, package, interpreter, toolchain, or other environment-sensitive command, load this skill and the applicable existing agent context.
 
-For such a facet, load applicable existing agent context before choosing or executing the concrete operational command or path. Do not wait for an operation to fail before consulting context that may already govern it.
+Also load it when the current work requires an operational choice involving durable filesystem/environment behavior, source locations, code-map locations/selections, or when a qualifying operational discovery may need preservation.
 
-Do not load agent context merely because a file exists or because implementation startup is occurring. Trigger it at the relevant operational facet, not as routine session-start context.
+Trigger prospectively. Do not first try the literal command or path from planning memory, and do not wait for an operation to fail before consulting applicable context.
+
+Do not load agent context merely because a file exists or because implementation startup is occurring. Trigger it only when the current work reaches an operational facet it can govern.
 
 Once triggered, keep relevant loaded context available for the session.
 

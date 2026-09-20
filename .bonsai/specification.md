@@ -1,5 +1,7 @@
 # Bonsai Specification
 
+**Version: 2.0.0**
+
 Bonsai is a workspace-memory and execution-workflow system for AI-assisted software development. It
 preserves the structured context an AI needs to design, build, inspect, map, and continue serious
 software work across fresh sessions without making chat history authoritative.

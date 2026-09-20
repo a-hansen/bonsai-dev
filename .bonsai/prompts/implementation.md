@@ -131,7 +131,7 @@ Load only triggered workflows/facets. Repository entry may delegate without an a
 | Human-selected Dry Run | `skills/dry_run.md` |
 | Exact-step completion/session handoff | `skills/handoff.md` |
 | Project final-truth clarification/revision | `skills/final_truth_update.md` |
-| An upcoming operational choice that may be governed by durable context, or a qualifying operational discovery | `skills/agent_context.md` |
+| Before choosing or executing a build, test, run, package, interpreter, toolchain, or other environment-sensitive command; or on a qualifying operational discovery | `skills/agent_context.md` |
 | Category-guide reconciliation for authorized standard prompt/skill/template add/remove/rename/material responsibility change | `skills/artifact_index.md` |
 | **Manage Code Maps**; compatible active-map execution; explicit code-map request; map-guided navigation/alignment; accepted contextual map action | `skills/code_maps.md` |
 
@@ -140,6 +140,8 @@ Resolve skills under current Bonsai Home. Missing triggered owner = workflow una
 ### Agent context
 
 When triggered, `skills/agent_context.md` owns scoped loading/application/qualification/maintenance. Agent context informs operations but never overrides human-owned developer context, project final truth, map calibration, authoritative source, or authorization boundaries.
+
+Trigger prospectively. Before choosing the concrete invocation for a build, test, run, package, interpreter, toolchain, or other environment-sensitive operation, load the skill and its applicable context layers. Do not first try the literal command from planning memory or wait for a failure to establish relevance.
 
 If applicable context defines how to invoke an authorized operation in the current environment, use it; literal command text in agent-owned planning memory is not immutable. Applying an existing correct rule is read-only and alone does not justify context rewrite or final-truth workflow.
 
@@ -240,7 +242,7 @@ After list/switch/create/decline/cancel, apply `skills/menu.md` subordinate-retu
 After authorization of one concrete exact action:
 
 - Execute only that step; load only required truth/source guidance/context/maps/skills.
-- Before environment/toolchain-sensitive commands, apply relevant operational context. A context-resolved invocation preserving the approved operation/check does not alter the step, require phase-plan correction, or create final-truth impact merely because literal command text differs from agent planning memory.
+- Before choosing or executing a build, test, run, package, interpreter, toolchain, or other environment-sensitive command, load `skills/agent_context.md` and apply its relevant operational context. Do not probe with the literal planned command first. A context-resolved invocation preserving the approved operation/check does not alter the step, require phase-plan correction, or create final-truth impact merely because literal command text differs from agent planning memory.
 - Current working tree is the human's intended baseline. Do not require clean state, revert/normalize unrelated work, or report unrelated pre-existing changes unless they block safe completion.
 - Follow workspace/repository conventions. Require evidence for non-obvious framework/platform behavior; do not invent it.
 - Never silently broaden scope. Material change to approved scope, contract, architecture, requirements, or planned outcomes stops at the owning gate.
