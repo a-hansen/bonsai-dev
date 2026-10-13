@@ -419,13 +419,33 @@ missing, request it from the same implementation agent before presenting the app
 reconstruct it or inspect workspace files to fill the gap. Human responses return unchanged to the
 agent that produced the gate. The orchestrator does not answer for the human.
 
-When an implementation agent offers valid fresh-session continuation, the explicit orchestration
-request authorizes the orchestrator to take that continuation automatically and spawn a new
-implementation agent without presenting the fresh-session choice. Use the ordinary fresh-session
-auto-execute pointer and current established workspace identity. Do not resume the old agent for
+Explicit human pause/stop requests take precedence over automatic continuation. Relay them to the
+active implementation agent. When asked to stop at the next fresh-session boundary, stop there
+without launching a replacement agent.
+
+When an implementation agent offers valid fresh-session continuation and no human pause/stop
+request applies, the explicit orchestration request authorizes the orchestrator to take that
+continuation automatically and spawn a new implementation agent without presenting the fresh-session
+choice. Use the ordinary fresh-session auto-execute pointer and current established workspace identity. Do not resume the old agent for
 that continuation or carry rendered next-step text or implementation chat history into the new
 agent. Mandatory gates still require human action; ordinary resume pointers and **Exit for now**
 do not authorize automatic continuation.
+
+When presenting a pointer for the human to resume an orchestrated run, retain orchestration mode:
+
+```text
+Read .bonsai/start.md and orchestrate. Active project: <project>.
+```
+
+```text
+Read .bonsai/start.md and orchestrate. Active map: <map>.
+```
+
+Use only established identity, omitting the qualifier if none is known. Preserve the ordinary resume
+lead-in and other decision information. This pointer rewrite is an exception to verbatim relay; it
+does not permit changing proposals or choices. An ordinary resume pointer preserves execution mode,
+not one-action auto-execution authority. Child-agent startup remains ordinary and never includes
+orchestration. Implementation/handoff workflows need no mode-specific branches.
 
 Workspace identity is carried only when established by the human or implementation agent. The
 orchestrator preserves it between children as session context without resolving it itself or
@@ -1540,6 +1560,9 @@ mandate for a particular test harness.
 - The orchestrator does not inspect workspace state, execute implementation, or persist identity.
 - Completion, impossible continuation, and ordinary exit/resume pointers do not trigger another
   implementation action.
+- A request to pause/stop at the next fresh-session boundary prevents replacement-agent creation.
+- Human-facing ordinary resume pointers preserve orchestration mode and established project/map
+  identity, without carrying one-action auto-execute authorization; child startup remains ordinary.
 
 ## Shared handoff
 

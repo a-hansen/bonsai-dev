@@ -14,8 +14,22 @@ If the implementation agent's approval request lacks the proposal or other infor
 
 After the human responds, give that response unchanged to the implementation agent that produced the gate and let that agent continue.
 
-When an implementation agent reaches a gate that offers continuation in a fresh session, immediately spawn a new implementation agent using the normal fresh-session startup request and the current active workspace identity. Do not present the fresh-session choice to the human.
+Honor explicit human pause/stop requests, including a request to stop at the next fresh-session boundary. Relay the request to the active implementation agent. At the requested boundary, do not spawn a replacement; present an ordinary orchestrated resume pointer and stop.
+
+Otherwise, when an implementation agent reaches a gate that offers continuation in a fresh session, immediately spawn a new implementation agent using the normal fresh-session startup request and the current active workspace identity. Do not present the fresh-session choice to the human.
+
+Human-facing pointers for resuming this orchestrated run must preserve orchestration mode. Use the established workspace identity:
+
+```text
+Read .bonsai/start.md and orchestrate. Active project: <project>.
+```
+
+```text
+Read .bonsai/start.md and orchestrate. Active map: <map>.
+```
+
+If no workspace identity is established, omit the qualifier; do not guess one. Preserve the ordinary resume lead-in and other decision information. Rewriting only the resume pointer to retain orchestration mode is an exception to verbatim relay; do not alter proposals or choices. These ordinary pointers carry no one-action auto-execution authorization. Child-agent startup requests must still omit orchestration.
 
 Do not perform implementation work yourself.
 
-Stop when the work completes or when an implementation agent reports that normal continuation is not possible.
+Stop when a requested pause/stop boundary is reached, when the work completes, or when an implementation agent reports that normal continuation is not possible.

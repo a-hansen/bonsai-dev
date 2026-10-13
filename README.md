@@ -154,7 +154,7 @@ A fresh session does not need a hand-written summary of the previous chat.
 
 Moving to a new session does not bypass a decision, review, blocker, or design issue that still needs human input.
 
-With optional orchestration, fresh implementation agents are launched automatically when Bonsai offers valid fresh-session continuation. Each agent reloads durable state; the orchestrator relays the human gates.
+With optional orchestration, fresh implementation agents are launched automatically when Bonsai offers valid fresh-session continuation. Each agent reloads durable state; the orchestrator relays the human gates. You can ask it to stop at the next fresh-session boundary. Its resume prompt retains `and orchestrate` and the established workspace identity.
 
 ---
 

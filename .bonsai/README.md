@@ -375,7 +375,13 @@ It does not rely on copied phase text or a hand-written summary from the previou
 
 Do not paste a previous chat summary into every fresh session. Bonsai memory should carry what matters.
 
-When orchestration is active, the orchestrator takes valid fresh-session continuation automatically. Required human gates still stop for your input. Ordinary resume pointers and **Exit for now** carry no automatic execution authority.
+When orchestration is active, the orchestrator takes valid fresh-session continuation automatically unless you ask it to pause or stop. Required human gates still stop for your input. If you ask it to stop at the next fresh-session boundary, it stops there and gives you an ordinary resume prompt that preserves orchestration:
+
+```text
+Read .bonsai/start.md and orchestrate. Active project: <project>.
+```
+
+For map work, use `Active map: <map>.` instead. Ordinary resume pointers and **Exit for now** carry no one-action auto-execution authority.
 
 ---
 
