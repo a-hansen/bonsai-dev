@@ -111,6 +111,28 @@ The startup prompt should stay small. You should not need to summarize the previ
 
 Bonsai's saved workspace state carries that information.
 
+## Optional orchestration
+
+Direct execution is the default. If your coding host supports fresh independent sub-agents, request orchestration with:
+
+```text
+Read .bonsai/start.md and orchestrate.
+```
+
+You can identify the workspace in the same request:
+
+```text
+Read .bonsai/start.md and orchestrate. Active project: <project>.
+```
+
+```text
+Read .bonsai/start.md and orchestrate. Active map: <map>.
+```
+
+The orchestrator starts an ordinary Bonsai implementation agent. When Bonsai offers valid fresh-session continuation, it launches a replacement agent automatically with the established workspace identity. Each replacement reloads durable state. You still receive decisions, menus, reviews, approvals, and tool permission requests; your responses go back to the agent that asked.
+
+If the host cannot create independent agents or the orchestration prompt is unavailable, startup stops with a clear explanation. To run directly, use the ordinary startup request above.
+
 ---
 
 # Day-to-Day Project Workflow
@@ -245,7 +267,7 @@ Requirements are not implementation notes. Architecture is not a task list. Stat
 
 # What Happens at Startup
 
-`start.md` identifies the active Bonsai installation, repository, and workspace, then reconstructs enough saved state to decide what should happen next.
+`start.md` identifies the Bonsai installation and repository, then forwards your request to `bootstrap.md`. Bootstrap selects execution mode before workspace resolution. Each ordinary implementation startup resolves the workspace and reconstructs enough saved state to decide what should happen next.
 
 Bonsai does not automatically load every requirement, architecture file, code map, context file, plan, or skill.
 
@@ -352,6 +374,8 @@ The new session reloads the saved project or map state before executing.
 It does not rely on copied phase text or a hand-written summary from the previous chat, and it still stops if it discovers a new blocker or a decision that requires human input.
 
 Do not paste a previous chat summary into every fresh session. Bonsai memory should carry what matters.
+
+When orchestration is active, the orchestrator takes valid fresh-session continuation automatically. Required human gates still stop for your input. Ordinary resume pointers and **Exit for now** carry no automatic execution authority.
 
 ---
 

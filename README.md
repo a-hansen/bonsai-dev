@@ -112,6 +112,14 @@ Bonsai reconstructs where the project left off, determines whether it needs your
 
 The startup prompt stays small because the durable memory does the remembering.
 
+Direct execution is the default. On a host that supports independent sub-agents, you can request orchestration:
+
+```text
+Read .bonsai/start.md and orchestrate. Active project: <project>.
+```
+
+The orchestrator starts ordinary Bonsai implementation agents and automatically replaces them at fresh-session continuation boundaries. Decisions, reviews, approvals, and tool permissions still come to you. If the host cannot create independent agents, Bonsai reports that orchestration is unavailable.
+
 ---
 
 ## The Core Model
@@ -145,6 +153,8 @@ Bonsai is designed around a different model:
 A fresh session does not need a hand-written summary of the previous chat.
 
 Moving to a new session does not bypass a decision, review, blocker, or design issue that still needs human input.
+
+With optional orchestration, fresh implementation agents are launched automatically when Bonsai offers valid fresh-session continuation. Each agent reloads durable state; the orchestrator relays the human gates.
 
 ---
 
