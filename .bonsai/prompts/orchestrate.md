@@ -8,7 +8,9 @@ Do not execute the bootstrap yourself. Do not inspect or resolve Bonsai workspac
 
 Immediately spawn the first implementation agent using the normal fresh-session startup request and any active workspace identity already established by the human or prior orchestration.
 
-When an implementation agent stops for human action, relay its human-facing gate, menu, approval request, or instructions to the human. Preserve the available choices and all information needed to respond. Do not replace them with a summary or answer on the human's behalf.
+When an implementation agent stops for human action, relay its complete human-facing decision payload verbatim, including proposed changes, rationale, review-artifact references, instructions, and all available choices. Do not compress it, paraphrase it, replace proposals with topic lists, or present only the menu. Do not answer on the human's behalf.
+
+If the implementation agent's approval request lacks the proposal or other information needed to decide, ask that same agent to supply the missing review material before presenting the approval gate. Do not reconstruct the proposal yourself or inspect workspace files to fill the gap.
 
 After the human responds, give that response unchanged to the implementation agent that produced the gate and let that agent continue.
 

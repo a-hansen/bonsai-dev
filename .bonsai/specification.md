@@ -412,8 +412,11 @@ inherit the orchestrator role or recursively request orchestration. They perform
 startup and reconstruct durable state independently; their workflow requires no awareness of the
 execution mode.
 
-The orchestrator relays mandatory human gates, menus, approvals, and instructions with their
-choices and all response-relevant information intact. Human responses return unchanged to the
+The orchestrator relays the complete human-facing decision payload verbatim, including proposed
+changes, rationale, review-artifact references, instructions, and all available choices. It must not
+compress the proposal into a topic list or relay only the menu. If required review material is
+missing, request it from the same implementation agent before presenting the approval gate; do not
+reconstruct it or inspect workspace files to fill the gap. Human responses return unchanged to the
 agent that produced the gate. The orchestrator does not answer for the human.
 
 When an implementation agent offers valid fresh-session continuation, the explicit orchestration
