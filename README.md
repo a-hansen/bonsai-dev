@@ -6,7 +6,7 @@ AI coding tools are remarkably capable inside a session. The harder problem is k
 
 Bonsai keeps the project knowledge that matters in structured Markdown close to the code, so a fresh AI session can reconstruct what it needs without relying on chat history or another hand-written recap.
 
-*Already using Bonsai? See [What's New in 2.0](#whats-new-in-20).*
+> **New in Bonsai 2.1: Optional orchestration.** Bonsai can now automatically move authorized work into fresh implementation sessions when no human gate is waiting, while still bringing decisions, reviews, approvals, and permissions back to you. [See what's new.](#whats-new)
 
 Bonsai helps you:
 
@@ -112,6 +112,14 @@ Bonsai reconstructs where the project left off, determines whether it needs your
 
 The startup prompt stays small because the durable memory does the remembering.
 
+Direct execution is the default. On a host that supports independent sub-agents, you can request orchestration:
+
+```text
+Read .bonsai/start.md and orchestrate. Active project: <project>.
+```
+
+The orchestrator starts ordinary Bonsai implementation agents and automatically replaces them at fresh-session continuation boundaries. Decisions, reviews, approvals, and tool permissions still come to you. If the host cannot create independent agents, Bonsai reports that orchestration is unavailable.
+
 ---
 
 ## The Core Model
@@ -145,6 +153,8 @@ Bonsai is designed around a different model:
 A fresh session does not need a hand-written summary of the previous chat.
 
 Moving to a new session does not bypass a decision, review, blocker, or design issue that still needs human input.
+
+With optional orchestration, fresh implementation agents are launched automatically when Bonsai offers valid fresh-session continuation. Each agent reloads durable state; the orchestrator relays the human gates. You can ask it to stop at the next fresh-session boundary. Its resume prompt retains `and orchestrate` and the established workspace identity.
 
 ---
 
@@ -271,9 +281,23 @@ The technology is deliberately boring.
 
 ---
 
-## What's New in 2.0
+## What's New
 
-Bonsai 2.0 is a redesign of the 1.x workflow. The main changes are:
+### 2.1: Optional Orchestration
+
+Bonsai 2.1 adds optional orchestration for implementation work that spans multiple AI sessions.
+
+* **Automatic fresh sessions**: when an implementation session reaches a valid continuation boundary and no human gate is waiting, Bonsai launches a fresh implementation agent automatically.
+* **Human gates stay human**: decisions, requirements or architecture revisions, contract reviews, approvals, blockers, and tool permissions still come back to the developer.
+* **Ordinary Bonsai underneath**: the orchestrator does not duplicate the Bonsai workflow. Each implementation agent starts through the normal Bonsai entry point, reloads durable project state, and does the work.
+* **Optional by design**: direct Bonsai execution remains the default. Add `and orchestrate` when you want Bonsai to carry work across fresh sessions for you.
+* **Clean stopping and resuming**: orchestration can stop at the next fresh-session boundary and later resume with the same workspace identity and orchestration mode.
+
+The result is the same fresh-session model Bonsai already used, but without requiring you to manually start every continuation session when nothing needs your attention.
+
+### 2.0: Bonsai Home, Fresh Sessions, and Code Maps
+
+Bonsai 2.0 was a redesign of the 1.x workflow. The main changes were:
 
 * **Reusable Bonsai Home** through `BONSAI_HOME`, allowing one cloned Bonsai installation to serve many repositories and provide shared resources such as code maps.
 * **Fresh-session continuation** that reconstructs project state and automatically continues already-authorized work when no human decision is required.
@@ -281,9 +305,9 @@ Bonsai 2.0 is a redesign of the 1.x workflow. The main changes are:
 * **Integrated reusable code maps** that give agents durable knowledge of unfamiliar codebases, with resumable mapping and create, extend, refresh, and rebuild workflows.
 * **Standardized project memory** through `projects/main` for normal repositories, with named projects available when multiple independent bodies of work are needed.
 
-Bonsai 2.0 is also self-hosting: continued Bonsai development uses Bonsai's own persistent project memory, code maps, operational context, and workflow.
+Bonsai 2.0 was also self-hosting: continued Bonsai development uses Bonsai's own persistent project memory, code maps, operational context, and workflow.
 
-For the complete change list and release notes, see the [GitHub release notes](https://github.com/a-hansen/bonsai-dev/releases/tag/v2.0.0).
+For complete release notes, see the [GitHub releases](https://github.com/a-hansen/bonsai-dev/releases).
 
 ---
 

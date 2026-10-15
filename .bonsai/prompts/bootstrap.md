@@ -2,6 +2,20 @@
 
 Read-only Bonsai bootstrap. Repository home and Bonsai Home are already resolved by `.bonsai/start.md`.
 
+## Execution Mode
+
+Direct execution is the default. Before resolving or inspecting workspace state, check whether the retained startup request explicitly requests orchestration, for example `Read .bonsai/start.md and orchestrate. Active project: foo.`
+
+If orchestration is requested:
+
+1. Require a host capable of spawning fresh independent implementation agents. If unavailable, stop and report that orchestration cannot proceed; do not silently switch to direct execution.
+2. Read `<bonsai-home>/prompts/orchestrate.md`. If missing or inaccessible, stop and report the configuration problem.
+3. Provide repository home, resolved Bonsai Home, and the complete retained startup request. Follow that prompt as the orchestration agent; do not continue workspace resolution or implementation startup in this agent.
+
+For the first child, use ordinary Bonsai startup with only the orchestration request removed; preserve all other human intent and any supplied workspace identity. Replacement children use the ordinary fresh-session auto-execute pointer with the current established workspace identity. Never pass the orchestration request into a child or inherit the orchestrator role. Each child performs normal startup and reconstructs durable state independently.
+
+Without an orchestration request, continue below unchanged.
+
 ## Session Inputs
 
 * Retain the human's complete startup request as natural language. An explicit active project or map is session identity; after resolving identity, pass the remaining request through unchanged. Do not require or invent startup command syntax.

@@ -4,7 +4,7 @@
 
 Close an authorized exact next step for the active project/map workspace: reconcile execution truth, preserve safe resume state, report actual results, and present the applicable continuation gate.
 
-Handoff is not a session log and cannot control the host application. Bonsai cannot terminate, clear, reset, or create sessions.
+Handoff is not a session log and cannot control the host application. The implementation agent cannot terminate, clear, reset, or create its host session.
 
 ## Load When
 
@@ -172,7 +172,7 @@ Authorization rules:
 
 ## Fresh-Session Continuation
 
-Print a prompt after fresh-session continuation, **Exit for now**, or explicit prompt request. The human starts the new host session.
+Print a prompt after fresh-session continuation, **Exit for now**, or explicit prompt request. The next host session is started outside the implementation agent.
 
 Always preserve the active workspace identity in the fresh-session pointer. Project appends `Active project: <project>.` using the directory name. Map appends `Active map: <map>.` using the directory name. Do not discard known identity merely because `start.md` could infer the same workspace.
 
@@ -208,7 +208,7 @@ Always include the active workspace qualifier. For an explicitly requested ordin
 
 Never append workspace path, phase, mapping scope, pass, readiness, rendered next step, approval state, dry-run state, workflow name, required skills, blockers, or prior-session summary. Put resume-critical facts in `agent_state.md` before presenting the pointer.
 
-Fresh-session continuation: tell the human to start a new session with the pointer, then stop. **Exit for now**: present lead-in + pointer, then stop. Never claim Bonsai started, reset, or ended a session.
+Fresh-session continuation: present the pointer for starting a new session, then stop. **Exit for now**: present lead-in + pointer, then stop. Never claim the implementation agent started, reset, or ended a session.
 
 ## Stop Conditions
 

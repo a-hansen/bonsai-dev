@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Stable implementation kernel after `start.md` resolves Bonsai Home, repository home, optional active workspace type/name/home, project/map candidates, and the natural-language startup request.
+Stable implementation kernel after `.bonsai/start.md` resolves Bonsai Home and repository home, and bootstrap resolves optional active workspace type/name/home, project/map candidates, and the natural-language startup request.
 
 - No active workspace: own repository entry/routing.
 - Active workspace: determine minimum current execution condition; load only triggered context/workflows; preserve human gates.
@@ -296,7 +296,7 @@ Completion reports list only files changed for the authorized step and checks ac
 
 Subordinate workflows return to refreshed invoking gate unless they create a new required gate or materially change execution state.
 
-Bonsai may record fresh-session readiness; it cannot terminate, reset, clear, or create a host session.
+The implementation agent may record fresh-session readiness; it cannot terminate, reset, clear, or create its host session.
 
 ## Boundaries
 

@@ -371,24 +371,87 @@ Manage Code Maps.
 
 No formal startup-command language is required.
 
-`start.md` should remain small. It establishes environment identity, resolves an active workspace
-when needed, derives workspace type from its structural path, verifies the selected workspace is
-established, and hands control to the Bonsai Home or embedded implementation kernel.
+`start.md` remains a small repository-local entry point. It establishes repository home, resolves
+Bonsai Home, and forwards the human's complete startup request unchanged to
+`<bonsai-home>/prompts/bootstrap.md`.
 
-Bootstrap responsibilities:
+Bootstrap selects execution mode before resolving or inspecting workspace state. Direct execution
+is the default. For ordinary startup it:
 
-1. establish repository home from local `.bonsai`;
-2. resolve Bonsai Home;
-3. resolve active workspace type/name/path when applicable, with type derived from `projects/` or
+1. resolves active workspace type/name/path when applicable, with type derived from `projects/` or
    `maps/`;
-4. verify the selected workspace directory and required shared execution-memory artifacts exist;
-5. retain Bonsai Home, repository home, active workspace identity/path, and startup request as
+2. verifies the selected workspace directory and required shared execution-memory artifacts exist;
+3. retains Bonsai Home, repository home, active workspace identity/path, and startup request as
    session context;
-6. load `<bonsai-home>/prompts/implementation.md`;
-7. continue under the standard implementation workflow.
+4. loads `<bonsai-home>/prompts/implementation.md` and follows the implementation workflow.
 
 Bootstrap does not routinely load requirements, architecture, generated maps, developer/agent
 context, detailed plans, or specialized skills.
+
+### Optional orchestration
+
+Explicit orchestration uses the same entry point:
+
+```text
+Read .bonsai/start.md and orchestrate. Active project: foo.
+```
+
+Bootstrap routes to `<bonsai-home>/prompts/orchestrate.md` before workspace resolution, passing
+repository home, resolved Bonsai Home, and the complete retained request. That agent becomes only
+the orchestrator. It may read startup contracts to understand ordinary startup, but must not
+resolve/select workspaces, inspect workspace state, load project/map context, or execute Bonsai
+workflows or implementation itself.
+
+Orchestration requires a host capable of spawning fresh independent implementation agents. If
+that capability or the orchestration prompt is unavailable, stop clearly; do not silently switch
+execution mode. Direct startup remains available through an ordinary startup request.
+
+The first implementation child receives ordinary startup with only the orchestration request
+removed, preserving all other human intent and supplied workspace identity. Children must not
+inherit the orchestrator role or recursively request orchestration. They perform normal Bonsai
+startup and reconstruct durable state independently; their workflow requires no awareness of the
+execution mode.
+
+The orchestrator relays the complete human-facing decision payload verbatim, including proposed
+changes, rationale, review-artifact references, instructions, and all available choices. It must not
+compress the proposal into a topic list or relay only the menu. If required review material is
+missing, request it from the same implementation agent before presenting the approval gate; do not
+reconstruct it or inspect workspace files to fill the gap. Human responses return unchanged to the
+agent that produced the gate. The orchestrator does not answer for the human.
+
+Explicit human pause/stop requests take precedence over automatic continuation. Relay them to the
+active implementation agent. When asked to stop at the next fresh-session boundary, stop there
+without launching a replacement agent.
+
+When an implementation agent offers valid fresh-session continuation and no human pause/stop
+request applies, the explicit orchestration request authorizes the orchestrator to take that
+continuation automatically and spawn a new implementation agent without presenting the fresh-session
+choice. Use the ordinary fresh-session auto-execute pointer and current established workspace identity. Do not resume the old agent for
+that continuation or carry rendered next-step text or implementation chat history into the new
+agent. Mandatory gates still require human action; ordinary resume pointers and **Exit for now**
+do not authorize automatic continuation.
+
+When presenting a pointer for the human to resume an orchestrated run, retain orchestration mode:
+
+```text
+Read .bonsai/start.md and orchestrate. Active project: <project>.
+```
+
+```text
+Read .bonsai/start.md and orchestrate. Active map: <map>.
+```
+
+Use only established identity, omitting the qualifier if none is known. Preserve the ordinary resume
+lead-in and other decision information. This pointer rewrite is an exception to verbatim relay; it
+does not permit changing proposals or choices. An ordinary resume pointer preserves execution mode,
+not one-action auto-execution authority. Child-agent startup remains ordinary and never includes
+orchestration. Implementation/handoff workflows need no mode-specific branches.
+
+Workspace identity is carried only when established by the human or implementation agent. The
+orchestrator preserves it between children as session context without resolving it itself or
+persisting a current-workspace pointer. It stops when work completes or normal continuation is
+impossible. Orchestration grants no additional implementation authority: each replacement child
+may execute only the one reconstructed exact next action under the normal continuation rules.
 
 ## 4.3 Bonsai Home resolution
 
@@ -768,8 +831,10 @@ normally internal execution detail.
 
 ## 7.4 Shared continuation model
 
-Bonsai preserves continuity across sessions but does not control the host application. It cannot
-terminate, clear, reset, or create a chat/session; those remain human actions.
+An implementation agent preserves continuity but does not control its host session: it cannot
+terminate, clear, reset, or create that session. In direct execution the human starts the next
+session. In explicitly orchestrated execution, the host-supported orchestrator may create a fresh
+implementation agent at a valid fresh-session continuation boundary under section 4.2.
 
 At a natural handoff, reconcile the active workspace and persist exact next action/readiness before
 presenting continuation choices.
@@ -1264,8 +1329,12 @@ with category guide `prompts/prompts.md`.
 
 The prompt set should remain small.
 
+- `prompts/bootstrap.md`: selects execution mode before workspace resolution; ordinary startup
+  resolves and structurally validates optional workspace identity, then delegates to implementation.
+- `prompts/orchestrate.md`: optional host-supported implementation-agent lifecycle and human-gate
+  relay; does not resolve workspace state or execute Bonsai workflow itself.
 - `prompts/implementation.md`: stable workspace-aware kernel/router. Receives session identity from
-  `.bonsai/start.md`, loads minimum additional context, may surface map maintenance/opportunities
+  bootstrap, loads minimum additional context, may surface map maintenance/opportunities
   from source already required by project work, and routes accepted map work to
   `skills/code_maps.md`. It does not roam through source looking for mapping opportunities.
 - `prompts/create_project.md`: Web UI project synthesis/bootstrap packaging into
@@ -1475,6 +1544,25 @@ mandate for a particular test harness.
    path and shared execution memory without requiring a workspace manifest.
 4. Active workspace identity remains session-local and is not written to `agent_context.md`.
 5. Startup does not eagerly load full project truth, full generated maps, or detailed map plans.
+
+## Optional orchestration
+
+- Ordinary startup remains direct by default, including project, map, and repository-level requests.
+- Explicit `and orchestrate` routes before workspace state is inspected or resolved.
+- Missing host capability or orchestration prompt stops clearly without a silent direct fallback.
+- The first child retains all startup intent except orchestration and performs ordinary startup.
+- Children are independent implementation contexts and never recursively enter orchestration.
+- Startup selection and mandatory review/approval gates are relayed intact; responses return
+  unchanged to the same child.
+- Valid fresh-session continuation automatically creates a replacement child using the ordinary
+  one-action auto-execute pointer and established project/map identity.
+- The replacement reconstructs durable state and stops at any newly discovered mandatory gate.
+- The orchestrator does not inspect workspace state, execute implementation, or persist identity.
+- Completion, impossible continuation, and ordinary exit/resume pointers do not trigger another
+  implementation action.
+- A request to pause/stop at the next fresh-session boundary prevents replacement-agent creation.
+- Human-facing ordinary resume pointers preserve orchestration mode and established project/map
+  identity, without carrying one-action auto-execute authorization; child startup remains ordinary.
 
 ## Shared handoff
 
